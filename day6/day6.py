@@ -16,8 +16,6 @@ def main():
         print('day 6 part 1:', getStartofPacket(line))
         print('day 6 part 2:', getStartofPacket(line,14)) 
         
-
-      
 def getStartofPacket(word: str, length: int = 4):
     letters = []
     for i, char in enumerate(word):
