@@ -37,7 +37,6 @@ class Folder():
                 self.currentFolder[arguments[1]] = {}
             elif arguments[0].isdigit():
                 self.currentFolder[arguments[1]] = int(arguments[0])
-
         #print(self.folder)
         pass
 
