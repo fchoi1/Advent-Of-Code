@@ -2,9 +2,6 @@ from typing import TypedDict
 import re
 from math import gcd, prod
 
-
-
-
 class Monkey():
 
     def  __init__(self, MonkeyObj: TypedDict):
