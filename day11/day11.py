@@ -1,6 +1,9 @@
 from typing import TypedDict
 import re
-import math
+from math import gcd, prod
+
+
+
 
 class Monkey():
 
@@ -10,8 +13,11 @@ class Monkey():
         self.test = MonkeyObj['test']
         self.result = MonkeyObj['result']
         self.itemsInspected = 0
-        self.worry =  MonkeyObj['worry']
+        self.worry = MonkeyObj['worry']
         # result arr: [false monkey, true monkey]
+
+    def updateDivisor(self, divisor):
+        self.modulo = divisor
 
     def passItems(self):
         passInfo = {}
@@ -20,6 +26,8 @@ class Monkey():
             item = self.operation(item) 
             item = item // 3 if self.worry else item
             divisible = item % self.test == 0
+            #too large item reduce it
+            item = item  %  self.modulo
             if self.result[divisible] in passInfo:
                 passInfo[self.result[divisible]].append(item)
             else:
@@ -48,9 +56,17 @@ class MonkeyGame():
         self.rounds = rounds
         self.worry = worry
         self.Monkeys = []
-        self.initializeMonkeys()
         self.maxInspected = [0,0]
+        self.testList = []
+        self.initializeMonkeys()
     
+    def updateLCM(self):
+        lcm = 1
+        for i in self.testList:
+            lcm = lcm*i//gcd(lcm, i)
+        for monkey in self.Monkeys:
+            monkey.updateDivisor(lcm)
+
     def getOperation(self, operation: str, value: int = 0):
         
         match  operation:
@@ -94,6 +110,7 @@ class MonkeyGame():
                         currMonkey['operation'] = self.getOperation(operator)
                 elif arg1 == 'Test:':
                     currMonkey['test'] = int(row.split()[3])
+                    self.testList.append(int(row.split()[3]))
                 elif arg1 == 'If':
                     monkeyNum = int(row.split()[5])                    
                     if  row.split()[1] == 'true:':
@@ -102,6 +119,7 @@ class MonkeyGame():
                         currMonkey['result'][0] = monkeyNum
         newMonkey = Monkey(currMonkey)
         self.Monkeys.append(newMonkey)
+        self.updateLCM()
     
     def playRound(self):
         for monkey in self.Monkeys:
@@ -123,7 +141,7 @@ class MonkeyGame():
             if monkey.itemsInspected > self.maxInspected[1]:
                 self.maxInspected[1] = monkey.itemsInspected
                 self.maxInspected.sort(reverse=True)
-        return math.prod(self.maxInspected)
+        return prod(self.maxInspected)
 
 if __name__ == "__main__":
     """ This isexecuted when run from the command line """
