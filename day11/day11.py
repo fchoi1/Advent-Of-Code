@@ -42,7 +42,7 @@ class MonkeyGame():
     
     def getInput(self):
         file1 = open('input.txt', 'r')
-        file1 = open('input-test.txt', 'r')
+        #file1 = open('input-test.txt', 'r')
         Lines = file1.readlines()
         data = []
         # Get input data
