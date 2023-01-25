@@ -94,6 +94,6 @@ if __name__ == "__main__":
     rope = Rope()
     rope.createTails(9)
     rope.moveRope()
-    print('Day 8 part 1:', rope.getUniqueSingleTail())
-    print('Day 8 part 2:', rope.getUniqueLastTail())
+    print('Day 9 part 1:', rope.getUniqueSingleTail())
+    print('Day 9 part 2:', rope.getUniqueLastTail())
 
