@@ -2,7 +2,7 @@
 class Rope():
     
     def getInput(self):
-        file1 = open('input.txt', 'r')
+        file1 = open('/home/coderpad/data/input.txt', 'r')
         #file1 = open('input-test.txt', 'r')
         Lines = file1.readlines()
         data = []
@@ -17,8 +17,8 @@ class Rope():
 
         self.visitedOnceSingle = 1
         self.visitedOnceLast = 1
-        self.visitedSingle = {'0,0': 1}
-        self.visitedLast = {'0,0': 1}
+        self.visitedSingle = set()
+        self.visitedLast = set()
 
         self.head = [0,0]
         self.tails = []
@@ -28,7 +28,7 @@ class Rope():
             self.tails.append([0,0])
     
     def tailInRange(self, head: list[int], tail: list[int]):
-        return  head[0] - 1 <= tail[0] <= head[0] + 1  and   head[1] - 1 <= tail[1] <= head[1] + 1
+        return  head[0] - 1 <= tail[0] <= head[0] + 1  and  head[1] - 1 <= tail[1] <= head[1] + 1
 
     def tailInRow(self, head: list[int], tail: list[int]):
         return head[0] - tail[0]
@@ -59,7 +59,7 @@ class Rope():
                 rowValue = self.tailInRow(currHead, self.tails[i])
                 colValue = self.tailInCol(currHead, self.tails[i])
                 if rowValue != 0:
-                    rowValue /= abs(rowValue)
+                    rowValue /= abs(rowValue) 
                 if colValue != 0:
                     colValue /= abs(colValue)
                 self.tails[i][0] +=  rowValue 
@@ -67,22 +67,14 @@ class Rope():
 
             lastTail = self.tails[len(self.tails) - 1]
             singleTail = self.tails[0]
-
-            [self.visitedSingle, self.visitedOnceSingle] = self.updateVisited(singleTail, self.visitedOnceSingle, self.visitedSingle)
-            [self.visitedLast, self.visitedOnceLast] = self.updateVisited(lastTail, self.visitedOnceLast, self.visitedLast)
-
-    def updateVisited(self, cords: list[int], visitedTimes: int, visitedGrid):
-        cordStr = f"{cords[0]},{cords[1]}"
-        if cordStr not in visitedGrid:
-            visitedGrid[cordStr] = True
-            visitedTimes += 1
-        return [visitedGrid, visitedTimes]
-
+            self.visitedLast.add(tuple(lastTail))
+            self.visitedSingle.add(tuple(singleTail))
+            
     def getUniqueSingleTail(self):
-        return self.visitedOnceSingle
+        return len(self.visitedSingle)
     
     def getUniqueLastTail(self):
-        return self.visitedOnceLast
+        return len(self.visitedLast) 
 
     def moveRope(self):
         for instruction in self.inputData:
@@ -96,4 +88,6 @@ if __name__ == "__main__":
     rope.moveRope()
     print('Day 9 part 1:', rope.getUniqueSingleTail())
     print('Day 9 part 2:', rope.getUniqueLastTail())
+
+
 
