@@ -3,7 +3,7 @@ from typing import Tuple, List, Optional
 class Hill():
     def getInput(self):
         with open('input.txt', 'r') as file1:
-        # with open('input-text.txt', 'r') as file1:
+        # with open('input-test.txt', 'r') as file1:
             Lines = file1.readlines()
             return [list(line.strip()) for line in Lines]
 
