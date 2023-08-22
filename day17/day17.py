@@ -13,16 +13,8 @@ class Rocks():
         self.windData = self.getInput()
 
         self.chamberWidth = 7
-        self.chamber = [['.'] * self.chamberWidth]
-        self.chamberHeights = [0] * self.chamberWidth
-        self.highest = 0
-        self.wind = 0
         self.windLength = len(self.windData)
-
-        self.cycleHeight = None
-        self.cycleLength = None
-
-        self.seen = {}   # { key: { state:  ,   height: }  -  use binary to represent it plus the initial height of state }
+        self.fullReset()
 
         self.rocks = [
             [
@@ -52,8 +44,6 @@ class Rocks():
     
     def fullReset(self):
         self.chamber = [['.'] * self.chamberWidth]
-        self.chamberHeights = [0] * self.chamberWidth
-        self.highest = 0
         self.chamberHeights = [0] * self.chamberWidth
         self.highest = 0
         self.wind = 0
@@ -107,27 +97,18 @@ class Rocks():
                     self.chamber[y+j][x+i] ='#'
                     self.chamberHeights[x+i] = max(self.chamberHeights[x+i], y+j+1)
 
-    def printChamber(self, start: Optional[int] = None, end: Optional[int]=None):
-        if not start or not end:
-            start = 0
-            end  = len(self.chamber)
-        for i, row in enumerate(reversed(self.chamber[start:end])):
-            print(len(self.chamber)-i,  ''.join(row))
-        print()
-
-    def dropOneLevel(self, rock: List[int]):
-        return [x - 1 if x != -1 else -1 for x in rock]
-    
     def getRockHeight(self, numRocks: int) -> int:
         self.fullReset()
+        cycleExists = False
 
         for i in range(numRocks):
             currRock =  i % len(self.rocks)
             self.dropPiece(currRock)
             if self.cycleFound(i, currRock, (self.wind-1) % self.windLength):
+                cycleExists = True
                 break
-    
-        if not self.cycleHeight or not self.cycleLength:
+
+        if not cycleExists:
             return self.highest
 
         fullCycles = (numRocks - i) // self.cycleLength
@@ -146,9 +127,6 @@ class Rocks():
         # 18 rows is the number of rows to check for cycle
         currState = self.getState(self.chamber[self.highest-18:self.highest])
 
-        if self.cycleHeight:
-            return True
-
         key = f'{rockNum},{wind}'
         if key in self.seen:
             state = self.seen[key]['state']
@@ -165,15 +143,19 @@ class Rocks():
         self.seen[key]['height'] = self.highest
         self.seen[key]['rockCount'] = rockCount
         return False
-        
+    
+    # Convertting row data to binary state representation
     def getState(self, rows: List[str]):
-        states = []
-        for row in rows:
-            strSymbol = "".join(row).replace('#', '1').replace('.', '0')
-            num = int(strSymbol, 2)
-            states.append(num)
+        return [[int("".join(row).replace('#', '1').replace('.', '0'), 2) for row in rows]]
 
-        return [states]
+    # Used for debugging and visualization
+    def printChamber(self, start: Optional[int] = None, end: Optional[int]=None):
+        if not start or not end:
+            start = 0
+            end  = len(self.chamber)
+        for i, row in enumerate(reversed(self.chamber[start:end])):
+            print(len(self.chamber)-i,  ''.join(row))
+        print()
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
