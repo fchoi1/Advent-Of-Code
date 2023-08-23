@@ -1,5 +1,6 @@
+from typing import List
 
-def getInput():
+def getInput() -> List[str]:
     file1 = open('input.txt', 'r')
     Lines = file1.readlines()
     data = []
@@ -8,7 +9,7 @@ def getInput():
         data.append(line.strip())
     return data
 
-def main():
+def main() -> None:
     """ Main entry point of the app """
     inputData = getInput()
 
@@ -25,9 +26,8 @@ def main():
     
     print('day 1 part 1:', maxCalories[0])
     print('day 1 part 2:', sum(maxCalories))
-    return maxCalories
 
-def sortCal(calories):
+def sortCal(calories: List[int]) -> List[int]:
     return sorted(calories, reverse=True)
 
 if __name__ == "__main__":

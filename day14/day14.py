@@ -1,7 +1,7 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 class Cave():
-    def getInput(self) -> List:
+    def getInput(self) -> List[Tuple[int]]:
         inputFile = 'input-test.txt' if self.useTest else 'input.txt'
         with open(inputFile, 'r') as file1:
             Lines = file1.readlines()
@@ -29,14 +29,12 @@ class Cave():
                     tuple_value = tuple(coordinates)
                     tuples_list.append(tuple_value)
                 data.append(tuples_list)
-
             return data
-        return  []
 
-    def createGrid(self, height: int, width: int) -> []:
+    def createGrid(self, height: int, width: int) -> List[List[str]]:
         return [['.' for _ in range(width + 1)] for _ in range(height + 1)]
     
-    def populateGrid(self, grid: List, minX: int, addFloor: bool = False) -> None:            
+    def populateGrid(self, grid: List[List[str]], minX: int, addFloor: bool = False) -> None:            
         for lines in self.inputData:
             (prevX, prevY) = lines[0]
             for (x,y) in lines[1:]:
@@ -57,7 +55,7 @@ class Cave():
                 grid[height] = ['X' for _ in grid[height]]
         return grid
         
-    def printGrid(self, grid, startX: int = -1, endX: int = -1) -> None:
+    def printGrid(self, grid: List[List[str]], startX: int = -1, endX: int = -1) -> None:
         for row in grid:
             if startX == -1 or endX == -1:
                 print(row)
@@ -89,7 +87,7 @@ class Cave():
         self.stableSand2 += 1
         return self.stableSand2
 
-    def dropSand(self, grid: List, sandPos: List[int] ) -> List[int]:
+    def dropSand(self, grid: List[List[str]], sandPos: List[int] ) -> List[int]:
         [sandPosX, sandPosY] = sandPos
         if grid[sandPosY+1][sandPosX] == '.':
             sandPosY += 1

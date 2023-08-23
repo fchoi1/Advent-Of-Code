@@ -17,7 +17,6 @@ class Signal():
                 dataPair.append(my_list)
             data.append(dataPair)
             return data
-        return  []
     
     def getInput2(self) -> List:
         inputFile = 'input-test.txt' if self.useTest else 'input.txt'
@@ -28,7 +27,6 @@ class Signal():
                 if line.strip():
                     data.append(ast.literal_eval(line.strip()))
             return data
-        return  []
 
     def compareList(self, left: List , right:  List)  -> bool:
         rightLength = len(right)
@@ -59,7 +57,7 @@ class Signal():
 
         return None
 
-    def evaluateSignals(self):
+    def evaluateSignals(self) -> None:
         for i, [leftSignal, rightSignal]  in enumerate(self.inputData1):
             if self.compareList(leftSignal, rightSignal):
                 self.correctIndices.append(i+1)
@@ -77,13 +75,12 @@ class Signal():
             return
         self.compareValue(signal[0])
 
-    def getDecorder(self):
+    def getDecorder(self) -> int:
         for signal  in self.inputData2:
             self.compareValue(signal)
         return self.before2 * (self.before2 + self.between)
-
             
-    def getSumofCorrectIdices(self):
+    def getSumofCorrectIdices(self) -> int:
         return sum (self.correctIndices)
 
     def __init__(self, useTest: Optional[bool] = False) -> None:

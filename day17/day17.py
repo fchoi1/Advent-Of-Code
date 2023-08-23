@@ -7,7 +7,7 @@ class Rocks():
             Lines = file1.readlines()
         return Lines[0].strip()
 
-    def __init__(self, useTest: Optional[bool] = False, row: int = 10) -> None:
+    def __init__(self, useTest: Optional[bool] = False) -> None:
         """ Main entry point of the app """
         self.useTest = useTest
         self.windData = self.getInput()
@@ -42,7 +42,7 @@ class Rocks():
             ],
         ] 
     
-    def fullReset(self):
+    def fullReset(self) -> None:
         self.chamber = [['.'] * self.chamberWidth]
         self.chamberHeights = [0] * self.chamberWidth
         self.highest = 0
@@ -64,7 +64,7 @@ class Rocks():
                     return True
         return False
 
-    def dropPiece(self, rockNum: int):
+    def dropPiece(self, rockNum: int) -> None:
         height = len(self.rocks[rockNum])
 
         startHeight = self.highest + 3
@@ -87,7 +87,7 @@ class Rocks():
         self.updateChamber(coords, rockNum)
         self.highest = max(self.chamberHeights)
 
-    def updateChamber(self, coords: List[int], rockNum:int):
+    def updateChamber(self, coords: List[int], rockNum:int) -> None:
         x, y = coords
         height = len(self.rocks[rockNum])
         width = len(self.rocks[rockNum][0])
@@ -122,8 +122,7 @@ class Rocks():
 
         return self.highest + heightAdd
     
-    def cycleFound(self, rockCount: int,  rockNum: int, wind: int ):
-        
+    def cycleFound(self, rockCount: int,  rockNum: int, wind: int ) -> bool:
         # 18 rows is the number of rows to check for cycle
         currState = self.getState(self.chamber[self.highest-18:self.highest])
 

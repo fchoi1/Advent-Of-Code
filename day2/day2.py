@@ -1,5 +1,6 @@
+from typing import List
 
-def getInput():
+def getInput() -> List[str]:
     file1 = open('input.txt', 'r')
     Lines = file1.readlines()
     data = []
@@ -8,7 +9,7 @@ def getInput():
         data.append(line.strip())
     return data
 
-def main():
+def main() -> None:
     """ Main entry point of the app """
     inputData = getInput()
 
@@ -22,9 +23,7 @@ def main():
     print('day 2 part 1:', scorePt1)
     print('day 2 part 2:', scorePt2)
 
-    return [scorePt1, scorePt2]
-
-def calculateRound(player1: str, player2:  str):
+def calculateRound(player1: str, player2:  str) -> int:
     gameMap ={
         'X' : 1,
         'Y' : 2 ,
@@ -40,7 +39,7 @@ def calculateRound(player1: str, player2:  str):
         case _:
             return 0
 
-def calculateRound2(player1: str, end:  str):
+def calculateRound2(player1: str, end:  str) ->  int:
     gameMap = {
         'A' : 1,
         'B' : 2 ,
@@ -55,8 +54,6 @@ def calculateRound2(player1: str, end:  str):
             return 6 +  (gameMap[player1]) % 3 + 1
         case _:
             return 0
-
-
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """

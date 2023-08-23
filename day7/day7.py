@@ -1,7 +1,8 @@
+from typing import List, Dict, Any
 
 class Folder():
     
-    def getInput(self):
+    def getInput(self) -> List[str]:
         file1 = open('input.txt', 'r')
         #file1 = open('input-test.txt', 'r')
         Lines = file1.readlines()
@@ -40,7 +41,7 @@ class Folder():
         #print(self.folder)
         pass
 
-    def getFolderSize(self, folder) -> int:
+    def getFolderSize(self, folder: Dict[str, Any]) -> int:
         size = 0
         for item in folder:
             if isinstance(folder[item], int):
@@ -49,7 +50,7 @@ class Folder():
                 size += self.getFolderSize(folder[item])
         return size
 
-    def calculateSizeSum(self, folder,  maxSize: int=100000) -> int:
+    def calculateSizeSum(self, folder:Dict[str, Any], maxSize: int=100000) -> int:
         for item in folder:
             if not isinstance(folder[item], int):
                 self.calculateSizeSum(folder[item])
@@ -63,15 +64,14 @@ class Folder():
                     self.folderToDeleteSize = folderSize
         pass
 
-    def getFoldertoDelete(self):
-        #print(self.folderToDelete, 'size', self.folderToDeleteSize)
-        return self.folderToDeleteSize
+    def getFoldertoDelete(self) -> int:
+        return int(self.folderToDeleteSize)
         
-    def getSizeSum(self):
+    def getSizeSum(self) -> int:
         self.calculateSizeSum(self.folder)
         return self.sizeSum
     
-    def updateFilePath(self, cmd: str):
+    def updateFilePath(self, cmd: str) -> None:
         if cmd == '..':
             self.filePath.pop()
             self.currentFolder = self.folder

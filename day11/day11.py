@@ -1,10 +1,10 @@
-from typing import TypedDict
+from typing import TypedDict, Dict, List, Optional, Callable, Union
 import re
 from math import gcd, prod
 
 class Monkey():
 
-    def  __init__(self, MonkeyObj: TypedDict):
+    def  __init__(self, MonkeyObj: TypedDict) -> None:
         self.items = MonkeyObj['items']
         self.operation = MonkeyObj['operation']
         self.test = MonkeyObj['test']
@@ -13,10 +13,10 @@ class Monkey():
         self.worry = MonkeyObj['worry']
         # result arr: [false monkey, true monkey]
 
-    def updateDivisor(self, divisor):
+    def updateDivisor(self, divisor: int) -> None:
         self.modulo = divisor
 
-    def passItems(self):
+    def passItems(self) -> Dict[str, List[int]]:
         passInfo = {}
         for item in self.items:
             self.itemsInspected += 1
@@ -32,12 +32,12 @@ class Monkey():
         self.items = []
         return passInfo
     
-    def recieveItems(self, items: list[int]):
+    def recieveItems(self, items: list[int]) -> None:
         self.items += items
 
 class MonkeyGame():
     
-    def getInput(self):
+    def getInput(self) -> List[str]:
         file1 = open('input.txt', 'r')
         #file1 = open('input-test.txt', 'r')
         Lines = file1.readlines()
@@ -57,14 +57,14 @@ class MonkeyGame():
         self.testList = []
         self.initializeMonkeys()
     
-    def updateLCM(self):
+    def updateLCM(self) -> None:
         lcm = 1
         for i in self.testList:
             lcm = lcm*i//gcd(lcm, i)
         for monkey in self.Monkeys:
             monkey.updateDivisor(lcm)
 
-    def getOperation(self, operation: str, value: int = 0):
+    def getOperation(self, operation: str, value: int = 0) -> Callable[[int], Union[int, float]] | None:
         
         match  operation:
             case '+':
@@ -82,7 +82,7 @@ class MonkeyGame():
             case  _:
                 return None
              
-    def initializeMonkeys(self):
+    def initializeMonkeys(self) -> None:
         currMonkey = {}
 
         for row in self.inputData:
@@ -118,23 +118,24 @@ class MonkeyGame():
         self.Monkeys.append(newMonkey)
         self.updateLCM()
     
-    def playRound(self):
+    def playRound(self) -> None:
         for monkey in self.Monkeys:
             monkeyInfo = monkey.passItems()
             for monkeyNum in monkeyInfo:
                 self.Monkeys[monkeyNum].recieveItems(monkeyInfo[monkeyNum])
 
-    def  playGame(self):
+    def playGame(self) -> None:
         for _ in range(self.rounds):
             self.playRound()
 
-    def getMonkeys(self):
+    def getMonkeys(self) -> None:
         for i,monkey in  enumerate(self.Monkeys):
             print('Monkey #', i ,'--------------------------------')
             monkey.printInfo()
 
-    def getInspectedTimes(self):
-        for i,monkey in  enumerate(self.Monkeys):
+    def getInspectedTimes(self) -> int:
+        self.playGame()
+        for monkey in self.Monkeys:
             if monkey.itemsInspected > self.maxInspected[1]:
                 self.maxInspected[1] = monkey.itemsInspected
                 self.maxInspected.sort(reverse=True)
@@ -142,9 +143,7 @@ class MonkeyGame():
 
 if __name__ == "__main__":
     """ This isexecuted when run from the command line """
-    game1= MonkeyGame(20)
-    game1.playGame()
-    game2= MonkeyGame(10000, False)
-    game2.playGame()
+    game1 = MonkeyGame(20)
+    game2 = MonkeyGame(10000, False)
     print('Day 11 part 1:', game1.getInspectedTimes())
     print('Day 11 part 2:', game2.getInspectedTimes())

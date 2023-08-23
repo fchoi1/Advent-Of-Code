@@ -1,5 +1,6 @@
+from typing import List
 
-def getInput():
+def getInput() -> List[str]:
     file1 = open('input.txt', 'r')
     Lines = file1.readlines()
     data = []
@@ -8,7 +9,7 @@ def getInput():
         data.append(line.strip())
     return data
 
-def main():
+def main() -> None:
     """ Main entry point of the app """
     inputData = getInput()
 
@@ -24,12 +25,11 @@ def main():
 
     print('day 4 part 1:', count1)
     print('day 4 part 2:', count2)
-    # print('day 2 part 2:', priorityPt2)
 
-def fullyEnclosed(p1: list[int], p2:  list[int]):
+def fullyEnclosed(p1: List[int], p2:  List[int]) -> bool:
     return (p1[0] >= p2[0] and p1[1] <= p2[1]) or (p2[0] >= p1[0] and p2[1] <= p1[1])
 
-def overlaped(p1: list[int], p2:  list[int]):
+def overlaped(p1: List[int], p2:  List[int]) -> bool:
     return not((p1[1] < p2[0]) or (p2[1] < p1[0]))
     
 

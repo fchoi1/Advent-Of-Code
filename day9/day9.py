@@ -1,8 +1,8 @@
-
+from typing import List
 class Rope():
     
-    def getInput(self):
-        file1 = open('/home/coderpad/data/input.txt', 'r')
+    def getInput(self)  -> List[str]:
+        file1 = open('input.txt', 'r')
         #file1 = open('input-test.txt', 'r')
         Lines = file1.readlines()
         data = []
@@ -11,7 +11,7 @@ class Rope():
             data.append(line.strip())
         return data
 
-    def __init__(self) -> None:
+    def __init__(self, numTails: int) -> None:
         """ Main entry point of the app """
         self.inputData = self.getInput()
 
@@ -22,21 +22,22 @@ class Rope():
 
         self.head = [0,0]
         self.tails = []
+        self.createTails(numTails)
     
-    def createTails(self, number: int):
+    def createTails(self, number: int) -> None:
         for i in range(number):
             self.tails.append([0,0])
     
-    def tailInRange(self, head: list[int], tail: list[int]):
-        return  head[0] - 1 <= tail[0] <= head[0] + 1  and  head[1] - 1 <= tail[1] <= head[1] + 1
+    def tailInRange(self, head: List[int], tail: List[int]) -> bool:
+        return head[0] - 1 <= tail[0] <= head[0] + 1  and  head[1] - 1 <= tail[1] <= head[1] + 1
 
-    def tailInRow(self, head: list[int], tail: list[int]):
+    def tailInRow(self, head: List[int], tail: List[int]) -> int:
         return head[0] - tail[0]
     
-    def tailInCol(self, head: list[int], tail: list[int]):
+    def tailInCol(self, head: List[int], tail: List[int]) -> int:
         return head[1] - tail[1] 
 
-    def moveHead(self, direction: str, steps: int):
+    def moveHead(self, direction: str, steps: int) -> None:
         dirSteps = {
             'R': [ 1,  0],
             'L': [-1,  0],
@@ -70,22 +71,21 @@ class Rope():
             self.visitedLast.add(tuple(lastTail))
             self.visitedSingle.add(tuple(singleTail))
             
-    def getUniqueSingleTail(self):
+    def getUniqueSingleTail(self) -> int:
+        self.moveRope()
         return len(self.visitedSingle)
     
-    def getUniqueLastTail(self):
+    def getUniqueLastTail(self) -> int:
         return len(self.visitedLast) 
 
-    def moveRope(self):
+    def moveRope(self) -> None:
         for instruction in self.inputData:
             [direction, steps] = [instruction.split(' ')[0], int(instruction.split(' ')[1])]
             self.moveHead(direction, steps)
 
 if __name__ == "__main__":
     """ This isexecuted when run from the command line """
-    rope = Rope()
-    rope.createTails(9)
-    rope.moveRope()
+    rope = Rope(9)
     print('Day 9 part 1:', rope.getUniqueSingleTail())
     print('Day 9 part 2:', rope.getUniqueLastTail())
 

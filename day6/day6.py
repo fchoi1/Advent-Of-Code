@@ -1,4 +1,6 @@
-def getInput():
+from typing import List
+
+def getInput() -> List[str]:
     file1 = open('input.txt', 'r')
     # file1 = open('input-test.txt', 'r')
     Lines = file1.readlines()
@@ -8,7 +10,7 @@ def getInput():
         data.append(line.strip())
     return data
 
-def main():
+def main() -> None:
     """ Main entry point of the app """
     inputData = getInput()
 
@@ -16,7 +18,7 @@ def main():
         print('day 6 part 1:', getStartofPacket(line))
         print('day 6 part 2:', getStartofPacket(line,14)) 
         
-def getStartofPacket(word: str, length: int = 4):
+def getStartofPacket(word: str, length: int = 4) ->  int:
     letters = []
     for i, char in enumerate(word):
         letters.append(char)
@@ -25,9 +27,9 @@ def getStartofPacket(word: str, length: int = 4):
                 return i + 1
             else:
                 letters.pop(0)
-    return None
+    return 0
         
-def isUnique(word: list[str]):
+def isUnique(word: List[str]) -> bool:
     letters = [*range(1,26)]
     for char in word:
         charNum = ord(char) - ord('a')
@@ -37,8 +39,6 @@ def isUnique(word: list[str]):
             return False
     return True
     
-
-
 if __name__ == "__main__":
     """ This is executed when run from the command line """
     main()

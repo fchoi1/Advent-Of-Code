@@ -1,8 +1,9 @@
 
+from typing import List
 import re
-from copy import copy, deepcopy
+from copy import deepcopy
 
-def getInput():
+def getInput() -> List[str]:
     file1 = open('input.txt', 'r')
     # file1 = open('input-test.txt', 'r')
     Lines = file1.readlines()
@@ -12,7 +13,7 @@ def getInput():
         data.append(line.strip())
     return data
 
-def main():
+def main() -> None:
     """ Main entry point of the app """
     inputData = getInput()
 
@@ -67,13 +68,13 @@ def main():
     print('day 5 part 1:', word1)
     print('day 5 part 2:', word2)
 
-def updateStack(instruction: list[int], stack):
+def updateStack(instruction: list[int], stack: List[List[str]]) ->  List[List[str]]:
     for _ in range(instruction[0]): 
         letter = stack[instruction[1]-1].pop()
         stack[instruction[2]-1].append(letter) 
     return stack
 
-def updateStack2(instruction: list[int], stack):
+def updateStack2(instruction: list[int], stack: List[List[str]]) -> List[List[str]]:
     index = len(stack[instruction[1]-1]) - instruction[0] 
     for _ in reversed(range(instruction[0])):
         letter = stack[instruction[1]-1].pop(index)

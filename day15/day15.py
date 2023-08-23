@@ -1,8 +1,7 @@
 from typing import List, Optional, Tuple
 import re
-
 class Beacon():
-    def getInput(self) -> List:
+    def getInput(self) -> List[List[Tuple[int]]]:
         inputFile = 'input-test.txt' if self.useTest else 'input.txt'
         with open(inputFile, 'r') as file1:
             Lines = file1.readlines()
@@ -12,7 +11,6 @@ class Beacon():
                 coords = list(map(int,re.split("|".join(map(re.escape, delimiters)), line.strip())[1:]))
                 data.append([(coords[0],  coords[1]),(coords[2], coords[3])])
             return data
-        return  []
     
     def checkPair(self, sensorY: int,  distance: int, row: int) ->  bool:
         return (sensorY >= row and sensorY - distance <= row) or (sensorY < row and sensorY + distance >= row)
@@ -44,7 +42,7 @@ class Beacon():
                         xRange[1] = maxX
                 self.BeaconRanges = self.merge_intervals(self.BeaconRanges, xRange)
 
-    def findSingleBeacon(self, x : int = 20, y : int = 20):
+    def findSingleBeacon(self, x : int = 20, y : int = 20) -> int:
         
         for i in range(y):
             self.BeaconRanges = []
@@ -72,7 +70,6 @@ class Beacon():
                 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
-    # beacon = Beacon(True, 10)
     beacon = Beacon(False, 2000000)
     print('Day 15 part 1:', beacon.getEmptySpots())
     print('Day 15 part 2:', beacon.findSingleBeacon(4000000,4000000))

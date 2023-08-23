@@ -1,8 +1,8 @@
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple, Callable, Any, Dict, List, Set
 from collections import deque
 import time
 
-def memoize(func):
+def memoize(func: Callable[..., Any]) -> Callable[..., Any]:
     cache = {}
 
     def wrapper(self, time, valve, bitmask):
@@ -14,11 +14,10 @@ def memoize(func):
     return wrapper
 
 class Valves():
-    def getInput(self) -> Tuple[dict, dict]:
+    def getInput(self) -> Tuple[Dict[str, int], Dict[str, List[str]]]:
         inputFile = 'input-test.txt' if self.useTest else 'input.txt'
         with open(inputFile, 'r') as file1:
             Lines = file1.readlines()
-            data = []
             valves = {}
             tunnels = {}
             for line in Lines:
@@ -28,7 +27,7 @@ class Valves():
                 tunnels[valve] = line.split('to ', 1)[1].split(' ',1)[1].split(', ')
         return (valves, tunnels)
     
-    def __init__(self, useTest: Optional[bool] = False, row: int = 10) -> None:
+    def __init__(self, useTest: Optional[bool] = False) -> None:
         """ Main entry point of the app """
         self.useTest = useTest
 
@@ -36,7 +35,7 @@ class Valves():
         self.nonEmpty = self.getNonEmpty(self.valves)
         self.dists = self.simpify(self.valves, self.tunnels)
 
-    def getNonEmpty(self, valves):
+    def getNonEmpty(self, valves: Dict[str, int]) -> Dict[str, int]:
         nonEmpty = {}
         count = 0
         for valve, flow in valves.items():
@@ -46,7 +45,7 @@ class Valves():
         return nonEmpty
 
     # find shortest path for each valve to each one that has not an empty flow rate
-    def simpify(self, valves: dict, tunnels: dict):
+    def simpify(self, valves: Dict[str, int], tunnels:  Dict[str, List[str]]) -> Set:
         dists = {}
 
         for valve in valves:
@@ -91,8 +90,7 @@ class Valves():
 
         return maxRate
 
-
-    def getMaxRate(self, timeLength: Optional[int] = 30):
+    def getMaxRate(self, timeLength: Optional[int] = 30) -> int:
         start_time = time.time()
         maxRate = self.dfs(timeLength,'AA',0)
         end_time = time.time()
@@ -100,7 +98,7 @@ class Valves():
         print('execution  time:', execution_time) # checking difference of memmoization
         return maxRate
 
-    def getMaxRate2(self, timeLength: Optional[int] = 26):
+    def getMaxRate2(self, timeLength: Optional[int] = 26) -> int:
         start_time = time.time()
         # loop through all possible positions for 2 workers with bit partitions
         totalPositions = (1 << len(self.nonEmpty)) - 1

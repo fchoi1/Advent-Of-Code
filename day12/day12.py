@@ -1,7 +1,7 @@
 from typing import Tuple, List, Optional
 
 class Hill():
-    def getInput(self):
+    def getInput(self) -> List[List[str]]:
         with open('input.txt', 'r') as file1:
         # with open('input-test.txt', 'r') as file1:
             Lines = file1.readlines()

@@ -1,5 +1,6 @@
+from typing import List
 
-def getInput():
+def getInput() -> List[str]:
     file1 = open('input.txt', 'r')
     Lines = file1.readlines()
     data = []
@@ -8,7 +9,7 @@ def getInput():
         data.append(line.strip())
     return data
 
-def main():
+def main() -> None:
     """ Main entry point of the app """
     inputData = getInput()
     priorityMap = {
@@ -35,7 +36,7 @@ def main():
     print('day 3 part 1:', priorityPt1)
     print('day 3 part 2:', priorityPt2)
 
-def findCommon(string1: str, string2: str, string3: str = ''):
+def findCommon(string1: str, string2: str, string3: str = '') -> str:
     unique = {}
     unique2 = {}
     for char in string1:
@@ -53,7 +54,7 @@ def findCommon(string1: str, string2: str, string3: str = ''):
         if char in unique2:
             return char
 
-    return False
+    return ''
 if __name__ == "__main__":
     """ This is executed when run from the command line """
     main()

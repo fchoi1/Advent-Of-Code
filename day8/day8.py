@@ -1,7 +1,7 @@
-
+from typing import List, Dict, Any
 class Trees():
     
-    def getInput(self):
+    def getInput(self) -> List[str]:
         file1 = open('input.txt', 'r')
         #file1 = open('input-test.txt', 'r')
         Lines = file1.readlines()
@@ -20,14 +20,14 @@ class Trees():
         self.maxScenicScore = 0
         self.generateGrid()
 
-    def generateGrid(self):
+    def generateGrid(self) -> None:
         for row in self.inputData:
             self.trees.append([int(x) for x in row])
 
         self.size[0] = len(self.trees)
         self.size[1] = len(self.trees[0])
     
-    def getTreeProps(self, index: int, row: list[int]):
+    def getTreeProps(self, index: int, row: List[int]) -> Dict[str, Any]:
         left = right = index
         leftVisible = rightVisible = True
         leftScore = rightScore = 0
@@ -48,7 +48,7 @@ class Trees():
     
         return  { "scenicScore": leftScore  * rightScore, "isVisible": (leftVisible or rightVisible) }
 
-    def calculateNumVisible(self):
+    def calculateNumVisible(self) -> None:
         for i in range(self.size[0]):
             for j in range(self.size[1]):
                 treeRowProps = self.getTreeProps(i, [row[j] for row in self.trees])
@@ -59,10 +59,10 @@ class Trees():
                 if scenicScore > self.maxScenicScore:
                     self.maxScenicScore = scenicScore
 
-    def getNumVisible(self):
-        return  self.numVisible
+    def getNumVisible(self) -> int:
+        return self.numVisible
     
-    def getScenicScore(self):
+    def getScenicScore(self) -> int:
         return self.maxScenicScore
 
 if __name__ == "__main__":
