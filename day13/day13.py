@@ -1,10 +1,11 @@
 import ast
 from typing import List, Optional
 
-class Signal():
+
+class Signal:
     def getInput1(self) -> List:
-        inputFile = 'input-test.txt' if self.useTest else 'input.txt'
-        with open(inputFile, 'r') as file1:
+        inputFile = "input-test.txt" if self.useTest else "input.txt"
+        with open(inputFile, "r") as file1:
             Lines = file1.readlines()
             data = []
             dataPair = []
@@ -17,10 +18,10 @@ class Signal():
                 dataPair.append(my_list)
             data.append(dataPair)
             return data
-    
+
     def getInput2(self) -> List:
-        inputFile = 'input-test.txt' if self.useTest else 'input.txt'
-        with open(inputFile, 'r') as file1:
+        inputFile = "input-test.txt" if self.useTest else "input.txt"
+        with open(inputFile, "r") as file1:
             Lines = file1.readlines()
             data = []
             for line in Lines:
@@ -28,7 +29,7 @@ class Signal():
                     data.append(ast.literal_eval(line.strip()))
             return data
 
-    def compareList(self, left: List , right:  List)  -> bool:
+    def compareList(self, left: List, right: List) -> bool:
         rightLength = len(right)
         leftLength = len(left)
 
@@ -47,27 +48,27 @@ class Signal():
 
             leftTemp = [left[i]] if isinstance(left[i], int) else left[i]
             rightTemp = [right[i]] if isinstance(right[i], int) else right[i]
-            
+
             listResult = self.compareList(leftTemp, rightTemp)
             if listResult is not None:
                 return listResult
-        
+
         if rightLength > leftLength:
             return True
 
         return None
 
     def evaluateSignals(self) -> None:
-        for i, [leftSignal, rightSignal]  in enumerate(self.inputData1):
+        for i, [leftSignal, rightSignal] in enumerate(self.inputData1):
             if self.compareList(leftSignal, rightSignal):
-                self.correctIndices.append(i+1)
+                self.correctIndices.append(i + 1)
 
     def compareValue(self, signal: List) -> None:
         if not signal:
             self.before2 += 1
             return
         if isinstance(signal[0], int):
-            if  signal[0] < self.firstPacket:
+            if signal[0] < self.firstPacket:
                 self.before2 += 1
 
             elif self.firstPacket <= signal[0] < self.secondPacket:
@@ -76,28 +77,29 @@ class Signal():
         self.compareValue(signal[0])
 
     def getDecorder(self) -> int:
-        for signal  in self.inputData2:
+        for signal in self.inputData2:
             self.compareValue(signal)
         return self.before2 * (self.before2 + self.between)
-            
+
     def getSumofCorrectIdices(self) -> int:
-        return sum (self.correctIndices)
+        return sum(self.correctIndices)
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """ Main entry point of the app """
+        """Main entry point of the app"""
         self.useTest = useTest
         self.inputData1 = self.getInput1()
         self.inputData2 = self.getInput2()
-        
+
         self.firstPacket = 2
-        self.secondPacket =  6
+        self.secondPacket = 6
         self.before2 = 1
         self.between = 1
         self.correctIndices = []
 
+
 if __name__ == "__main__":
-    """ This is executed when run from the command line """
+    """This is executed when run from the command line"""
     signal = Signal(False)
     signal.evaluateSignals()
-    print('Day 13 part 1:', signal.getSumofCorrectIdices())
-    print('Day 13 part 2:', signal.getDecorder() )
+    print("Day 13 part 1:", signal.getSumofCorrectIdices())
+    print("Day 13 part 2:", signal.getDecorder())

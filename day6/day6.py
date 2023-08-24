@@ -1,7 +1,8 @@
 from typing import List
 
+
 def getInput() -> List[str]:
-    file1 = open('input.txt', 'r')
+    file1 = open("input.txt", "r")
     # file1 = open('input-test.txt', 'r')
     Lines = file1.readlines()
     data = []
@@ -10,15 +11,17 @@ def getInput() -> List[str]:
         data.append(line.strip())
     return data
 
+
 def main() -> None:
-    """ Main entry point of the app """
+    """Main entry point of the app"""
     inputData = getInput()
 
     for line in inputData:
-        print('day 6 part 1:', getStartofPacket(line))
-        print('day 6 part 2:', getStartofPacket(line,14)) 
-        
-def getStartofPacket(word: str, length: int = 4) ->  int:
+        print("day 6 part 1:", getStartofPacket(line))
+        print("day 6 part 2:", getStartofPacket(line, 14))
+
+
+def getStartofPacket(word: str, length: int = 4) -> int:
     letters = []
     for i, char in enumerate(word):
         letters.append(char)
@@ -28,17 +31,19 @@ def getStartofPacket(word: str, length: int = 4) ->  int:
             else:
                 letters.pop(0)
     return 0
-        
+
+
 def isUnique(word: List[str]) -> bool:
-    letters = [*range(1,26)]
+    letters = [*range(1, 26)]
     for char in word:
-        charNum = ord(char) - ord('a')
+        charNum = ord(char) - ord("a")
         if charNum in letters:
             letters.pop(letters.index(charNum))
         else:
             return False
     return True
-    
+
+
 if __name__ == "__main__":
-    """ This is executed when run from the command line """
+    """This is executed when run from the command line"""
     main()
