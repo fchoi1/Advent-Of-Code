@@ -1,6 +1,5 @@
 from typing import Optional, Tuple, Callable, Any, Dict, List, Set
 from collections import deque
-import time
 
 
 def memoize(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -97,29 +96,19 @@ class Valves:
         return maxRate
 
     def getMaxRate(self, timeLength: Optional[int] = 30) -> int:
-        start_time = time.time()
-        maxRate = self.dfs(timeLength, "AA", 0)
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print("execution  time:", execution_time)  # checking difference of memmoization
-        return maxRate
+        return self.dfs(timeLength, "AA", 0)
 
     def getMaxRate2(self, timeLength: Optional[int] = 26) -> int:
-        start_time = time.time()
         # loop through all possible positions for 2 workers with bit partitions
         totalPositions = (1 << len(self.nonEmpty)) - 1
         maxRate = 0
-        for i in range(
-            (totalPositions + 1) // 2
-        ):  # Divide by 2 to avoid redundant calculations
+        # Divide by 2 to avoid redundant calculations
+        for i in range((totalPositions + 1) // 2):
             maxRate = max(
                 maxRate,
                 self.dfs(timeLength, "AA", i)
                 + self.dfs(timeLength, "AA", totalPositions ^ i),
             )
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print("execution  time:", execution_time)
         return maxRate
 
 
@@ -128,3 +117,4 @@ if __name__ == "__main__":
     valves = Valves(False)
     print("Day 16 part 1:", valves.getMaxRate(30))
     print("Day 16 part 2:", valves.getMaxRate2(26))
+    # Total runtime ~16 seconds
