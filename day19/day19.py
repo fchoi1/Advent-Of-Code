@@ -2,7 +2,7 @@ from typing import List, Optional
 import re
 
 
-#  TODO: Make this Faster
+#  TODO: Make this Faster using DFS instead of BFS
 class Minerals:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
