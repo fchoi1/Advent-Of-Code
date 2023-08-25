@@ -29,76 +29,86 @@ class Monkeys:
             "*": lambda x, y: x * y,
             "/": lambda x, y: x / y,
         }
-        # result = operator_mapping[operator](operand1, operand2)
+        self.reverseOp = {
+            "+": "-",
+            "-": "+",
+            "*": "/",
+            "/": "*"
+        }
 
-    def evaluateEquation(self, target: str) -> int:
-        first, second, op = self.equations[target]
-
-        firstNum = (
-            self.constants[first]
-            if first in self.constants
-            else self.evaluateEquation(first)
-        )
-
-        secondNum = (
-            self.constants[second]
-            if second in self.constants
-            else self.evaluateEquation(second)
-        )
-
-        return self.operations[op](firstNum, secondNum)
-
-    def evaluateEquation2(self, target: str, ops: List[str]) -> List:
-        print('target', target)
+    def evaluateEquation(self, target: str, ops: List[str]) -> List[str] | int:
         if target not in self.equations:
             return None
         
         first, second, op = self.equations[target]
         
-        if first in self.constants:
-            firstNum = self.constants[first]
+        firstNum = (
+            self.constants[first] if first in self.constants
+                else self.evaluateEquation(first, ops)
+        )
+        secondNum = (
+            self.constants[second] if second in self.constants 
+                else self.evaluateEquation(second, ops)
+        )
 
-        firstNum = self.evaluateEquation2(first, ops)
-
-        if second in self.constants:
-            secondNum = self.constants[second]
-
-        secondNum = self.evaluateEquation2(second, ops)
-       
-
-        if not isinstance(firstNum, int) and not isinstance(secondNum, int):
-            ops.append(['*', op, '*'])
-            return ops
+        if isinstance(firstNum, (int, float)) and isinstance(secondNum, (int,float)):
+            return self.operations[op](firstNum, secondNum)
         
-        if not isinstance(firstNum, int):
-            ops.append([op, secondNum])
-            return ops
-
-        if not isinstance(secondNum, int):
-            ops.append([firstNum, op])
-            return ops
-
-        print('firs', firstNum, 'second', secondNum)
-        # ops.append(self.operations[op](firstNum, secondNum))
-        return self.operations[op](firstNum, secondNum)
-
+        if isinstance(firstNum, list):
+            firstNum.append([None, op, secondNum])
+            return firstNum
+        elif isinstance(secondNum, list):
+            secondNum.append([firstNum, op, None])
+            return secondNum
+        
+        ops.append([firstNum, op, secondNum])
+        return ops
 
     def getRoot(self):
-        return self.evaluateEquation("root")
+        return self.evaluateEquation("root", [])        
 
-    def updateConstant(self, target: str) -> int:
-        # delete is from constant
-        del self.constants[target]
-        print(self.evaluateEquation2("sjmn", []))
-        print(self.evaluateEquation2("pppw", []))
+    def getConstant(self, target: Optional[str] = 'humn'):
+        if target in self.constants:
+            del self.constants[target]
 
-    def getHumn(self):
-        self.updateConstant("humn")
+        num1, num2, op = self.equations['root']
+        
+        value1 = self.evaluateEquation(num1, [])
+        value2 = self.evaluateEquation(num2, [])
+
+        operationList = None
+        targetVal = None
+
+        if isinstance(value1, (int, float)) and isinstance(value2, (int, float)):
+            return self.operations[op](value1, value2)
+
+        if isinstance(value1, list):
+            operationList = value1
+            targetVal = value2
+
+        elif isinstance(value2, list):
+            operationList = value2
+            targetVal = value1
+            
+        if operationList:
+            for num1, op, num2 in reversed(operationList):
+                
+                reverseOp = self.reverseOp[op]
+                x = targetVal
+                y = num2 if not num1 else num1
+                
+                # Special case for - and / operations (not comuntative)
+                if not num2 and op in ['/', '-']:
+                    reverseOp = op
+                    x = num1 
+                    y = targetVal
+                    
+                targetVal = self.operations[reverseOp](x, y)
+        return targetVal
 
 
 if __name__ == "__main__":
     """This is executed when run from the command line"""
-    monkeys = Monkeys(True)
-    # print("Day 21 part 1:", monkeys.getRoot())
-    print("Day 21 part 2:", monkeys.getHumn())
-    # Total Runtime ~ 3.5 Seconds
+    monkeys = Monkeys(False)
+    print("Day 21 part 1:", monkeys.getRoot())
+    print("Day 21 part 2:", monkeys.getConstant())
