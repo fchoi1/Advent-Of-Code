@@ -18,7 +18,6 @@ class Grove:
     def __init__(
         self, useTest: Optional[bool] = False, decrypt: Optional[int] = 811589153
     ) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.mapFile = self.getInput()
         self.length = len(self.mapFile)
@@ -98,7 +97,6 @@ class Grove:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     grove = Grove(False)
     print("Day 20 part 1:", grove.getCoods(False))
     print("Day 20 part 2:", grove.getCoods(True))

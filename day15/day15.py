@@ -78,7 +78,6 @@ class Beacon:
         return count
 
     def __init__(self, useTest: Optional[bool] = False, row: int = 10) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.inputData = self.getInput()
         self.BeaconRanges = []
@@ -86,7 +85,6 @@ class Beacon:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     beacon = Beacon(False, 2_000_000)
     print("Day 15 part 1:", beacon.getEmptySpots())
     print("Day 15 part 2:", beacon.findSingleBeacon(4_000_000, 4_000_000))

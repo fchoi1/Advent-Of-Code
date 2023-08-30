@@ -9,7 +9,6 @@ class Rocks:
         return Lines[0].strip()
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.windData = self.getInput()
 
@@ -157,7 +156,6 @@ class Rocks:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     rocks = Rocks(False)
     print("Day 17 part 1:", rocks.getRockHeight(2022))
     print("Day 17 part 2:", rocks.getRockHeight(1000000000000))

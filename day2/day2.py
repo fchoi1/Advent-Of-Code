@@ -12,7 +12,6 @@ def getInput() -> List[str]:
 
 
 def main() -> None:
-    """Main entry point of the app"""
     inputData = getInput()
 
     scorePt1 = scorePt2 = 0
@@ -53,5 +52,4 @@ def calculateRound2(player1: str, end: str) -> int:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     main()

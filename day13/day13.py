@@ -85,7 +85,6 @@ class Signal:
         return sum(self.correctIndices)
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.inputData1 = self.getInput1()
         self.inputData2 = self.getInput2()
@@ -98,7 +97,6 @@ class Signal:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     signal = Signal(False)
     signal.evaluateSignals()
     print("Day 13 part 1:", signal.getSumofCorrectIdices())

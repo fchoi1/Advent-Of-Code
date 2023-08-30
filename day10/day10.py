@@ -13,7 +13,6 @@ class Tube:
         return data
 
     def __init__(self) -> None:
-        """Main entry point of the app"""
         self.inputData = self.getInput()
         self.cycle = 0
         self.value = 1

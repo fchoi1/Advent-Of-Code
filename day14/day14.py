@@ -105,7 +105,6 @@ class Cave:
         return [sandPosX, sandPosY]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.inputData = self.getInput()
 
@@ -127,7 +126,6 @@ class Cave:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     cave = Cave(False)
     print("Day 14 part 1:", cave.countSand1())
     print("Day 14 part 2:", cave.countSand2())

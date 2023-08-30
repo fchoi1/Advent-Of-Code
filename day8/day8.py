@@ -13,7 +13,6 @@ class Trees:
         return data
 
     def __init__(self) -> None:
-        """Main entry point of the app"""
         self.inputData = self.getInput()
         self.trees = []
         self.numVisible = 0
@@ -71,7 +70,6 @@ class Trees:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     tree = Trees()
     tree.calculateNumVisible()
     print("Day 8 part 1:", tree.getNumVisible())

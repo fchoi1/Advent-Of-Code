@@ -13,7 +13,6 @@ class Folder:
         return data
 
     def __init__(self) -> None:
-        """Main entry point of the app"""
         self.inputData = self.getInput()
         self.folder = {}
         self.filePath = []
@@ -88,7 +87,6 @@ class Folder:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     folder = Folder()
     print("Day 7 part 1:", folder.getSizeSum())
     print("Day 7 part 2:", folder.getFoldertoDelete())

@@ -15,7 +15,6 @@ def getInput() -> List[str]:
 
 
 def main() -> None:
-    """Main entry point of the app"""
     inputData = getInput()
 
     """
@@ -86,5 +85,4 @@ def updateStack2(instruction: list[int], stack: List[List[str]]) -> List[List[st
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     main()

@@ -37,7 +37,6 @@ class Minerals:
         return blueprints
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.blueprints = self.getInput()
         self.maxGeode = [0] * len(self.blueprints)
@@ -130,7 +129,6 @@ class Minerals:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     mineral = Minerals(False)
     # ~ 34 seconds runtime
     print("Day 19 part 1:", mineral.getQuality(24))

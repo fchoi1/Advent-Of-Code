@@ -48,7 +48,6 @@ class MonkeyGame:
         return data
 
     def __init__(self, rounds: int, worry: bool = True) -> None:
-        """Main entry point of the app"""
         self.inputData = self.getInput()
         self.rounds = rounds
         self.worry = worry

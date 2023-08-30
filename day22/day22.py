@@ -15,7 +15,6 @@ class MonkeyMap:
             return [data[:-2], "".join(data[len(data) - 1])]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.map, self.directions = self.getInput()
         self.map = self.fillEmpty(self.map)
@@ -191,7 +190,6 @@ class MonkeyMap:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     monkeyMap = MonkeyMap(False)
     print("Day 22 part 1:", monkeyMap.getPassword(False))
     print("Day 22 part 2:", monkeyMap.getPassword(True))

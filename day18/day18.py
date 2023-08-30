@@ -14,7 +14,6 @@ class Lava:
         return cubes
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.cubes = self.getInput()
         self.max = self.getMaxDimensions()
@@ -114,7 +113,6 @@ class Lava:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     lava = Lava(False)
     print("Day 18 part 1:", lava.getSurfaceArea())
     print("Day 18 part 2:", lava.surfaceAreaNoPockets())

@@ -19,7 +19,6 @@ class Monkeys:
             return [constants, equations]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
         self.constants, self.equations = self.getInput()
 
@@ -108,7 +107,6 @@ class Monkeys:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     monkeys = Monkeys(False)
     print("Day 21 part 1:", monkeys.getRoot())
     print("Day 21 part 2:", monkeys.getConstant())

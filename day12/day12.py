@@ -87,7 +87,6 @@ class Hill:
         self.q = []
 
     def __init__(self) -> None:
-        """Main entry point of the app"""
         self.inputData = self.getInput()
         self.start = self.getStart()
         self.end = self.getEnd()
@@ -99,7 +98,6 @@ class Hill:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     hill = Hill()
     print("Day 12 part 1:", hill.solve("E"))
     print("Day 12 part 2:", hill.solve("a", False))

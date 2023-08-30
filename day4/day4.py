@@ -12,7 +12,6 @@ def getInput() -> List[str]:
 
 
 def main() -> None:
-    """Main entry point of the app"""
     inputData = getInput()
 
     count1 = count2 = 0
@@ -38,5 +37,4 @@ def overlaped(p1: List[int], p2: List[int]) -> bool:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     main()

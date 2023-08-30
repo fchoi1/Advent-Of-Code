@@ -13,9 +13,7 @@ class Rope:
         return data
 
     def __init__(self, numTails: int) -> None:
-        """Main entry point of the app"""
         self.inputData = self.getInput()
-
         self.visitedOnceSingle = 1
         self.visitedOnceLast = 1
         self.visitedSingle = set()

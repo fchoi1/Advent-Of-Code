@@ -12,7 +12,6 @@ def getInput() -> List[str]:
 
 
 def main() -> None:
-    """Main entry point of the app"""
     inputData = getInput()
     priorityMap = {
             'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 10, 
@@ -63,5 +62,4 @@ def findCommon(string1: str, string2: str, string3: str = "") -> str:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     main()

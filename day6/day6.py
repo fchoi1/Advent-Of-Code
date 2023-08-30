@@ -13,7 +13,6 @@ def getInput() -> List[str]:
 
 
 def main() -> None:
-    """Main entry point of the app"""
     inputData = getInput()
 
     for line in inputData:
@@ -45,5 +44,4 @@ def isUnique(word: List[str]) -> bool:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     main()

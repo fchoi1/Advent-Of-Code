@@ -29,7 +29,6 @@ class Valves:
         return (valves, tunnels)
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
-        """Main entry point of the app"""
         self.useTest = useTest
 
         self.valves, self.tunnels = self.getInput()
@@ -113,7 +112,6 @@ class Valves:
 
 
 if __name__ == "__main__":
-    """This is executed when run from the command line"""
     valves = Valves(False)
     print("Day 16 part 1:", valves.getMaxRate(30))
     print("Day 16 part 2:", valves.getMaxRate2(26))
