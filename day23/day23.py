@@ -1,5 +1,4 @@
 from typing import List, Optional, Set
-import re
 
 
 class Elves:
@@ -14,10 +13,8 @@ class Elves:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.map = self.getInput()
-        print(len(self.map), len(self.map[0]))
 
         self.positions = self.getPositions(self.map)
-
         self.directions = ["N", "S", "W", "E"]
         self.dirMap = {
             "E": [(1, 0), (1, 1), (1, -1)],
@@ -36,7 +33,9 @@ class Elves:
             (0, -1),
         ]
 
-        print(self.positions, len(self.positions))
+    def reset(self):
+        self.positions = self.getPositions(self.map)
+        self.directions = ["N", "S", "W", "E"]
 
     def getPositions(self, plantMap: List[str]) -> List[List[int]]:
         positions = set()
@@ -46,74 +45,74 @@ class Elves:
                     positions.add(f"{x},{y}")
         return positions
 
-    def moveElves(self, rounds: int):
-        self.printPosition(self.getMaxDimensions())
+    def updateElves(self, pos: Set[str]) -> None:
+        noChange = set()
+        nextPos = {}
+        hasNewPos = False
         
-        print(self.directions)
-        for _ in range(rounds):
-            print()
-            noChange = set()
-            nextPos = {}
-            # first half
-            for coords in self.positions:
-                x, y = map(int, coords.split(","))
+        # first half
+        for coords in pos:
+            x, y = map(int, coords.split(","))
 
-                if all(f"{x+dx},{y+dy}" in self.positions for dx, dy in self.around):
-                    noChange.add(f"{x},{y}")
-                    continue
+            if all(f"{x+dx},{y+dy}" not in pos for dx, dy in self.around):
+                noChange.add(f"{x},{y}")
+                continue
 
-                # check all around  first
-                newX = newY = None
+            for direction in self.directions:
+                checkDirs = self.dirMap[direction]
+                isNewPos = not any(f"{x+dx},{y+dy}" in pos for dx, dy in checkDirs)
 
-                for direction in self.directions:
-                    checkDirs = self.dirMap[direction]
+                if isNewPos:
+                    newX, newY = x + checkDirs[0][0], y + checkDirs[0][1]
 
-                    isNewPos = not any(
-                        f"{x+dx},{y+dy}" in self.positions for dx, dy in checkDirs
-                    )
-                    if isNewPos:
-                        newX = x + checkDirs[0][0]
-                        newY = y + checkDirs[0][1]
+                    newKey = f"{newX},{newY}"
+                    if newKey not in nextPos:
+                        nextPos[f"{newX},{newY}"] = (x, y)
+                    else:  # duplicate position, no need to update
+                        if not nextPos[f"{newX},{newY}"]:
+                            continue
+                        prevX, prevY = nextPos[f"{newX},{newY}"]
+                        noChange.add(f"{x},{y}")
+                        noChange.add(f"{prevX},{prevY}")
+                        nextPos[f"{newX},{newY}"] = None
+                    break
 
-                        print('old', x, y, 'new pos', newX, newY, 'checkDirs', direction)
-
-                        newKey = f"{newX},{newY}"
-                        if newKey not in nextPos:
-                            nextPos[f"{newX},{newY}"] = (x, y)
-                        else:  # duplicate position, no need to update
-                            if not nextPos[f"{newX},{newY}"]:
-                                continue
-                            prevX, prevY = nextPos[f"{newX},{newY}"]
-                            noChange.add(f"{x},{y}")
-                            noChange.add(f"{prevX},{prevY}")
-                            nextPos[f"{newX},{newY}"] = None
-                        break
-
-                if not isNewPos:
-                    noChange.add(f"{x},{y}")
-
-            # 2nd half
-            for key, value in nextPos.items():
-                if not value:
-                    continue
-                x, y = map(int, key.split(","))
+            if not isNewPos:
                 noChange.add(f"{x},{y}")
 
-            self.directions.append(self.directions.pop(0))
-            self.positions = noChange
-            
-            print(self.getMaxDimensions())
+        # 2nd half
+        for key, value in nextPos.items():
+            if not value:
+                continue
+            x, y = map(int, key.split(","))
+            if not hasNewPos:
+                hasNewPos = True
+            noChange.add(f"{x},{y}")
 
-            self.printPosition(self.getMaxDimensions())
+        self.directions.append(self.directions.pop(0))
+        return [noChange, hasNewPos]
+
+    def moveElves(self, rounds: int):
+        self.reset()
+        for _ in range(rounds):
+            self.positions = self.updateElves(self.positions)[0]
 
         [maxX, maxY, minX, minY] = self.getMaxDimensions()
         width = maxX - minX + 1
         length = maxY - minY + 1
-        return (width*length - len(self.positions))
+        return width * length - len(self.positions)
+
+    def getFinishRounds(self):
+        self.reset()
+        hasNewPos = True
+        rounds = 0
+        while hasNewPos:
+            self.positions, hasNewPos = self.updateElves(self.positions)
+            rounds += 1
+        return rounds
 
     def getMaxDimensions(self) -> List[int]:
         maxX = maxY = minX = minY = 0
-
         for coords in self.positions:
             x, y = map(int, coords.split(","))
             maxX = max(x, maxX)
@@ -122,11 +121,13 @@ class Elves:
             minY = min(y, minY)
         return [maxX, maxY, minX, minY]
 
-    def printPosition(self, dimensions: List[int]):
-        maxX, maxY, minX, minY = dimensions
+    # For debugging
+    def printPosition(self):
+        maxX, maxY, minX, minY = self.getMaxDimensions()
         width = maxX - minX + 1
         length = maxY - minY + 1
         dataMap = [["." for _ in range(width)] for _ in range(length)]
+        dataMap[-minY][-minX] = "O"
         for coords in self.positions:
             x, y = map(int, coords.split(","))
             dataMap[y - minY][x - minX] = "#"
@@ -134,10 +135,9 @@ class Elves:
         for row in dataMap:
             print(" ".join(row))
 
-        pass
-
 
 if __name__ == "__main__":
-    elves = Elves(True)
-    print("Day 23 part 1:", elves.moveElves(2))
-    print("Day 23 part 2:")
+    elves = Elves(False)
+    print("Day 23 part 1:", elves.moveElves(10))
+    print("Day 23 part 2:", elves.getFinishRounds())
+    #  Total Runtime ~6.6 s
