@@ -113,6 +113,6 @@ class Lava:
 
 
 if __name__ == "__main__":
-    lava = Lava(False)
+    lava = Lava()
     print("Day 18 part 1:", lava.getSurfaceArea())
     print("Day 18 part 2:", lava.surfaceAreaNoPockets())

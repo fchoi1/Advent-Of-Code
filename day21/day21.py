@@ -107,6 +107,6 @@ class Monkeys:
 
 
 if __name__ == "__main__":
-    monkeys = Monkeys(False)
+    monkeys = Monkeys()
     print("Day 21 part 1:", monkeys.getRoot())
     print("Day 21 part 2:", monkeys.getConstant())

@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 
-class Blizzard:
+class Balloon:
     def getInput(self) -> List[str]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         data = []
@@ -12,10 +12,42 @@ class Blizzard:
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
-        self.map = self.getInput()
+        self.snafu = self.getInput()
+
+    def toSNAFU(self, num: int) -> str:
+        snafu = ""
+        digits = 1
+        power = 2
+
+        while num > power:
+            power += 2 * (5**digits)
+            digits += 1
+        digits -= 1
+
+        for i in range(digits, -1, -1):
+            mutiplier = 5**i
+
+            top = num + (mutiplier // 2) + mutiplier * 2
+            index = top // mutiplier - 2
+
+            snafu += "=-012"[index + 2]
+            num -= (index) * mutiplier
+        return snafu
+
+    def fromSNAFU(self, SNAFU: str) -> int:
+        n = 0
+        for i, char in enumerate(reversed(SNAFU)):
+            index = "=-012".index(char) - 2
+            n += (5**i) * index
+        return n
+
+    def getFuel(self):
+        n = 0
+        for snafu in self.snafu:
+            n += self.fromSNAFU(snafu)
+        return self.toSNAFU(n)
 
 
 if __name__ == "__main__":
-    blizzard = Blizzard(False)
-    print("Day 25 part 1:")
-    print("Day 25 part 2:")
+    balloon = Balloon()
+    print("Day 25 part 1:", balloon.getFuel())

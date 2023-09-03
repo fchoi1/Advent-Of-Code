@@ -137,7 +137,7 @@ class Elves:
 
 
 if __name__ == "__main__":
-    elves = Elves(False)
+    elves = Elves()
     print("Day 23 part 1:", elves.moveElves(10))
     print("Day 23 part 2:", elves.getFinishRounds())
     #  Total Runtime ~6.6 s

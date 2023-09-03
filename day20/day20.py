@@ -97,7 +97,7 @@ class Grove:
 
 
 if __name__ == "__main__":
-    grove = Grove(False)
-    print("Day 20 part 1:", grove.getCoods(False))
+    grove = Grove()
+    print("Day 20 part 1:", grove.getCoods())
     print("Day 20 part 2:", grove.getCoods(True))
     # Total Runtime ~ 3.5 Seconds

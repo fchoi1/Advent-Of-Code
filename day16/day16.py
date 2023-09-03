@@ -112,7 +112,7 @@ class Valves:
 
 
 if __name__ == "__main__":
-    valves = Valves(False)
+    valves = Valves()
     print("Day 16 part 1:", valves.getMaxRate(30))
     print("Day 16 part 2:", valves.getMaxRate2(26))
     # Total runtime ~16 seconds

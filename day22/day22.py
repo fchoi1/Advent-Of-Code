@@ -190,6 +190,6 @@ class MonkeyMap:
 
 
 if __name__ == "__main__":
-    monkeyMap = MonkeyMap(False)
+    monkeyMap = MonkeyMap()
     print("Day 22 part 1:", monkeyMap.getPassword(False))
     print("Day 22 part 2:", monkeyMap.getPassword(True))

@@ -156,6 +156,6 @@ class Rocks:
 
 
 if __name__ == "__main__":
-    rocks = Rocks(False)
+    rocks = Rocks()
     print("Day 17 part 1:", rocks.getRockHeight(2022))
     print("Day 17 part 2:", rocks.getRockHeight(1000000000000))

@@ -126,6 +126,6 @@ class Cave:
 
 
 if __name__ == "__main__":
-    cave = Cave(False)
+    cave = Cave()
     print("Day 14 part 1:", cave.countSand1())
     print("Day 14 part 2:", cave.countSand2())

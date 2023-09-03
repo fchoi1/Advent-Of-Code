@@ -129,7 +129,7 @@ class Minerals:
 
 
 if __name__ == "__main__":
-    mineral = Minerals(False)
+    mineral = Minerals()
     # ~ 34 seconds runtime
     print("Day 19 part 1:", mineral.getQuality(24))
     # ~ 1 minute 24 second runtime

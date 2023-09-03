@@ -97,7 +97,7 @@ class Signal:
 
 
 if __name__ == "__main__":
-    signal = Signal(False)
+    signal = Signal()
     signal.evaluateSignals()
     print("Day 13 part 1:", signal.getSumofCorrectIdices())
     print("Day 13 part 2:", signal.getDecorder())

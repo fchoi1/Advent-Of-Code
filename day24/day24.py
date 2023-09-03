@@ -109,7 +109,7 @@ class Blizzard:
 
 
 if __name__ == "__main__":
-    blizzard = Blizzard(False)
+    blizzard = Blizzard()
     print("Day 24 part 1:", blizzard.getFewestMinutes())
     print("Day 24 part 2:", blizzard.getRoundTrip())
     # Runtime ~3 seconds

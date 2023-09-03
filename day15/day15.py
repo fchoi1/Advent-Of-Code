@@ -63,7 +63,7 @@ class Beacon:
         for i in range(y):
             self.BeaconRanges = []
             self.checkSensors(True, 0, x, i)
-            
+
             if len(self.BeaconRanges) > 1:
                 break
         hiddenBeacon = [self.BeaconRanges[0][1] + 1, i]
@@ -77,15 +77,15 @@ class Beacon:
             count += x2 - x1
         return count
 
-    def __init__(self, useTest: Optional[bool] = False, row: int = 10) -> None:
+    def __init__(self, row: int = 10, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.inputData = self.getInput()
         self.BeaconRanges = []
-        self.row = 10 if useTest  else  row
+        self.row = 10 if useTest else row
 
 
 if __name__ == "__main__":
-    beacon = Beacon(False, 2_000_000)
+    beacon = Beacon(2_000_000)
     print("Day 15 part 1:", beacon.getEmptySpots())
     print("Day 15 part 2:", beacon.findSingleBeacon(4_000_000, 4_000_000))
     # Runtime ~37 seconds
