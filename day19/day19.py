@@ -39,7 +39,6 @@ class Minerals:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.blueprints = self.getInput()
-        self.maxGeode = [0] * len(self.blueprints)
         self.currentBlueprint = 0
         # ore: 1, clay: 2, obsidian: 3, geode: 4
         self.robots = [1, 0, 0, 0]
@@ -70,7 +69,7 @@ class Minerals:
                     continue
                 visited.add(key)
 
-                for i, isAllowed in enumerate(options):
+                for i, isAllowed in options:
                     # Want only max amount of robots for max cost
                     if isAllowed and robots[i] < maxCosts[i]:
                         newRobot = robots.copy()
@@ -87,7 +86,7 @@ class Minerals:
                         tempQ.append((newRobot, newResources))
                         maxGeode = max(maxGeode, newResources[3])
 
-                if not all(options):
+                if not all(option[1] for option in options):
                     updatedResources = self.updateResources(robots, resources)
                     tempQ.append((robots, updatedResources))
                     maxGeode = max(maxGeode, updatedResources[3])
@@ -120,10 +119,16 @@ class Minerals:
 
     def getOptions(self, resources: List[int]) -> List[bool]:
         blueprint = self.blueprints[self.currentBlueprint - 1]
-        options = [False] * len(blueprint)
+        options = []
         for i, mineralCost in enumerate(blueprint):
-            options[i] = all(
-                resource >= cost for resource, cost in zip(resources, mineralCost)
+            options.append(
+                [
+                    i,
+                    all(
+                        resource >= cost
+                        for resource, cost in zip(resources, mineralCost)
+                    ),
+                ]
             )
         return options
 
