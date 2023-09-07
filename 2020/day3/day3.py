@@ -17,7 +17,7 @@ class Toboggan:
         self.width = len(self.trees[0])
         self.slopes = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
 
-    def findTree(self, slope: Optional[Tuple[int]] = (3, 1)):
+    def findTree(self, slope: Optional[Tuple[int]] = (3, 1)) -> int:
         tree_count = 0
         x, y = 0, 0
 
@@ -30,7 +30,7 @@ class Toboggan:
 
         return tree_count
 
-    def getTrees(self):
+    def getTrees(self) -> int:
         product = 1
         for slope in self.slopes:
             product *= self.findTree(slope)
@@ -38,6 +38,6 @@ class Toboggan:
 
 
 if __name__ == "__main__":
-    toboggan = Toboggan(False)
+    toboggan = Toboggan()
     print("Day 3 part 1:", toboggan.findTree())
     print("Day 3 part 2:", toboggan.getTrees())

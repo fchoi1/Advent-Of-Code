@@ -45,6 +45,6 @@ class Password:
 
 
 if __name__ == "__main__":
-    password = Password(False)
+    password = Password()
     print("Day 2 part 1:", password.checkOccurence())
     print("Day 2 part 2:", password.checkSubstring())

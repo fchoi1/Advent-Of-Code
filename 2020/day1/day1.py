@@ -38,6 +38,6 @@ class Report:
 
 
 if __name__ == "__main__":
-    report = Report(False)
+    report = Report()
     print("Day 1 part 1:", report.getTwoEntries())
     print("Day 1 part 2:", report.getThreeEntries())
