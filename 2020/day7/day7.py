@@ -12,7 +12,6 @@ class Haversacks:
                 splited = re.split(delimiters, line)
                 connections = []
                 if splited[3] == 'no': continue
-                print(splited)
                 for i in range(3, 3+len(splited[4:]), 3):
                     connections.append((int(splited[i]), splited[i+1]+splited[i+2]))
                 data["".join(splited[:2])] = connections
