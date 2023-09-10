@@ -3,7 +3,7 @@ import re
 
 class Haversacks:
     def getInput(self) -> Dict[int, List[str]]:
-        inputFile = "input-test2.txt" if self.useTest else "input.txt"
+        inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
             data = {}
             delimiters = "|".join(map(re.escape, [" bags contain ", " ", ", ", "."]))
@@ -37,14 +37,14 @@ class Haversacks:
 
         return any(n for n in total)
 
-    def getBagsWithTarget(self):
+    def getBagsWithTarget(self) -> int:
         count = 0
         for bag in self.bags:
             if self.hasTarget(bag, set()) and bag != self.target:
                 count += 1  
         return count
     
-    def getBagsInTarget(self):
+    def getBagsInTarget(self) -> int:
         return  self.getNumBags(self.target, {})
      
     def getNumBags(self, bag: str, bagDict: Dict) -> int:
