@@ -32,7 +32,6 @@ class Balloon:
 
             snafu += "=-012"[index + 2]
             num -= (index) * mutiplier
-        print(num)
         return snafu
 
     def fromSNAFU(self, SNAFU: str) -> int:
