@@ -47,6 +47,7 @@ class Shuttle:
                 currLcm = math.lcm(currLcm, bus)
         return intersection - i
 
+    # Ref: https://math.stackexchange.com/questions/2218763/how-to-find-lcm-of-two-numbers-when-one-starts-with-an-offset
     def getOffsetPhase(self, x: int, y: int, offset: int) -> int:
         gcd, s, t = extended_gcd(x, y)
         period = (x * y) // gcd
