@@ -12,7 +12,7 @@ class Operation:
                 pass
         return data
 
-    def __init__(self, useTest: Optional[bool] = False, rounds: Optional[int] = 6) -> None:
+    def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.expressions = self.getInput()
 
