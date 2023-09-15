@@ -55,15 +55,17 @@ class Messages:
     def manualRuleChange(self) -> None:
         length = max(len(message) for message in self.messages)
         print(self.convertedRule[42])
-        print(self.convertedRule[31])
+        print(self.convertedRule[8])
+        # print(self.convertedRule[31])
 
         newConverted = self.combineRules(["42", "8"])
         currLength = max(len(element) for element in newConverted)
+        # print("starrt", currLength, newConverted)
         count = 0
         while currLength < length and count < 10:
-            newConverted.update(self.combineRules([["42"], ["42", "8"]]))
+            newConverted.update(self.combineRules(["42", "42"]))
             currLength = max(len(match) for match in newConverted)
-            print(currLength)
+            # print(currLength)
             count += 1
 
         pass
@@ -75,10 +77,12 @@ class Messages:
         for rule in rules:
             possibleMatches = [self.convertedRule[int(num)] for num in rule]
             possibleMatchesSet.update("".join(match) for match in itertools.product(*possibleMatches))
+            print('possibleMatches', possibleMatches)
+        print(possibleMatchesSet)
         return possibleMatchesSet
 
 
 if __name__ == "__main__":
     messages = Messages(True)
     print("Day 19 part 1:", messages.getZeroRuleMatches())
-    # print("Day 19 part 2:", messages.getZeroRuleMatches(True))
+    print("Day 19 part 2:", messages.getZeroRuleMatches(True))
