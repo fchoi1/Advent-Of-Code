@@ -57,28 +57,26 @@ class Messages:
         print(self.convertedRule[42])
         print(self.convertedRule[8])
         # print(self.convertedRule[31])
-
+        ruleList = ["42", "42"]
         newConverted = self.combineRules(["42", "8"])
         currLength = max(len(element) for element in newConverted)
-        # print("starrt", currLength, newConverted)
+        # print("starrt", currLength, length)
         count = 0
-        while currLength < length and count < 10:
-            newConverted.update(self.combineRules(["42", "42"]))
+        while currLength < length and count < 3:
+            newConverted.update(self.combineRules(ruleList))
+            ruleList.append("42")
             currLength = max(len(match) for match in newConverted)
-            # print(currLength)
+            print(currLength)
             count += 1
 
         pass
-        self.convertedRule[8] = newConverted
-        print("dpne!")
+        # self.convertedRule[8] = newConverted
+        print("dpne!", currLength)
 
-    def combineRules(self, rules) -> Set[str]:
+    def combineRules(self, rule) -> Set[str]:
         possibleMatchesSet = set()
-        for rule in rules:
-            possibleMatches = [self.convertedRule[int(num)] for num in rule]
-            possibleMatchesSet.update("".join(match) for match in itertools.product(*possibleMatches))
-            print('possibleMatches', possibleMatches)
-        print(possibleMatchesSet)
+        possibleMatches = [self.getRules(int(num)) for num in rule]
+        possibleMatchesSet.update("".join(match) for match in itertools.product(*possibleMatches))
         return possibleMatchesSet
 
 
