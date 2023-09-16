@@ -44,15 +44,14 @@ class Messages:
         return possibleMatchesSet
 
     def getZeroRuleMatches(self, updateRules: Optional[bool] = False) -> int:
-        self.reset()
         zeroRules = self.getRules(0)
         if updateRules:
             return self.manualCheck()
         return sum(message in zeroRules for message in self.messages)
 
+    # A bit of hard code list the problem suggests
     def manualCheck(self) -> None:
         total = 0
-        # A bit of hard code list the problem suggests
         for message in self.messages:
             firstPart = []
             timesMatched = 0
@@ -95,4 +94,3 @@ if __name__ == "__main__":
     messages = Messages()
     print("Day 19 part 1:", messages.getZeroRuleMatches())
     print("Day 19 part 2:", messages.getZeroRuleMatches(True))
-    # Total Runtime ~2.2s
