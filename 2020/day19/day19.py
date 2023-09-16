@@ -23,7 +23,6 @@ class Messages:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.reset()
-        # print(self.rules, self.messages)
 
     def reset(self) -> None:
         self.rules, self.messages = self.getInput()
@@ -48,39 +47,52 @@ class Messages:
         self.reset()
         zeroRules = self.getRules(0)
         if updateRules:
-            self.manualRuleChange()
-
+            return self.manualCheck()
         return sum(message in zeroRules for message in self.messages)
 
-    def manualRuleChange(self) -> None:
-        length = max(len(message) for message in self.messages)
-        print(self.convertedRule[42])
-        print(self.convertedRule[8])
-        # print(self.convertedRule[31])
-        ruleList = ["42", "42"]
-        newConverted = self.combineRules(["42", "8"])
-        currLength = max(len(element) for element in newConverted)
-        # print("starrt", currLength, length)
-        count = 0
-        while currLength < length and count < 3:
-            newConverted.update(self.combineRules(ruleList))
-            ruleList.append("42")
-            currLength = max(len(match) for match in newConverted)
-            print(currLength)
-            count += 1
+    def manualCheck(self) -> None:
+        total = 0
+        # A bit of hard code list the problem suggests
+        for message in self.messages:
+            firstPart = []
+            timesMatched = 0
+            
+            while message:
+                for possibleMatch in self.convertedRule[42]:
+                    if message.startswith(possibleMatch):
+                        message = message[len(possibleMatch):]
+                        timesMatched += 1
+                        # 42 is repeated twice, so we can skip the first iteration (Hack)
+                        if timesMatched > 1:
+                            firstPart.append((message, timesMatched))
+                        break
+                else:
+                    break
+            
+            for matchedMessage, times in firstPart:
+                if self.hasMatch(matchedMessage, times, self.convertedRule[31]):
+                    total += 1
+                    break
 
-        pass
-        # self.convertedRule[8] = newConverted
-        print("dpne!", currLength)
+        return total
 
-    def combineRules(self, rule) -> Set[str]:
-        possibleMatchesSet = set()
-        possibleMatches = [self.getRules(int(num)) for num in rule]
-        possibleMatchesSet.update("".join(match) for match in itertools.product(*possibleMatches))
-        return possibleMatchesSet
+    def hasMatch(self, message: str, times: int, possibleMatches: Set[str]) -> bool:
+        timesMatched = 0
+        while message:
+            for possibleMatch in possibleMatches:
+                if message.startswith(possibleMatch):
+                    message = message[len(possibleMatch):]
+                    timesMatched += 1
+                    if len(message) == 0 and timesMatched <= times - 1:
+                        return True
+                    break
+            else:
+                break
+        return False
 
 
 if __name__ == "__main__":
-    messages = Messages(True)
+    messages = Messages()
     print("Day 19 part 1:", messages.getZeroRuleMatches())
     print("Day 19 part 2:", messages.getZeroRuleMatches(True))
+    # Total Runtime ~2.2s
