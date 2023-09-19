@@ -39,33 +39,23 @@ class Jigsaw:
             for x, char in enumerate(row):
                 if char == "#":
                     coordinates.append((x, y))
-
         return [(x, y) for x, y in coordinates]
 
     def countMonsters(self, picture: List[List[str]]) -> int:
-        map_height = len(picture)
-        map_width = len(picture[0])
+        height = len(picture)
+        width = len(picture[0])
         monster_count = 0
 
-        for y in range(map_height):
-            for x in range(map_width):
-                is_monster = True
+        for y in range(height):
+            for x in range(width):
+                isMonster = True
                 for dx, dy in self.monster:
-                    new_x, new_y = x + dx, y + dy
-
-                    if (
-                        new_x < 0
-                        or new_x >= map_width
-                        or new_y < 0
-                        or new_y >= map_height
-                        or picture[new_y][new_x] != "#"
-                    ):
-                        is_monster = False
+                    newX, newY = x + dx, y + dy
+                    if newX < 0 or newX >= width or newY < 0 or newY >= height or picture[newY][newX] != "#":
+                        isMonster = False
                         break
-
-                if is_monster:
+                if isMonster:
                     monster_count += 1
-
         return monster_count
 
     def getEdges(self, tiles: Dict[int, List]) -> Dict[int, Tuple]:
