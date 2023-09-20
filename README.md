@@ -18,7 +18,7 @@ if **name** == "**main**":
 
 ## Completed
 
-- [x] 2022 (Python)
+- [x] [2022](2022) (Python)
 - [ ] 2021
 - [ ] 2020 (in Progress - Almost done)
 - [ ] 2019
