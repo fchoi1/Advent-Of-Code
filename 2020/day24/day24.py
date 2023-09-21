@@ -21,7 +21,6 @@ class Lobby:
         self.blackTiles = set()
 
     # 3 Axis system   https://www.redblobgames.com/grids/hexagons/
-    # ( SE <-> NW , W <-> E ,SW <-> NE , )
     def getTiles(self) -> int:
         for line in self.lineList:
             prev = line[0]
@@ -44,7 +43,6 @@ class Lobby:
 
     def updateTileColor(self, tile: Tuple, newBlackTiles: set) -> Set[Tuple]:
         count = 0
-
         if tile in self.seen:
             return newBlackTiles
         self.seen.add(tile)
@@ -72,6 +70,7 @@ class Lobby:
                 tempBlackTiles = self.updateTileColor(tile, tempBlackTiles)
             self.blackTiles = tempBlackTiles
         return len(self.blackTiles)
+
 
 if __name__ == "__main__":
     lobby = Lobby()
