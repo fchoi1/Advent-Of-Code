@@ -5,10 +5,9 @@ class Passport:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
             data = []
             passport = {}
-            for line in Lines:
+            for line in file1.readlines():
                 line = line.strip()
                 if not line:
                     data.append(passport)

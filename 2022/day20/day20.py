@@ -12,12 +12,9 @@ class Grove:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
-            return [int(item.strip()) for item in Lines]
+            return [int(item.strip()) for item in file1.readlines()]
 
-    def __init__(
-        self, useTest: Optional[bool] = False, decrypt: Optional[int] = 811589153
-    ) -> None:
+    def __init__(self, useTest: Optional[bool] = False, decrypt: Optional[int] = 811589153) -> None:
         self.useTest = useTest
         self.mapFile = self.getInput()
         self.length = len(self.mapFile)

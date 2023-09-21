@@ -8,7 +8,6 @@ def toBinaryList(binary: int | str, length: Optional[int] = 36):
         binary_string = binary[2:]
     else:
         raise ValueError("Unsupported input format")
-
     return binary_string.zfill(length)
 
 

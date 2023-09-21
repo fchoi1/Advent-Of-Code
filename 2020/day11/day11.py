@@ -4,11 +4,8 @@ from typing import Optional, List, Tuple
 class Seat:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        data = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
-                data.append(list(line.strip()))
-        return data
+            return [x.strip() for x in file1.readlines()]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -105,3 +102,4 @@ if __name__ == "__main__":
     seat = Seat()
     print("Day 11 part 1:", seat.getOccupied())
     print("Day 11 part 2:", seat.getOccupied(True))
+    # Total Runtime ~1.6s

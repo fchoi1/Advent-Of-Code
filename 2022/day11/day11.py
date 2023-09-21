@@ -11,7 +11,6 @@ class Monkey:
         self.result = MonkeyObj["result"]
         self.itemsInspected = 0
         self.worry = MonkeyObj["worry"]
-        # result arr: [false monkey, true monkey]
 
     def updateDivisor(self, divisor: int) -> None:
         self.modulo = divisor
@@ -37,24 +36,20 @@ class Monkey:
 
 
 class MonkeyGame:
-    def getInput(self) -> List[str]:
-        file1 = open("input.txt", "r")
-        # file1 = open('input-test.txt', 'r')
-        Lines = file1.readlines()
-        data = []
-        # Get input data
-        for line in Lines:
-            data.append(line.strip())
-        return data
+    def getInput(self) -> List[int]:
+        inputFile = "input-test.txt" if self.useTest else "input.txt"
+        with open(inputFile, "r") as file1:
+            return [x.strip() for x in file1.readlines()]
 
-    def __init__(self, rounds: int, worry: bool = True) -> None:
+    def __init__(self, useTest: Optional[bool] = False) -> None:
+        self.useTest = useTest
         self.inputData = self.getInput()
-        self.rounds = rounds
-        self.worry = worry
+        self.reset()
+
+    def reset(self) -> None:
         self.Monkeys = []
         self.maxInspected = [0, 0]
         self.testList = []
-        self.initializeMonkeys()
 
     def updateLCM(self) -> None:
         lcm = 1
@@ -63,9 +58,7 @@ class MonkeyGame:
         for monkey in self.Monkeys:
             monkey.updateDivisor(lcm)
 
-    def getOperation(
-        self, operation: str, value: int = 0
-    ) -> Callable[[int], Union[int, float]] | None:
+    def getOperation(self, operation: str, value: int = 0) -> Callable[[int], Union[int, float]] | None:
         match operation:
             case "+":
                 return lambda x: x + value if value else x + x
@@ -124,17 +117,25 @@ class MonkeyGame:
             for monkeyNum in monkeyInfo:
                 self.Monkeys[monkeyNum].recieveItems(monkeyInfo[monkeyNum])
 
-    def playGame(self) -> None:
-        for _ in range(self.rounds):
+    def playGame(self, isPart2: Optional[bool] = False) -> None:
+        if isPart2:
+            rounds = 10000
+        else:
+            rounds = 20
+        for _ in range(rounds):
             self.playRound()
 
+    # For Debugging
     def getMonkeys(self) -> None:
         for i, monkey in enumerate(self.Monkeys):
             print("Monkey #", i, "--------------------------------")
             monkey.printInfo()
 
-    def getInspectedTimes(self) -> int:
-        self.playGame()
+    def getInspectedTimes(self, isPart2: Optional[bool] = False) -> int:
+        self.worry = not isPart2
+        self.reset()
+        self.initializeMonkeys()
+        self.playGame(isPart2)
         for monkey in self.Monkeys:
             if monkey.itemsInspected > self.maxInspected[1]:
                 self.maxInspected[1] = monkey.itemsInspected
@@ -144,7 +145,6 @@ class MonkeyGame:
 
 if __name__ == "__main__":
     """This isexecuted when run from the command line"""
-    game1 = MonkeyGame(20)
-    game2 = MonkeyGame(10000, False)
-    print("Day 11 part 1:", game1.getInspectedTimes())
-    print("Day 11 part 2:", game2.getInspectedTimes())
+    monkeyGame = MonkeyGame()
+    print("Day 11 part 1:", monkeyGame.getInspectedTimes())
+    print("Day 11 part 2:", monkeyGame.getInspectedTimes(True))

@@ -4,11 +4,8 @@ from typing import Optional, List
 class Adapter:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        data = set()
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
-                data.add(int(line.strip()))
-        return data
+            return set([int(x.strip()) for x in file1.readlines()])
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

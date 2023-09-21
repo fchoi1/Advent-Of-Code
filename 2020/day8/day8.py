@@ -5,12 +5,7 @@ class Console:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            data = []
-            for line in file1.readlines():
-                line = line.strip().split(" ")
-                data.append((line[0], int(line[1])))
-
-            return data
+            return [(x.split()[0], int(x.split()[1])) for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

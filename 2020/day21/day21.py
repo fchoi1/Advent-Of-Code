@@ -7,11 +7,11 @@ class Allergen:
         allergensList = []
         with open(inputFile, "r") as file1:
             for line in file1:
-                line = line.strip().replace(")", "").split(" (contains ")
-                allergenSet = set()
-                for item in line[1].split(" "):
-                    allergenSet.add(item.replace(",", ""))
-                allergensList.append((set(line[0].split(" ")), allergenSet))
+                ingredients, allergens = (
+                    set(line.strip().split(" (contains ")[0].split()),
+                    set(line.strip().split(" (contains ")[1].replace(")", "").split(", ")),
+                )
+                allergensList.append((ingredients, allergens))
         return allergensList
 
     def __init__(self, useTest: Optional[bool] = False) -> None:

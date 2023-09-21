@@ -6,12 +6,8 @@ class Lava:
     def getInput(self) -> List[List[int]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
-            cubes = []
-            for line in Lines:
-                line = line.strip()
-                cubes.append(list(map(int, line.split(","))))
-        return cubes
+            cubes = [list(map(int, line.strip().split(","))) for line in file1]
+            return cubes
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -105,11 +101,7 @@ class Lava:
         currentKey = f"{currX},{currY},{currZ}"
         if currentKey in self.seen:
             return True
-        return (
-            1 < currX < self.max[0]
-            and 1 < currY < self.max[1]
-            and 1 < currZ < self.max[2]
-        )
+        return 1 < currX < self.max[0] and 1 < currY < self.max[1] and 1 < currZ < self.max[2]
 
 
 if __name__ == "__main__":

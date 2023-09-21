@@ -1,18 +1,14 @@
-from typing import List
+from typing import List, Optional
 
 
-def getInput() -> List[str]:
-    file1 = open("input.txt", "r")
-    Lines = file1.readlines()
-    data = []
-    # Get input data
-    for line in Lines:
-        data.append(line.strip())
-    return data
+def getInput(useTest) -> List[str]:
+    inputFile = "input-test.txt" if useTest else "input.txt"
+    with open(inputFile, "r") as file1:
+        return [x.strip() for x in file1.readlines()]
 
 
-def main() -> None:
-    inputData = getInput()
+def main(useTest: Optional[bool] = False) -> None:
+    inputData = getInput(useTest)
 
     scorePt1 = scorePt2 = 0
 

@@ -23,9 +23,7 @@ class Minerals:
                 prices = list(
                     map(
                         int,
-                        re.split("|".join(map(re.escape, delimiters)), line.strip())[
-                            1:7
-                        ],
+                        re.split("|".join(map(re.escape, delimiters)), line.strip())[1:7],
                     )
                 )
                 # [ore, clay, obsidian, geode]
@@ -124,10 +122,7 @@ class Minerals:
             options.append(
                 [
                     i,
-                    all(
-                        resource >= cost
-                        for resource, cost in zip(resources, mineralCost)
-                    ),
+                    all(resource >= cost for resource, cost in zip(resources, mineralCost)),
                 ]
             )
         return options

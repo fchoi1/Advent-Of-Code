@@ -1,18 +1,14 @@
-from typing import List
+from typing import List, Optional
 
 
 class Rope:
-    def getInput(self) -> List[str]:
-        file1 = open("input.txt", "r")
-        # file1 = open('input-test.txt', 'r')
-        Lines = file1.readlines()
-        data = []
-        # Get input data
-        for line in Lines:
-            data.append(line.strip())
-        return data
+    def getInput(self) -> List[int]:
+        inputFile = "input-test.txt" if self.useTest else "input.txt"
+        with open(inputFile, "r") as file1:
+            return [x.strip() for x in file1.readlines()]
 
-    def __init__(self, numTails: int) -> None:
+    def __init__(self, useTest: Optional[bool] = False) -> None:
+        self.useTest = useTest
         self.inputData = self.getInput()
         self.visitedOnceSingle = 1
         self.visitedOnceLast = 1
@@ -21,17 +17,14 @@ class Rope:
 
         self.head = [0, 0]
         self.tails = []
-        self.createTails(numTails)
+        self.createTails(9)
 
     def createTails(self, number: int) -> None:
         for i in range(number):
             self.tails.append([0, 0])
 
     def tailInRange(self, head: List[int], tail: List[int]) -> bool:
-        return (
-            head[0] - 1 <= tail[0] <= head[0] + 1
-            and head[1] - 1 <= tail[1] <= head[1] + 1
-        )
+        return head[0] - 1 <= tail[0] <= head[0] + 1 and head[1] - 1 <= tail[1] <= head[1] + 1
 
     def tailInRow(self, head: List[int], tail: List[int]) -> int:
         return head[0] - tail[0]
@@ -86,6 +79,6 @@ class Rope:
 
 if __name__ == "__main__":
     """This isexecuted when run from the command line"""
-    rope = Rope(9)
+    rope = Rope()
     print("Day 9 part 1:", rope.getUniqueSingleTail())
     print("Day 9 part 2:", rope.getUniqueLastTail())

@@ -1,18 +1,14 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 
 class Folder:
-    def getInput(self) -> List[str]:
-        file1 = open("input.txt", "r")
-        # file1 = open('input-test.txt', 'r')
-        Lines = file1.readlines()
-        data = []
-        # Get input data
-        for line in Lines:
-            data.append(line.strip())
-        return data
+    def getInput(self) -> List[int]:
+        inputFile = "input-test.txt" if self.useTest else "input.txt"
+        with open(inputFile, "r") as file1:
+            return [x.strip() for x in file1.readlines()]
 
-    def __init__(self) -> None:
+    def __init__(self, useTest: Optional[bool] = False) -> None:
+        self.useTest = useTest
         self.inputData = self.getInput()
         self.folder = {}
         self.filePath = []
@@ -58,10 +54,7 @@ class Folder:
                 if folderSize < maxSize:
                     self.sizeSum += folderSize
 
-                if (
-                    folderSize > self.deleteSize
-                    and folderSize < self.folderToDeleteSize
-                ):
+                if folderSize > self.deleteSize and folderSize < self.folderToDeleteSize:
                     self.folderToDelete = item
                     self.folderToDeleteSize = folderSize
         pass

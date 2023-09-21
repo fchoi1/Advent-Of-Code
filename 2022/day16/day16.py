@@ -88,8 +88,7 @@ class Valves:
                 continue
             maxRate = max(
                 maxRate,
-                self.dfs(timeRemain, nextValve, bitmask | bit)
-                + timeRemain * self.valves[nextValve],
+                self.dfs(timeRemain, nextValve, bitmask | bit) + timeRemain * self.valves[nextValve],
             )
 
         return maxRate
@@ -105,8 +104,7 @@ class Valves:
         for i in range((totalPositions + 1) // 2):
             maxRate = max(
                 maxRate,
-                self.dfs(timeLength, "AA", i)
-                + self.dfs(timeLength, "AA", totalPositions ^ i),
+                self.dfs(timeLength, "AA", i) + self.dfs(timeLength, "AA", totalPositions ^ i),
             )
         return maxRate
 

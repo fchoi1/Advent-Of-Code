@@ -101,11 +101,7 @@ class MonkeyMap:
         x_direction = -1 if currDir == "R" else 1 if currDir == "L" else 0
         y_direction = 1 if currDir == "U" else -1 if currDir == "D" else 0
 
-        while (
-            0 <= y < len(self.map)
-            and 0 <= x < len(self.map[y])
-            and self.map[y][x] != " "
-        ):
+        while 0 <= y < len(self.map) and 0 <= x < len(self.map[y]) and self.map[y][x] != " ":
             x += x_direction
             y += y_direction
 

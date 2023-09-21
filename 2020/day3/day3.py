@@ -5,11 +5,7 @@ class Toboggan:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
-            data = []
-            for line in Lines:
-                data.append(line.strip())
-        return data
+            return [x.strip() for x in file1.readlines()]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

@@ -15,7 +15,6 @@ class Monkeys:
                     constants[line[0]] = int(line[1])
                 else:
                     equations[line[0]] = [line[1], line[3], line[2]]
-
             return [constants, equations]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
@@ -28,50 +27,39 @@ class Monkeys:
             "*": lambda x, y: x * y,
             "/": lambda x, y: x / y,
         }
-        self.reverseOp = {
-            "+": "-",
-            "-": "+",
-            "*": "/",
-            "/": "*"
-        }
+        self.reverseOp = {"+": "-", "-": "+", "*": "/", "/": "*"}
 
     def evaluateEquation(self, target: str, ops: List[str]) -> List[str] | int:
         if target not in self.equations:
             return None
-        
-        first, second, op = self.equations[target]
-        
-        firstNum = (
-            self.constants[first] if first in self.constants
-                else self.evaluateEquation(first, ops)
-        )
-        secondNum = (
-            self.constants[second] if second in self.constants 
-                else self.evaluateEquation(second, ops)
-        )
 
-        if isinstance(firstNum, (int, float)) and isinstance(secondNum, (int,float)):
+        first, second, op = self.equations[target]
+
+        firstNum = self.constants[first] if first in self.constants else self.evaluateEquation(first, ops)
+        secondNum = self.constants[second] if second in self.constants else self.evaluateEquation(second, ops)
+
+        if isinstance(firstNum, (int, float)) and isinstance(secondNum, (int, float)):
             return self.operations[op](firstNum, secondNum)
-        
+
         if isinstance(firstNum, list):
             firstNum.append([None, op, secondNum])
             return firstNum
         elif isinstance(secondNum, list):
             secondNum.append([firstNum, op, None])
             return secondNum
-        
+
         ops.append([firstNum, op, secondNum])
         return ops
 
     def getRoot(self):
-        return self.evaluateEquation("root", [])        
+        return self.evaluateEquation("root", [])
 
-    def getConstant(self, target: Optional[str] = 'humn'):
+    def getConstant(self, target: Optional[str] = "humn"):
         if target in self.constants:
             del self.constants[target]
 
-        num1, num2, op = self.equations['root']
-        
+        num1, num2, op = self.equations["root"]
+
         value1 = self.evaluateEquation(num1, [])
         value2 = self.evaluateEquation(num2, [])
 
@@ -88,20 +76,19 @@ class Monkeys:
         elif isinstance(value2, list):
             operationList = value2
             targetVal = value1
-            
+
         if operationList:
             for num1, op, num2 in reversed(operationList):
-                
                 reverseOp = self.reverseOp[op]
                 x = targetVal
                 y = num2 if not num1 else num1
-                
+
                 # Special case for - and / operations (not comuntative)
-                if not num2 and op in ['/', '-']:
+                if not num2 and op in ["/", "-"]:
                     reverseOp = op
-                    x = num1 
+                    x = num1
                     y = targetVal
-                    
+
                 targetVal = self.operations[reverseOp](x, y)
         return targetVal
 

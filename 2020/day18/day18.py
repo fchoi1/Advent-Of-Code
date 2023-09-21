@@ -5,12 +5,8 @@ from functools import reduce
 class Operation:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        data = []
         with open(inputFile, "r") as file1:
-            for line in file1:
-                data.append(line.strip().replace("(", "( ").replace(")", " )").split(" "))
-                pass
-        return data
+            return [x.strip().replace("(", "( ").replace(")", " )").split(" ") for x in file1.readlines()]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

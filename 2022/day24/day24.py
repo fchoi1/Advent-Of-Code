@@ -1,14 +1,12 @@
 from typing import List, Optional, Tuple, Dict
 from math import lcm
 
+
 class Blizzard:
     def getInput(self) -> List[str]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        data = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
-                data.append(list(line.strip()))
-            return data
+            return [list(x.strip()) for x in file1.readlines()]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -28,9 +26,7 @@ class Blizzard:
         start = finish = None
         for y, row in enumerate(self.map):
             for x, val in enumerate(row):
-                if (
-                    y in [0, len(self.map) - 1] or x in [0, len(row) - 1]
-                ) and val == ".":
+                if (y in [0, len(self.map) - 1] or x in [0, len(row) - 1]) and val == ".":
                     if not start:
                         start = (x, y)
                     else:

@@ -4,11 +4,8 @@ from typing import List, Optional
 class Balloon:
     def getInput(self) -> List[str]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        data = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
-                data.append(list(line.strip()))
-            return data
+            return [list(x.strip()) for x in file1.readlines()]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

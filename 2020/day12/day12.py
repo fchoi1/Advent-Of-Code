@@ -5,11 +5,8 @@ import math
 class Ferry:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        data = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
-                data.append((line.strip()[0], int(line.strip()[1:])))
-        return data
+            return [(x.strip()[0], int(x.strip()[1:])) for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

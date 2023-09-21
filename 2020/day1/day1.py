@@ -5,12 +5,7 @@ class Report:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
-            data = []
-            for line in Lines:
-                line = line.strip()
-                data.append(int(line))
-        return data
+            return [int(x.strip()) for x in file1.readlines()]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -23,7 +18,6 @@ class Report:
         for i in numList:
             diff = target - i
             if i in numDict:
-                print(diff, i)
                 return diff * i
             numDict.add(diff)
         return None
