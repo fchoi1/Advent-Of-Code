@@ -1,6 +1,6 @@
-qjhvhtzxzqqjkmpb
-xxyxx
-uurcxstgmygtbstg
-ieodomkazucvgmuy
-aaaa
-aaa
+toggle 0,0 through 4,4
+turn off 0,0 through 2,0
+turn off 0,0 through 0,2
+turn off 0,0 through 0,2
+turn off 0,0 through 0,2
+turn off 0,0 through 0,2
