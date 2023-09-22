@@ -71,4 +71,4 @@ class Lights {
 const lights = new Lights();
 console.log("Day 6 part 1:", lights.getLightsOn());
 console.log("Day 6 part 2:", lights.getBrightness());
-// Total Runtime ~
+// Total Runtime ~10.5
