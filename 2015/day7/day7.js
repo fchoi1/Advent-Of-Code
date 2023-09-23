@@ -79,4 +79,3 @@ class Tables {
 const tables = new Tables();
 console.log("Day 7 part 1:", tables.getWireA());
 console.log("Day 7 part 2:", tables.getRewiredA());
-// Total Runtime ~10.5
