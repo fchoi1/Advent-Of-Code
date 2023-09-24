@@ -9,8 +9,8 @@ class Locations {
       data.forEach((route) => {
         const [locations, distance] = route.split(" = ");
         const [location1, location2] = locations.split(" to ");
-        locationMap[location1] = { ...(locationMap[location1] || {}), [location2]: distance };
-        locationMap[location2] = { ...(locationMap[location2] || {}), [location1]: distance };
+        locationMap[location1] = { ...(locationMap[location1] || {}), [location2]: parseInt(distance) };
+        locationMap[location2] = { ...(locationMap[location2] || {}), [location1]: parseInt(distance) };
       });
       return locationMap;
     } catch (err) {
@@ -22,36 +22,41 @@ class Locations {
     this.useTest = useTest;
     this.routes = this.getInput();
     this.shortest = Number.POSITIVE_INFINITY;
+    this.longest = Number.NEGATIVE_INFINITY;
     this.destinations = Object.keys(this.routes).length;
-    console.log(this.routes, this.destinations);
+    this.calculateDistance();
   }
 
   // dfs?
   getShortestRoute(currlocation, totalDistance, visited) {
-    console.log(visited);
-    if (this.visited.size === this.destinations) {
+    visited.add(currlocation);
+    if (visited.size === this.destinations) {
       this.shortest = Math.min(this.shortest, totalDistance);
+      this.longest = Math.max(this.longest, totalDistance);
       return;
     }
-    visited.add(currlocation);
     const nextLocations = this.routes[currlocation];
-    for (const [location, distance] of nextLocations) {
+    for (const location in nextLocations) {
       if (!visited.has(location)) {
-        this.getShortestRoute(location, totalDistance + distance, visited);
+        this.getShortestRoute(location, totalDistance + nextLocations[location], new Set(visited));
       }
     }
-
-    nextLocations.forEach();
-
-    // for  each route
-    return;
   }
 
-  getDistance() {
-    return this.getShortestRoute("London", 0, new Set());
+  calculateDistance() {
+    Object.keys(this.routes).forEach((location) => {
+      this.getShortestRoute(location, 0, new Set());
+    });
+  }
+
+  getShortest() {
+    return this.shortest;
+  }
+  getLongest() {
+    return this.longest;
   }
 }
 
 const locations = new Locations();
-console.log("Day 9 part 1:", locations.getDistance());
-console.log("Day 9 part 2:");
+console.log("Day 9 part 1:", locations.getShortest());
+console.log("Day 9 part 2:", locations.getLongest());
