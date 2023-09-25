@@ -76,4 +76,3 @@ class Password {
 const password = new Password();
 console.log("Day 11 part 1:", password.getNewPassword());
 console.log("Day 11 part 2:", password.getNewPassword());
-// Total Runtime ~13s
