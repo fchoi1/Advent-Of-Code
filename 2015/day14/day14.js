@@ -29,7 +29,6 @@ class Reindeer {
     this.useTest = useTest;
     this.reindeers = this.getInput();
     this.time = useTest ? 1000 : 2500;
-    console.log(this.reindeers);
   }
 
   getDistance() {
