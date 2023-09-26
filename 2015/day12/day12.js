@@ -15,7 +15,6 @@ class Document {
     this.useTest = useTest;
     this.json = this.getInput();
     this.delimiters = / |,|:|\[|\]|\{|\}/;
-    console.log();
   }
 
   getSum(string) {
