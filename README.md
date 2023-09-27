@@ -25,7 +25,7 @@ if **name** == "**main**":
 - [ ] [2018](2018)
 - [ ] [2017](2017)
 - [ ] [2016](2016)
-- [ ] [2015](2015) (NodeJS/Javascript) - In Progress
+- [ ] [2015](2015) (NodeJS) - In Progress
 
 ## AOC 2022
 
