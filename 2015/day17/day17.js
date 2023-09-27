@@ -3,7 +3,6 @@ const fs = require("fs");
 class Containers {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
-    const delimiters = /Sue |: |, /;
     try {
       const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
       return data.map((row) => parseInt(row));
