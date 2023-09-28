@@ -6,7 +6,7 @@ class Knights {
     const delimiters = / would | happiness units by sitting next to |\./;
     try {
       const members = {};
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((rule) => {
         const [person1, change, person2] = rule.split(delimiters);
         const happinessChange = (change.split(" ")[0] === "gain" ? 1 : -1) * parseInt(change.split(" ")[1]);

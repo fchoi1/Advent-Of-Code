@@ -6,7 +6,7 @@ class Reindeer {
     const delimiters = / can fly | km\/s for | seconds, but then must rest for |seconds\./;
     try {
       const reindeers = {};
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((rule) => {
         const [reindeer, speed, speedTime, restTime] = rule.split(delimiters);
         reindeers[reindeer] = reindeers[reindeer] || {};

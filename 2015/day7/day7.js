@@ -6,7 +6,7 @@ class Tables {
     try {
       const circuits = {};
       const delimiters = / |,| -> /;
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((circuit) => {
         const s = circuit.split(" -> ");
         const val = s[0].split(" ");

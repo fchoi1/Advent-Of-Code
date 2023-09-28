@@ -4,7 +4,7 @@ class Medicine {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       return data.reduce(
         ([molecules, reverseMolecules, dna], row) => {
           const [source, target] = row.split(" => ");

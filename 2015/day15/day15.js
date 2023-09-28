@@ -6,7 +6,7 @@ class Cookie {
     const delimiters = /: capacity |, durability |, flavor |, texture |, calories/;
     try {
       const ingredients = {};
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((row) => {
         const [ingredient, capacity, durability, flavor, texture, calories] = row.split(delimiters);
         ingredients[ingredient] = ingredients[ingredient] || {};

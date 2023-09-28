@@ -5,7 +5,7 @@ class Lights {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
       const delimiters = / |,| through /;
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       return data.map((config) => {
         const s = config.split(delimiters);
         if (s[0] !== "toggle") s.shift();

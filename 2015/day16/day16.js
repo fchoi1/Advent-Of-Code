@@ -6,7 +6,7 @@ class MFCSAM {
     const delimiters = /Sue |: |, /;
     try {
       const aunts = [];
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((row) => {
         const [_, __, ...items] = row.split(delimiters);
         const gift = {};

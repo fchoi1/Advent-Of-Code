@@ -5,7 +5,7 @@ class Locations {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     const locationMap = {};
     try {
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((route) => {
         const [locations, distance] = route.split(" = ");
         const [location1, location2] = locations.split(" to ");

@@ -5,7 +5,7 @@ class RPG {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
       const boss = {};
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((item) => {
         let [statName, value] = item.split(": ");
         if (statName === "Hit Points") statName = "Health";

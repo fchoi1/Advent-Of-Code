@@ -4,7 +4,7 @@ class Matchsticks {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
-      return fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      return fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
     } catch (err) {
       throw err;
     }

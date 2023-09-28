@@ -5,7 +5,7 @@ class Password {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     const locationMap = {};
     try {
-      return fs.readFileSync(inputFile, "utf8").trim().split("\r\n")[0];
+      return fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/)[0];
     } catch (err) {
       throw err;
     }

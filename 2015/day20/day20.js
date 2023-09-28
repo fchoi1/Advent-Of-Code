@@ -4,7 +4,7 @@ class House {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
-      return parseInt(fs.readFileSync(inputFile, "utf8").trim().split("\r\n")[0]);
+      return parseInt(fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/)[0]);
     } catch (err) {
       throw err;
     }
@@ -19,7 +19,7 @@ class House {
     const multipler = isPart2 ? 11 : 10;
     let curr = 1;
     let currSum = 0;
-    while (currSum < this.target ) {
+    while (currSum < this.target) {
       currSum = 0;
       for (let i = 1; i <= Math.ceil(Math.sqrt(curr)); i++) {
         if (curr % i === 0) {

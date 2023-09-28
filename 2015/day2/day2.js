@@ -4,7 +4,7 @@ class WrappingPaper {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       return data.map((dimension) => {
         return dimension.split("x").map((str) => parseInt(str));
       });

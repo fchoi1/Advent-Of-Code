@@ -5,7 +5,7 @@ class WizardSim {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
       const boss = {};
-      const data = fs.readFileSync(inputFile, "utf8").trim().split("\r\n");
+      const data = fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/);
       data.forEach((item) => {
         let [statName, value] = item.split(": ");
         if (statName === "Hit Points") statName = "Health";
@@ -53,7 +53,7 @@ class WizardSim {
 
     // Optimization
     const key = `${you.Mana},${you.Health},${you.Armor},${boss.Health},${effects.join(",")}`;
-    if (this.seen.has(key))  return;
+    if (this.seen.has(key)) return;
     this.seen.add(key);
 
     const newEffects = effects.map((effect, i) => {

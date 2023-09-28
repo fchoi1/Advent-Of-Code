@@ -5,7 +5,7 @@ class Document {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
 
     try {
-      return fs.readFileSync(inputFile, "utf8").trim().split("\r\n")[0];
+      return fs.readFileSync(inputFile, "utf8").trim().split(/\r?\n/)[0];
     } catch (err) {
       throw err;
     }
