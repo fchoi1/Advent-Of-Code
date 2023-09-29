@@ -8,12 +8,18 @@ For my practice!
 To run files, put input data into `input.txt` file  
 Test Data uses `input-test.txt` file
 
-To run test data, pass `True` to class instance in main
+To run test data, pass `True` to class instance at bottom
 Ex:
 
 ```
-if **name** == "**main**":
+# Python
+if __name__ == "__main__":
     solution = Solution(True)
+```
+
+```
+\\ Javascript
+const solution = new Solution(true);
 ```
 
 ## Completed
