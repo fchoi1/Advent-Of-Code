@@ -12,6 +12,7 @@ type Taxi struct {
 	UseTest     bool
 	Directions  [][]interface{}
 	Position	[]int
+	first		[]int
 }
 
 func Abs(x int) int {
@@ -44,6 +45,7 @@ func (taxi *Taxi) getInput() {
 }
 
 func (taxi *Taxi) getDistance() int {
+	seenMap := make(map[string]bool)
 	dirMap := map[string][2]int{
 		"N": {0, 1},
 		"S": {0, -1},
@@ -64,18 +66,31 @@ func (taxi *Taxi) getDistance() int {
 		}
 		currentDir := string(dirStr[currentDirIndex])
 		movement := dirMap[currentDir]
-		taxi.Position[0] += movement[0] * steps
-		taxi.Position[1] += movement[1] * steps
+		
+		for i := 0; i < steps; i++ {
+			taxi.Position[0] += movement[0] 
+			taxi.Position[1] += movement[1] 
+			strKey := strconv.Itoa(taxi.Position[0]) + "," + strconv.Itoa(taxi.Position[1])
+			if seenMap[strKey] && len(taxi.first) <= 0 {
+				taxi.first = append(taxi.first, taxi.Position[0], taxi.Position[1])
+			}
+			seenMap[strKey] = true
+		}
 	}
 	return Abs(taxi.Position[0] ) +  Abs(taxi.Position[1])
+}
+
+func (taxi *Taxi) getFirst() int {
+	return Abs(taxi.first[0] ) +  Abs(taxi.first[1])
 }
 
 func main() {
 	taxi := &Taxi{
 		UseTest:  false,
 		Position: []int{0,0},
+		first: []int{},
 	}
 	taxi.getInput()
 	fmt.Println("Day 1 part 1:", taxi.getDistance())
-	fmt.Println("Day 1 part 2:")
+	fmt.Println("Day 1 part 2:", taxi.getFirst())
 }
