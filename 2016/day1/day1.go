@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"strings"
 	"strconv"
 )
@@ -28,14 +27,11 @@ func (taxi *Taxi) getInput() {
 		inputFile = "input-test.txt"
 	}
 
-	data, err := ioutil.ReadFile(inputFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	data, _ := ioutil.ReadFile(inputFile)
 	line := strings.TrimSpace(string(data))
 	parts := strings.Split(line, ", ")
 	taxi.Directions = make([][]interface{}, len(parts))
+
 	for i, part := range parts {
 		direction := string(part[0])
 		distanceStr := strings.TrimPrefix(part, direction)
@@ -44,7 +40,7 @@ func (taxi *Taxi) getInput() {
 	}
 }
 
-func (taxi *Taxi) getDistance() int {
+func (taxi *Taxi) travel(){
 	seenMap := make(map[string]bool)
 	dirMap := map[string][2]int{
 		"N": {0, 1},
@@ -77,6 +73,9 @@ func (taxi *Taxi) getDistance() int {
 			seenMap[strKey] = true
 		}
 	}
+}
+
+func (taxi *Taxi) getDistance() int {
 	return Abs(taxi.Position[0] ) +  Abs(taxi.Position[1])
 }
 
@@ -91,6 +90,7 @@ func main() {
 		first: []int{},
 	}
 	taxi.getInput()
+	taxi.travel()
 	fmt.Println("Day 1 part 1:", taxi.getDistance())
 	fmt.Println("Day 1 part 2:", taxi.getFirst())
 }
