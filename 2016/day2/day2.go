@@ -26,7 +26,6 @@ func (this *Bathroom) getInput() {
 	}
 
 	scanner := bufio.NewScanner(file)
-	this.Input = make([][]string, 0)
 
 	for scanner.Scan() {
 		line := scanner.Text()
