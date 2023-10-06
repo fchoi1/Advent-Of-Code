@@ -88,6 +88,6 @@ func main() {
 	}
 	signal.getInput()
 	signal.countCharacters()
-	fmt.Println("Day 5 part 1:", signal.getCode(false))
-	fmt.Println("Day 5 part 2:", signal.getCode(true))
+	fmt.Println("Day 6 part 1:", signal.getCode(false))
+	fmt.Println("Day 6 part 2:", signal.getCode(true))
 }
