@@ -19,12 +19,8 @@ func (this *Bathroom) getInput() {
 		inputFile = "input-test.txt"
 	}
 
-	file, err := os.Open(inputFile)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-
+	file, _ := os.Open(inputFile)
+	
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
