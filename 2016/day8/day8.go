@@ -27,6 +27,7 @@ func makeScreen(height int, width int) [][]string {
 	}
 	return twoDSlice
 }
+
 func (this *Screen) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
@@ -55,19 +56,39 @@ func (this *Screen) getInput() {
 }
 
 func (this *Screen) runCommands() {
-	for _, command := range this.Commands {
-		if cmd, ok := command[0].(string); ok {
-			if cmd== "rect" {
-				for j := 0; j < command[2]; j++ {
-					for i := 0; i < command[1]; i++ {
-						this.Screen[j][i] = "#"
-					}
+	for _, commandInterface := range this.Commands {
+		command := commandInterface.([]interface{})
+		cmd := command[0].(string)
+		int1 := command[1].(int)
+		int2 := command[2].(int)
+		if cmd == "rect" {
+			for j := 0; j < int2; j++ {
+				for i := 0; i < int1; i++ {
+					this.Screen[j][i] = "#"
 				}
-				continue
 			}
+		} else if cmd == "column" {
+			column := make([]string, len(this.Screen))
+			for i, row := range this.Screen {
+				column[i] = row[int1]
+			}
+			shift := int2 % len(this.Screen)
+			shiftedColumn := append(column[len(column)-shift:], column[:len(column)-shift]...)
+
+			for i, row := range this.Screen {
+				row[int1] = shiftedColumn[i]
+			}
+		} else if cmd == "row" {
+			row := this.Screen[int1]
+			shift := int2 % this.width
+			this.Screen[int1] = append(row[len(row)-shift:], row[:len(row)-shift]...)
 		}
 	}
+}
 
+func (this *Screen) printScreen() {
+	for _, row := range this.Screen {
+		fmt.Println(row)
 	}
 }
 
@@ -88,12 +109,14 @@ func main() {
 	width := 50
 	height := 6
 	screen := &Screen{
-		UseTest: true,
+		UseTest: false,
 		width:   width,
 		height:  height,
-		Screen:  makeScreen(width, height),
+		Screen:  makeScreen(height, width),
 	}
 	screen.getInput()
+	screen.runCommands()
 	fmt.Println("Day 8 part 1:", screen.getOnLights())
-	// fmt.Println("Day 8 part 2:", screen.getValidSSL())
+	fmt.Println("Day 8 part 2:")
+	screen.printScreen()
 }
