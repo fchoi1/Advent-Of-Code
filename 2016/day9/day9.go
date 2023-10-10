@@ -107,6 +107,6 @@ func main() {
 		UseTest: false,
 	}
 	file.getInput()
-	fmt.Println("Day 8 part 1:", file.getFileLength())
-	fmt.Println("Day 8 part 2:", file.getFileLength2())
+	fmt.Println("Day 9 part 1:", file.getFileLength())
+	fmt.Println("Day 9 part 2:", file.getFileLength2())
 }
