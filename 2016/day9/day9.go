@@ -47,7 +47,6 @@ func getCompressedLength(text string, times int) int {
 	var skipIndex int
 	length := 0
 	for i, char := range text {
-
 		if i < skipIndex {
 			continue
 		}

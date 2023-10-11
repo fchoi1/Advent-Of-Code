@@ -8,105 +8,172 @@ import (
 	"strings"
 )
 
-type File struct {
-	UseTest     bool
-	file        string
-	compressed  string
-	compressed2 string
+type Factory struct {
+	UseTest    bool
+	Factory    string
+	compareBot int
+	targetHigh int
+	targetLow  int
+	targetBot  int
+	Bots       map[int]*FactoryBot
+	Outputs    map[int]*Output
+	Values     map[int]*FactoryBot
 }
 
-func parseMarker(text string) (int, int) {
-	splitted := strings.FieldsFunc(text, func(r rune) bool {
-		return r == '(' || r == 'x'
-	})
-	num1, _ := strconv.Atoi(splitted[0])
-	num2, _ := strconv.Atoi(splitted[1])
-	return num1, num2
+type FactoryBot struct {
+	id      int
+	lowVal  int
+	highVal int
+	low     interface{}
+	high    interface{}
 }
 
-func (this *File) getInput() {
-	inputFile := "input.txt"
-	if this.UseTest {
-		inputFile = "input-test.txt"
+type Output struct {
+	id     int
+	values []int
+}
+
+func (f *Factory) getOrCreateOutput(id int) *Output {
+	output, exists := f.Outputs[id]
+	if !exists {
+		output = &Output{
+			id:     id,
+			values: []int{},
+		}
+		f.Outputs[id] = output
+	}
+	return output
+}
+
+func (f *Factory) getOrCreateBot(id int) *FactoryBot {
+	bot, exists := f.Bots[id]
+	if !exists {
+		bot = &FactoryBot{
+			id:   id,
+			low:  nil,
+			high: nil,
+		}
+		f.Bots[id] = bot
+	}
+	return bot
+}
+
+func (this *Factory) updateBots(bot *FactoryBot, value int) {
+
+	if bot.lowVal == 0 {
+		bot.lowVal = value
+	} else if value > bot.lowVal {
+		bot.highVal = value
+	} else {
+		bot.highVal, bot.lowVal = bot.lowVal, value
 	}
 
-	file, _ := os.Open(inputFile)
+	if bot.highVal != 0 && bot.lowVal != 0 {
+		if bot.highVal == this.targetHigh && bot.lowVal == this.targetLow {
+			this.targetBot = bot.id
+		}
+		if lowBot, isFactoryBot := bot.low.(*FactoryBot); isFactoryBot {
+			this.updateBots(lowBot, bot.lowVal)
+		} else if output, isOutput := bot.low.(*Output); isOutput {
+			output.values = append(output.values, bot.lowVal)
+		}
+		if highBot, isFactoryBot := bot.high.(*FactoryBot); isFactoryBot {
+			this.updateBots(highBot, bot.highVal)
+		} else if output, isOutput := bot.low.(*Output); isOutput {
+			output.values = append(output.values, bot.highVal)
+		}
+		bot.highVal, bot.lowVal = 0, 0
+	}
+}
 
-	scanner := bufio.NewScanner(file)
+func (this *Factory) getInput() {
+	inputFactory := "input.txt"
+	if this.UseTest {
+		inputFactory = "input-test.txt"
+	}
+
+	Factory, _ := os.Open(inputFactory)
+
+	scanner := bufio.NewScanner(Factory)
+
+	var value int
+	var botNum int
+	this.Bots = make(map[int]*FactoryBot)
+	this.Values = make(map[int]*FactoryBot)
+	this.Outputs = make(map[int]*Output)
 	for scanner.Scan() {
 		line := scanner.Text()
-		this.file += string(line)
+		splitted := strings.Split(line, " ")
+
+		if splitted[0] == "value" {
+			value, _ = strconv.Atoi(splitted[1])
+			botNum, _ = strconv.Atoi(splitted[5])
+
+			Bot := this.getOrCreateBot(botNum)
+			this.Values[value] = Bot
+
+		} else {
+			botNum, _ := strconv.Atoi(splitted[1])
+			botLow, _ := strconv.Atoi(splitted[6])
+			botHigh, _ := strconv.Atoi(splitted[11])
+			isOutput1 := splitted[5] == "output"
+			isOutput2 := splitted[10] == "output"
+
+			Bot := this.getOrCreateBot(botNum)
+
+			var newLow, newHigh interface{}
+
+			if isOutput1 {
+				newLow = this.getOrCreateOutput(botLow)
+			} else {
+				newLow = this.getOrCreateBot(botLow)
+			}
+
+			if isOutput2 {
+				newHigh = this.getOrCreateOutput(botHigh)
+			} else {
+				newHigh = this.getOrCreateBot(botHigh)
+			}
+			Bot.low = newLow
+			Bot.high = newHigh
+		}
 	}
-	defer file.Close()
+	defer Factory.Close()
 }
-func getCompressedLength(text string, times int) int {
 
-	var str string
-	markerFound := false
-	var markStart int
-	var skipIndex int
-	length := 0
-	for i, char := range text {
-
-		if i < skipIndex {
-			continue
-		}
-		if !markerFound && char == '(' {
-			markerFound = true
-			markStart = i
-		} else if !markerFound {
-			str += string(char)
-			length++
-		}
-		if markerFound && char == ')' {
-			markerFound = false
-			strLen, times := parseMarker(text[markStart:i])
-			skipIndex = i + strLen + 1
-			length += getCompressedLength(text[i+1:skipIndex], times)
-		}
+func (this *Factory) sortBots() {
+	if this.UseTest {
+		this.targetLow = 2
+		this.targetHigh = 3
+	} else {
+		this.targetLow = 17
+		this.targetHigh = 61
 	}
-	return length * times
-}
-
-func (this *File) compressFile() {
-	markerFound := false
-	var markStart int
-	var skipIndex int
-	for i, char := range this.file {
-
-		if i < skipIndex {
-			continue
-		}
-		if !markerFound && char == '(' {
-			markerFound = true
-			markStart = i
-		} else if !markerFound {
-			this.compressed += string(char)
-		}
-		if markerFound && char == ')' {
-			markerFound = false
-			strLen, times := parseMarker(this.file[markStart:i])
-			skipIndex = i + strLen + 1
-			repeated := strings.Repeat(this.file[i+1:skipIndex], times)
-			this.compressed += repeated
-		}
+	for value, bot := range this.Values {
+		this.updateBots(bot, value)
 	}
 }
 
-func (this *File) getFileLength() int {
-	this.compressFile()
-	return len(this.compressed)
+func (this *Factory) getBot() int {
+	return this.targetBot
 }
 
-func (this *File) getFileLength2() int {
-	return getCompressedLength(this.file, 1)
+func (this *Factory) getProduct() int {
+	out0, ok0 := this.Outputs[0]
+	out1, ok1 := this.Outputs[1]
+	out2, ok2 := this.Outputs[2]
+	if !ok0 || len(out0.values) == 0 || !ok1 || len(out1.values) == 0 || !ok2 || len(out2.values) == 0 {
+		return 0
+	}
+	return out0.values[0] * out1.values[0] * out2.values[0]
 }
 
 func main() {
-	file := &File{
+	factory := &Factory{
 		UseTest: false,
 	}
-	file.getInput()
-	fmt.Println("Day 10 part 1:", file.getFileLength())
-	fmt.Println("Day 10 part 2:", file.getFileLength2())
+	factory.getInput()
+	factory.sortBots()
+	fmt.Println("Day 10 part 1:", factory.getBot())
+	fmt.Println("Day 10 part 2:", factory.getProduct())
 }
