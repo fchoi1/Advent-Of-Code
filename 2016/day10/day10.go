@@ -87,14 +87,13 @@ func (this *Factory) updateBots(bot *FactoryBot, value int) {
 }
 
 func (this *Factory) getInput() {
-	inputFactory := "input.txt"
+	inputFile := "input.txt"
 	if this.UseTest {
-		inputFactory = "input-test.txt"
+		inputFile = "input-test.txt"
 	}
 
-	Factory, _ := os.Open(inputFactory)
-
-	scanner := bufio.NewScanner(Factory)
+	file, _ := os.Open(inputFile)
+	scanner := bufio.NewScanner(file)
 
 	var value int
 	var botNum int
@@ -103,7 +102,7 @@ func (this *Factory) getInput() {
 	this.Outputs = make(map[int]*Output)
 	for scanner.Scan() {
 		line := scanner.Text()
-		splitted := strings.Split(line, " ")
+		splitted := strings.Fields(line)
 
 		if splitted[0] == "value" {
 			value, _ = strconv.Atoi(splitted[1])
@@ -138,7 +137,7 @@ func (this *Factory) getInput() {
 			Bot.high = newHigh
 		}
 	}
-	defer Factory.Close()
+	defer file.Close()
 }
 
 func (this *Factory) sortBots() {

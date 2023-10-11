@@ -27,7 +27,6 @@ func (this *Signal) getInput() {
 	}
 
 	file, _ := os.Open(inputFile)
-
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()

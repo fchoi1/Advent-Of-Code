@@ -31,7 +31,6 @@ func (this *Triangle) getInput() {
 	}
 
 	file, _ := os.Open(inputFile)
-
 	scanner := bufio.NewScanner(file)
 	i := 0
 
