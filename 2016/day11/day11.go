@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -13,8 +12,8 @@ import (
 type Elevator struct {
 	UseTest      bool
 	Floors       map[int]Floor
-	steps        int
 	permutations []string
+	currFloorId  int
 }
 type Floor struct {
 	id    int
@@ -34,7 +33,6 @@ func (this *Elevator) getInput() {
 	this.Floors = make(map[int]Floor)
 	for scanner.Scan() {
 		line := scanner.Text()
-
 		newFloor := Floor{
 			id:    floor,
 			gens:  []string{},
@@ -104,9 +102,6 @@ func generatePermutations(items []string) [][]string {
 	generate(len(items), items)
 	return result
 }
-func permutations(input []string) [][]string {
-	return generatePermutations(input)
-}
 
 func generatePairs(items []string) [][]string {
 	var result [][]string
@@ -126,12 +121,29 @@ func generatePairs(items []string) [][]string {
 
 func getItems(floor Floor) [][]string {
 	var itemList []string
+	var remove []string
+	var pairs int
+	lookup := make(map[string]bool)
+
 	for _, chip := range floor.chips {
 		itemList = append(itemList, "c-"+chip)
+		lookup[chip] = true
 	}
+
 	for _, gen := range floor.gens {
 		itemList = append(itemList, "g-"+gen)
+		_, exists := lookup[gen]
+		if exists {
+			pairs++
+			if pairs > 2 {
+				remove = append(remove, "g-"+gen, "c-"+gen)
+			}
+		}
 	}
+	for _, item := range remove {
+		itemList = removeElement(itemList, item)
+	}
+
 	movableItems := generatePairs(itemList)
 	for _, str := range itemList {
 		movableItems = append(movableItems, []string{str})
@@ -139,7 +151,7 @@ func getItems(floor Floor) [][]string {
 	return movableItems
 }
 
-func checkElevator(elevator Elevator, floorId int) (bool, bool) {
+func checkElevator(elevator Elevator) (bool, bool) {
 	allDone := true
 	for floorNum, floor := range elevator.Floors {
 		lookup := make(map[string]bool)
@@ -187,27 +199,25 @@ func generateKey(elevator Elevator, strKey string, useMap bool, permMap map[stri
 	return strKey
 }
 
-func isRepeat(floor int, elevator Elevator, visited map[string]int, step int) bool {
+func isRepeat(elevator Elevator, visited map[string]bool) bool {
 	length := len(elevator.permutations)
-	perms := permutations(elevator.permutations)
-	key := generateKey(elevator, strconv.Itoa(floor)+":", false, make(map[string]string))
-	visitedStep, exists := visited[key]
-	if exists && step >= visitedStep {
+	perms := generatePermutations(elevator.permutations)
+	key := generateKey(elevator, strconv.Itoa(elevator.currFloorId)+":", false, make(map[string]string))
+	_, exists := visited[key]
+	if exists {
 		return true
-	} else if exists {
-		visited[key] = step
 	}
 	// 5 objects = 120 permutations
 	// 6 objects = 720 permutations
 	for _, permutation := range perms {
 		permMap := make(map[string]string)
-		strKey := strconv.Itoa(floor) + ":"
+		strKey := strconv.Itoa(elevator.currFloorId) + ":"
 
 		for i := 0; i < length; i++ {
 			permMap[elevator.permutations[i]] = permutation[i]
 		}
 		strKey = generateKey(elevator, strKey, true, permMap)
-		visited[strKey] = step
+		visited[strKey] = true
 	}
 	return false
 }
@@ -237,82 +247,80 @@ func min(a, b int) int {
 	return b
 }
 
-func (this *Elevator) moveChips(items []string, floorId int, elevator Elevator, steps int, visited map[string]int) {
-	if steps > 500 || steps > this.steps {
-		// fmt.Println("pasted steps", steps)
-		return
-	}
+func (this *Elevator) moveChips(elevator Elevator) int {
+	var queue []Elevator
+	visited := make(map[string]bool)
+	steps := 1
+	queue = append(queue, elevator)
 
-	currentFloor := elevator.Floors[floorId]
-	for _, item := range items { // put items in floor and check
-		itemType, name := strings.Split(item, "-")[0], strings.Split(item, "-")[1]
-		if itemType == "g" {
-			currentFloor.gens = append(currentFloor.gens, name)
-		} else {
-			currentFloor.chips = append(currentFloor.chips, name)
-		}
-	}
-	elevator.Floors[floorId] = currentFloor
+	for len(queue) > 0 {
+		fmt.Println("STEP", steps)
+		temp := []Elevator{}
 
-	chipInGen, allDone := checkElevator(elevator, floorId)
-	// fmt.Println("step", steps, "FLOOR", floorId, "Elevator after", elevator)
-
-	if !chipInGen {
-		// fmt.Println("chipInGen", elevator, steps)
-		return
-	}
-	if allDone {
-		this.steps = min(this.steps, steps)
-		// fmt.Println("DONE this", steps, "this", elevator)
-		return
-	}
-
-	isRepeat := isRepeat(floorId, elevator, visited, steps)
-
-	if isRepeat {
-		// fmt.Println("isRepeat", elevator, steps)
-		return
-	}
-
-	movableItems := getItems(currentFloor)
-	for _, newFloorId := range []int{floorId + 1, floorId - 1} {
-		if newFloorId < 1 || newFloorId > 4 {
-			continue
-		}
-		for _, items := range movableItems {
-			newElevator := Elevator{
-				UseTest:      elevator.UseTest,
-				steps:        elevator.steps,
-				permutations: make([]string, len(elevator.permutations)),
-				Floors:       make(map[int]Floor),
-			}
-			copy(newElevator.permutations, elevator.permutations)
-			for key, floor := range elevator.Floors {
-				newElevator.Floors[key] = deepCopyFloor(floor)
-			}
-			newFloor := newElevator.Floors[floorId]
-
-			for _, item := range items {
-				itemType, name := strings.Split(item, "-")[0], strings.Split(item, "-")[1]
-				if itemType == "g" {
-					newFloor.gens = removeElement(newFloor.gens, name)
-				} else {
-					newFloor.chips = removeElement(newFloor.chips, name)
+		for _, elevator := range queue {
+			floorId := elevator.currFloorId
+			currentFloor := elevator.Floors[floorId]
+			movableItems := getItems(currentFloor)
+			move2up := false
+			move1down := false
+			for _, newFloorId := range []int{floorId + 1, floorId - 1} {
+				if newFloorId < 1 || newFloorId > 4 {
+					continue
 				}
-				// fmt.Println(floorId, "newFloor after", newFloor)
-			}
-			newElevator.Floors[floorId] = newFloor
-			// fmt.Println("calling again", newFloorId, newElevator.Floors, items, "steps", steps)
-			this.moveChips(items, newFloorId, newElevator, steps+1, visited)
-		}
-	}
+				for _, items := range movableItems {
+					newElevator := Elevator{
+						UseTest:      elevator.UseTest,
+						permutations: make([]string, len(elevator.permutations)),
+						Floors:       make(map[int]Floor),
+						currFloorId:  newFloorId,
+					}
+					copy(newElevator.permutations, elevator.permutations)
+					for key, floor := range elevator.Floors {
+						newElevator.Floors[key] = deepCopyFloor(floor)
+					}
+					removeFloor := newElevator.Floors[floorId]
+					addFloor := newElevator.Floors[newFloorId]
 
+					// Move items to new floor
+					for _, item := range items {
+						itemType, name := strings.Split(item, "-")[0], strings.Split(item, "-")[1]
+						if itemType == "g" {
+							removeFloor.gens = removeElement(removeFloor.gens, name)
+							addFloor.gens = append(addFloor.gens, name)
+						} else {
+							removeFloor.chips = removeElement(removeFloor.chips, name)
+							addFloor.chips = append(addFloor.chips, name)
+						}
+					}
+					newElevator.Floors[floorId] = removeFloor
+					newElevator.Floors[newFloorId] = addFloor
+
+					isRepeat := isRepeat(newElevator, visited)
+					chipInGen, allDone := checkElevator(newElevator)
+					if newFloorId > floorId && len(items) == 2 {
+						move2up = true
+					}
+					if newFloorId < floorId && len(items) == 1 {
+						move1down = true
+					}
+					if isRepeat || !chipInGen || (move2up && len(items) == 1) || (move1down && len(items) == 2) {
+						continue
+					}
+					if allDone {
+						return steps
+					}
+					temp = append(temp, newElevator)
+				}
+			}
+		}
+		queue = temp
+		steps++
+	}
+	return 0
 }
 
 func (this *Elevator) getMinSteps(isPart2 bool) int {
-	this.steps = math.MaxInt64
 	elevator := *this
-
 	if isPart2 {
 		floor := elevator.Floors[1]
 		floor.gens = append(floor.gens, "el", "di")
@@ -321,20 +329,16 @@ func (this *Elevator) getMinSteps(isPart2 bool) int {
 		elevator.Floors[1] = floor
 	}
 	fmt.Println(elevator.Floors)
-
-	this.moveChips([]string{}, 1, elevator, 0, make(map[string]int))
-	fmt.Println("fin", this)
-	return this.steps
+	return this.moveChips(elevator)
 }
 
 func main() {
 	elevator := &Elevator{
-		UseTest: false,
-		steps:   math.MaxInt64,
+		UseTest:     false,
+		currFloorId: 1,
 	}
 	elevator.getInput()
 	fmt.Println("Day 11 part 1:", elevator.getMinSteps(false))
-	// fmt.Println("Day 11 part 2:", elevator.getMinSteps(true))
-
-	// fmt.Println("Day 11 part 2:", Elevator.getProduct())
+	fmt.Println("Day 11 part 2:", elevator.getMinSteps(true))
+	//  Total Runtime 1026 seconds
 }
