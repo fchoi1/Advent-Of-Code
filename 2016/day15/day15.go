@@ -9,12 +9,12 @@ import (
 	"strings"
 )
 
-type Pad struct {
+type Capsule struct {
 	UseTest bool
 	Discs   [][]int
 }
 
-func (this *Pad) getInput() {
+func (this *Capsule) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -34,7 +34,7 @@ func (this *Pad) getInput() {
 	defer file.Close()
 }
 
-func (this *Pad) getTime(isPart2 bool) int {
+func (this *Capsule) getTime(isPart2 bool) int {
 	if isPart2 {
 		this.Discs = append(this.Discs, []int{11, 0})
 	}
@@ -60,11 +60,10 @@ func (this *Pad) getTime(isPart2 bool) int {
 }
 
 func main() {
-	pad := &Pad{
+	capsule := &Capsule{
 		UseTest: false,
 	}
-	pad.getInput()
-	fmt.Println("Day 14 part 1:", pad.getTime(false))
-	fmt.Println("Day 14 part 2:", pad.getTime(true))
-	//Total Runtime ~ 8.8s
+	capsule.getInput()
+	fmt.Println("Day 15 part 1:", capsule.getTime(false))
+	fmt.Println("Day 15 part 2:", capsule.getTime(true))
 }
