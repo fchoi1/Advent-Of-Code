@@ -91,7 +91,6 @@ func (this *Factory) getInput() {
 	if this.UseTest {
 		inputFile = "input-test.txt"
 	}
-
 	file, _ := os.Open(inputFile)
 	scanner := bufio.NewScanner(file)
 
@@ -110,7 +109,6 @@ func (this *Factory) getInput() {
 
 			Bot := this.getOrCreateBot(botNum)
 			this.Values[value] = Bot
-
 		} else {
 			botNum, _ := strconv.Atoi(splitted[1])
 			botLow, _ := strconv.Atoi(splitted[6])
@@ -119,15 +117,12 @@ func (this *Factory) getInput() {
 			isOutput2 := splitted[10] == "output"
 
 			Bot := this.getOrCreateBot(botNum)
-
 			var newLow, newHigh interface{}
-
 			if isOutput1 {
 				newLow = this.getOrCreateOutput(botLow)
 			} else {
 				newLow = this.getOrCreateBot(botLow)
 			}
-
 			if isOutput2 {
 				newHigh = this.getOrCreateOutput(botHigh)
 			} else {
