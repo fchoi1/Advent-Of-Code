@@ -101,6 +101,6 @@ func main() {
 	}
 	computer.getInput()
 	computer.blacklistIPs()
-	fmt.Println("Day 19 part 1:", computer.getLowestIP())
-	fmt.Println("Day 19 part 2:", computer.getBlacklistCount())
+	fmt.Println("Day 20 part 1:", computer.getLowestIP())
+	fmt.Println("Day 20 part 2:", computer.getBlacklistCount())
 }
