@@ -13,6 +13,7 @@ import (
 type Storage struct {
 	UseTest  bool
 	NodeMap  map[string]Node
+	adjMap   map[string][]Node
 	NodeList []Node
 	zeroNode Node
 	goalNode Node
@@ -65,7 +66,6 @@ func (this *Storage) getInput() {
 		this.width, this.height = x+1, y+1
 		this.NodeList = append(this.NodeList, newNode)
 	}
-	fmt.Println("zero", this.zeroNode, this.goalNode)
 	defer file.Close()
 }
 
@@ -122,55 +122,117 @@ func (this *Storage) getPairs() int {
 	return pairs
 }
 
-func (this *Storage) findGoalPaths() [][]Node {
-	visited := make(map[string]bool)
-	paths := [][]Node{}
-	dirMap := [][]int{
-		{0, -1},
-		{0, 1},
-		{1, 0},
-		{-1, 0},
-	}
-	var findPath func(node Node, path []Node)
-	findPath = func(node Node, path []Node) {
-		fmt.Println("node                   :", node.key)
-
-		if node.key == "0,0" {
-			paths = append(paths, path)
-			return
-		}
-
+func (this *Storage) generateAdjacencyMap() {
+	this.adjMap = make(map[string][]Node)
+	dirMap := [][]int{{0, -1}, {0, 1}, {1, 0}, {-1, 0}}
+	for _, node := range this.NodeList {
 		for _, dir := range dirMap {
 			newX, newY := dir[0]+node.x, dir[1]+node.y
 			if newX >= 0 && newX < this.width && newY >= 0 && newY < this.height {
 				key := strconv.Itoa(newX) + "," + strconv.Itoa(newY)
 				newNode := this.NodeMap[key]
-				fmt.Println("jeyu", key)
+				if node.used <= newNode.size {
+					this.adjMap[node.key] = append(this.adjMap[node.key], newNode)
+				}
+			}
+		}
+	}
+}
 
-				if newNode.size < this.goalNode.used || visited[key] {
+func (this *Storage) bfs(start Node, end Node, visited map[string]bool) int {
+	// visited has the current goal node inside
+	steps := 0
+	queue := []Node{start}
+	for len(queue) > 0 {
+		temp := []Node{}
+		for _, curr := range queue {
+			fmt.Println(curr.key)
+			if curr == end {
+				return steps
+			}
+			for _, node := range this.adjMap[curr.key] {
+				if visited[node.key] {
 					continue
 				}
-
-				newPath := copyPath(path)
 				visited[node.key] = true
-				newPath = append(newPath, newNode)
-				visited[newNode.key] = false
-				findPath(newNode, newPath)
+				temp = append(temp, node)
+			}
+		}
+		steps++
+		queue = temp
+	}
+	fmt.Println("not found in bfs")
+	return -1
+}
 
-				// path = append(path, newNode)
-				// findPath(newNode, path)
-				// path = path[:len(path)-1]
+// func (this *Storage) findGoalPaths() [][]Node { // ??? on straight line???
+// 	visited := make(map[string]bool)
+// 	visited[this.goalNode.key] = true
+// 	paths := [][]Node{}
+// 	var findPath func(node Node, path []Node, visited map[string]bool)
+// 	findPath = func(currNode Node, path []Node, visited map[string]bool) {
+// 		if currNode.key == "0,0" {
+// 			paths = append(paths, copyPath(path))
+// 			return
+// 		}
+
+// 		_, exists := this.adjMap[currNode.key]
+// 		if !exists {
+// 			return
+// 		}
+// 		visited[currNode.key] = true
+// 		for _, node := range this.adjMap[currNode.key] {
+// 			if visited[node.key] {
+// 				continue
+// 			}
+// 			if node.x > currNode.x {
+// 				// fmt.Println("why go right?")
+// 			}
+// 			// Backtrack
+// 			path = append(path, node)
+// 			// visited[currNode.key] = true
+
+// 			findPath(node, path, visited)
+// 			// visited[node.key] = false
+// 			path = path[:len(path)-1]
+// 		}
+// 		visited[currNode.key] = false
+
+// 	}
+// 	findPath(this.goalNode, []Node{this.goalNode}, visited)
+// 	return paths
+// }
+
+func printPath(paths [][]Node) {
+
+	for i, path := range paths {
+		coords := []string{}
+		fmt.Println("path #", i)
+		for _, node := range path {
+			coords = append(coords, node.key)
+		}
+		fmt.Println(coords)
+	}
+}
+func (this *Storage) getLeastSteps() int {
+
+	this.generateAdjacencyMap()
+
+	currNode := this.goalNode
+	path := []Node{}
+	for currNode != this.NodeMap["0,0"] {
+		fmt.Println("curr", currNode.key)
+		path = append(path, currNode)
+		for _, node := range this.adjMap[currNode.key] {
+			if node.x < currNode.x {
+				currNode = node
+				break
 			}
 		}
 	}
 
-	findPath(this.goalNode, []Node{this.goalNode})
-	fmt.Println("paths", len(paths))
-	return paths
+	fmt.Println("path", len(path), path)
 
-}
-
-func (this *Storage) getLeastSteps() int {
 	//bfs
 	// key position of goal and empty disk
 	// exit when 0,0 is empty and goal is beside exit
@@ -183,9 +245,20 @@ func (this *Storage) getLeastSteps() int {
 	maxSize := this.zeroNode.avail
 	goalSize := this.goalNode.used
 	fmt.Println("sizes", maxSize, goalSize)
+	// fmt.Println("shortest", this.bfs(this.NodeMap["0,0"], this.goalNode, make(map[string]bool)))
+	fmt.Println("shortest", this.bfs(this.zeroNode, this.goalNode, make(map[string]bool)))
 
-	paths := this.findGoalPaths()
-	fmt.Println("paths", paths)
+	// paths := this.findGoalPaths()
+	// fmt.Println("num pahts", len(paths))
+	// printPath(paths)
+
+	// for i, path := range paths {
+	// 	fmt.Println("path #", i)
+	// 	for _, node := range path {
+	// 		fmt.Println(node.key)
+
+	// 	}
+	// }
 
 	// make map to exclude any data that can't be transferred
 	return 1
@@ -193,7 +266,7 @@ func (this *Storage) getLeastSteps() int {
 
 func main() {
 	storage := &Storage{
-		UseTest: true,
+		UseTest: false,
 	}
 	storage.getInput()
 	fmt.Println("Day 22 part 1:", storage.getPairs())
