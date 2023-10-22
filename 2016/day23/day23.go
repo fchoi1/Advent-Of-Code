@@ -45,7 +45,6 @@ func toggle(index int, command []string) {
 			command[0] = "jnz"
 		}
 	}
-
 }
 func (this *Program) runProgram() {
 	index := 0
