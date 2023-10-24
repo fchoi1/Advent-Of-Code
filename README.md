@@ -22,6 +22,15 @@ if __name__ == "__main__":
 const solution = new Solution(true);
 ```
 
+```
+# Golang
+func main() {
+	solution := &Solution{
+		UseTest: true,
+	}
+}
+```
+
 ## Completed
 
 - [x] [2022](2022) (Python)
@@ -30,7 +39,7 @@ const solution = new Solution(true);
 - [ ] [2019](2019)
 - [ ] [2018](2018)
 - [ ] [2017](2017)
-- [ ] [2016](2016) (Golang???)
+- [x] [2016](2016) (Golang)
 - [x] [2015](2015) (Javascript) 
 
 ## AOC 2022
