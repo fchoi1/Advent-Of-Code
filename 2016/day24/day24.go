@@ -107,10 +107,6 @@ func (this *HVAC) bfs(start, goal []int) int {
 }
 
 func (this *HVAC) getShortestPath(curr int, visited map[int]bool, totalCost int, isPart2 bool) {
-	if visited[curr] {
-		return
-	}
-	visited[curr] = true
 	if len(visited) == len(this.Locations) {
 		if isPart2 {
 			totalCost += this.adjMap[curr][0]
@@ -122,6 +118,7 @@ func (this *HVAC) getShortestPath(curr int, visited map[int]bool, totalCost int,
 		if visited[path] {
 			continue
 		}
+		visited[path] = true
 		this.getShortestPath(path, visited, totalCost+cost, isPart2)
 		delete(visited, path)
 	}
