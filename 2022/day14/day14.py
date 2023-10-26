@@ -58,15 +58,6 @@ class Cave:
                 grid[height] = ["X" for _ in grid[height]]
         return grid
 
-    def printGrid(
-        self, grid: List[List[str]], startX: int = -1, endX: int = -1
-    ) -> None:
-        for row in grid:
-            if startX == -1 or endX == -1:
-                print(row)
-            else:
-                print(row[startX:endX])
-
     def countSand1(self) -> int:
         sandPos = self.defaultSandDrop
         self.grid1[sandPos[1]][sandPos[0]] = "+"
