@@ -2,7 +2,7 @@ from typing import List, Optional
 
 
 class Captcha:
-    def getInput(self) -> List[str]:
+    def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
             return [int(x.strip()) for x in file1.readline()]
