@@ -89,5 +89,5 @@ class Circus:
 
 if __name__ == "__main__":
     circus = Circus()
-    print("Day 6 part 1:", circus.getRoot())
-    print("Day 6 part 2:", circus.getCorrectWeight())
+    print("Day 7 part 1:", circus.getRoot())
+    print("Day 7 part 2:", circus.getCorrectWeight())
