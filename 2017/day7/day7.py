@@ -8,7 +8,7 @@ class Node:
         self.val = val
         self.children = {}
 
-    def addChildren(self, node: "Node"):
+    def addChildren(self, node: "Node") -> None:
         self.children[node.name] = node
 
 
@@ -49,20 +49,20 @@ class Circus:
             totalWeight += self.getWieght(node)
         return currNode.val + totalWeight
 
-    def checkWieghts(self, currNode: "Node", foundMissing: Optional[bool] = False):
+    def checkWieghts(self, currNode: "Node", found: Optional[bool] = False) -> None:
         if not currNode.children:
             return
         weights = []
         for node in currNode.children.values():
             weights.append((self.getWieght(node), node))
         counts = Counter(item[0] for item in weights)
-        if len(counts) > 1: 
+        if len(counts) > 1:
             unique = next((item for item in weights if counts[item[0]] == 1), None)
             commonVal = next((item[0] for item in weights if counts[item[0]] > 1), None)
             self.diff = unique[1].val - (unique[0] - commonVal)
             self.checkWieghts(unique[1], True)
             return
-        if foundMissing:
+        if found:
             return
         for node in currNode.children.values():
             self.checkWieghts(node)
