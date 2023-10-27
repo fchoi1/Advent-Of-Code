@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 from collections import Counter
 
 
@@ -13,7 +13,7 @@ class Node:
 
 
 class Circus:
-    def getInput(self) -> List[List[str]]:
+    def getInput(self) -> Dict[str, Node]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         nodeMap = {}
         with open(inputFile, "r") as file1:
@@ -41,7 +41,7 @@ class Circus:
         self.root = self.getRoot()
         self.diff = 0
 
-    def getWieght(self, currNode: "Node") -> int:
+    def getWieght(self, currNode: Node) -> int:
         if not currNode.children:
             return currNode.val
         totalWeight = 0
@@ -49,7 +49,7 @@ class Circus:
             totalWeight += self.getWieght(node)
         return currNode.val + totalWeight
 
-    def checkWieghts(self, currNode: "Node", found: Optional[bool] = False) -> None:
+    def checkWieghts(self, currNode: Node, found: Optional[bool] = False) -> None:
         if not currNode.children:
             return
         weights = []
