@@ -1,11 +1,9 @@
-from typing import List, Optional, Tuple, Union, Dict
-from collections import deque
+from typing import Optional
 
 
 class Stream:
     def getInput(self) -> str:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-
         with open(inputFile, "r") as file1:
             return file1.readline().strip()
 
@@ -15,7 +13,7 @@ class Stream:
         self.score = self.garbage = 0
         self.calculateStream(0, 0)
 
-    def calculateStream(self, index: int, level: int) -> Tuple[int]:
+    def calculateStream(self, index: int, level: int) -> None:
         garbage = False
         while index < len(self.stream):
             sym = self.stream[index]
