@@ -22,29 +22,24 @@ class HexGrid:
         return self.maxDist
 
     def runSteps(self) -> None:
+        stepDir = {
+            "n": (0, 1, 1),
+            "s": (0, -1, -1),
+            "ne": (1, 1, 0),
+            "nw": (-1, 0, 1),
+            "se": (1, 0, -1),
+            "sw": (-1, -1, 0),
+        }
+
         for step in self.steps:
-            if step == "n":
-                self.pos[1] += 1
-                self.pos[2] += 1
-            elif step == "s":
-                self.pos[1] -= 1
-                self.pos[2] -= 1
-            elif step == "ne":
-                self.pos[0] += 1
-                self.pos[1] += 1
-            elif step == "nw":
-                self.pos[0] -= 1
-                self.pos[2] += 1
-            elif step == "se":
-                self.pos[0] += 1
-                self.pos[2] -= 1
-            elif step == "sw":
-                self.pos[0] -= 1
-                self.pos[1] -= 1
+            dx, dy, dz = stepDir[step]
+            self.pos[0] += dx
+            self.pos[1] += dy
+            self.pos[2] += dz
             self.maxDist = max(self.maxDist, self.getDistance())
 
 
 if __name__ == "__main__":
     hexGrid = HexGrid()
     print("Day 11 part 1:", hexGrid.getDistance())
-    print("Day 10 part 2:", hexGrid.getMaxDistance())
+    print("Day 11 part 2:", hexGrid.getMaxDistance())
