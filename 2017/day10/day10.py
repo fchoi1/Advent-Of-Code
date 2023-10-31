@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 from functools import reduce
 
@@ -5,29 +6,32 @@ from functools import reduce
 class Knot:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        with open(inputFile, "r") as file1:
+        scriptDir = os.path.dirname(
+            os.path.abspath(__file__)
+        )  # need absolute path for day 14
+        filePath = os.path.join(scriptDir, inputFile)
+        with open(filePath, "r") as file1:
             return [int(x) for x in file1.readline().strip().split(",")]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.lengths = self.getInput()
-        self.newLengths = self.getNewLengths()
-        self.length = 5 if useTest else 256
+        self.length = 256
         self.firstTwo = 0
 
-    def reset(self) -> None:
-        self.hash = [i for i in range(self.length)]
+    def reset(self, isPart2: Optional[bool] = False) -> None:
+        length = 5 if self.useTest and not isPart2 else 256
+        self.hash = [i for i in range(length)]
         self.skip = self.index = 0
 
-    def getNewLengths(self) -> List[int]:
-        string = ",".join(map(str, self.lengths))
+    def getNewLengths(self, string: str) -> List[int]:
         lengths = [ord(char) for char in string]
         lengths += [17, 31, 73, 47, 23]
         return lengths
 
     def reverseSubset(self, start: int, end: int) -> None:
-        if end > self.length:
-            end %= self.length
+        if end > len(self.hash):
+            end %= len(self.hash)
             sublist = list(reversed(self.hash[start:] + self.hash[:end]))
             self.hash[start:] = sublist[: len(self.hash) - start]
             self.hash[:end] = sublist[len(self.hash) - start :]
@@ -38,7 +42,7 @@ class Knot:
         for l in lengths:
             subset = self.index + l
             self.reverseSubset(self.index, subset)
-            self.index = (subset + self.skip) % self.length
+            self.index = (subset + self.skip) % len(self.hash)
             self.skip += 1
         self.firstTwo = self.hash[0] * self.hash[1]
 
@@ -50,18 +54,23 @@ class Knot:
     def densitfy(self, hashList: List[int]) -> int:
         return reduce(lambda x, y: x ^ y, hashList)
 
-    def generateKnotHash(self) -> str:
-        self.reset()
-        str = ""
+    def generateKnotHash(self, string: Optional[str] = "") -> str:
+        self.reset(True)
+        newLengths = (
+            self.getNewLengths(string)
+            if string
+            else self.getNewLengths(",".join(map(str, self.lengths)))
+        )
+        stringHash = ""
         for _ in range(64):
-            self.runLengths(self.newLengths)
+            self.runLengths(newLengths)
         for i in range(self.length // 16):
             val = self.densitfy(self.hash[i * 16 : (i + 1) * 16])
-            str += format(val, "02x")
-        return str
+            stringHash += format(val, "02x")
+        return stringHash
 
 
 if __name__ == "__main__":
-    knot = Knot()
+    knot = Knot(True)
     print("Day 10 part 1:", knot.getFirstTwo())
     print("Day 10 part 2:", knot.generateKnotHash())

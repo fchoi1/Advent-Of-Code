@@ -45,3 +45,7 @@ yarn-error.log
 
 # Go workspace file
 go.work
+
+
+*.pyc
+__pycache__
