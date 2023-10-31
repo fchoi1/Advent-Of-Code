@@ -25,7 +25,7 @@ class Knot:
         lengths += [17, 31, 73, 47, 23]
         return lengths
 
-    def reverseSubset(self, start: int, end: int):
+    def reverseSubset(self, start: int, end: int) -> None:
         if end > self.length:
             end %= self.length
             sublist = list(reversed(self.hash[start:] + self.hash[:end]))
