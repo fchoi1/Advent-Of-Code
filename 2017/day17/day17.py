@@ -16,7 +16,6 @@ class Spinlock:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.step = self.getInput()
-        self.pos = 0
 
     def getPosition(self) -> int:
         node = Node(0)
@@ -30,8 +29,7 @@ class Spinlock:
         return node.next.val
 
     def getPosition2(self) -> int:
-        pos1Val = 0
-        currPos = 0
+        pos1Val = currPos = 0
         for i in range(1, 50_000_000):
             currPos = ((currPos + self.step) % i + 1) % (i + 1)
             if currPos == 1:
