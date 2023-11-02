@@ -34,10 +34,10 @@ func main() {
 ## Completed
 
 - [x] [2022](2022) (Python)
-- [ ] [2021](2021) 
+- [ ] [2021](2021)  ???
 - [x] [2020](2020) (Python)
-- [ ] [2019](2019)
-- [ ] [2018](2018)
+- [ ] [2019](2019) (Golang - not started)
+- [ ] [2018](2018) (Javascript - not started)
 - [x] [2017](2017) (Python - in progress)
 - [x] [2016](2016) (Golang)
 - [x] [2015](2015) (Javascript) 
