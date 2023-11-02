@@ -18,6 +18,15 @@ class Spinlock:
         self.step = self.getInput()
         self.pos = 0
 
+    def printNode(self, node):
+        val = node.val
+        node = node.next
+        arr = [val]
+        while node.val != val:
+            arr.append(node.val)
+            node = node.next
+        print(arr)
+
     def getPosition(self) -> int:
         node = Node(0)
         node.next = node
