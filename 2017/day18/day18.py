@@ -1,55 +1,112 @@
-from typing import Optional
+from typing import Optional, List, Union, Deque, Dict
+from collections import defaultdict, deque
 
 
-class Node:
-    def __init__(self, val: int) -> None:
-        self.val = val
-        self.next = None
-
-
-class Spinlock:
-    def getInput(self) -> int:
+class Duet:
+    def getInput(self) -> List[Union[str, int]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
+        commands = []
         with open(inputFile, "r") as file1:
-            return int(file1.readline().strip())
+            for line in file1.readlines():
+                line = line.strip().split(" ")
+                try:
+                    line[1] = int(line[1])
+                except ValueError:
+                    line[1] = line[1]
+                if len(line) == 3:
+                    try:
+                        line[2] = int(line[2])
+                    except ValueError:
+                        line[2] = line[2]
+                commands.append(line)
+        return commands
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
-        self.step = self.getInput()
-        self.pos = 0
+        self.commands = self.getInput()
+        self.recover = self.count = 0
 
-    def printNode(self, node):
-        val = node.val
-        node = node.next
-        arr = [val]
-        while node.val != val:
-            arr.append(node.val)
-            node = node.next
-        print(arr)
+    def getRecover(self) -> int:
+        register = defaultdict(int)
+        index = recover = 0
+        while 0 <= index < len(self.commands):
+            cmd = self.commands[index]
+            if cmd[0] in ["snd", "rcv"]:
+                val = cmd[1] if isinstance(cmd[1], int) else register[cmd[1]]
+            else:
+                val = cmd[2] if isinstance(cmd[2], int) else register[cmd[2]]
+            if cmd[0] == "snd":
+                recover = val
+            elif cmd[0] == "rcv":
+                if val != 0:
+                    return recover
+            elif cmd[0] == "set":
+                register[cmd[1]] = val
+            elif cmd[0] == "add":
+                register[cmd[1]] += val
+            elif cmd[0] == "mul":
+                register[cmd[1]] *= val
+            elif cmd[0] == "mod":
+                register[cmd[1]] %= val
+            elif cmd[0] == "jgz":
+                jmp = cmd[1] if isinstance(cmd[1], int) else register[cmd[1]]
+                if jmp > 0:
+                    index += val
+                    continue
+            index += 1
+        return recover
 
-    def getPosition(self) -> int:
-        node = Node(0)
-        node.next = node
-        for i in range(1, 2018):
-            for _ in range(self.step):
-                node = node.next
-            newNode = Node(i)
-            node.next, newNode.next = newNode, node.next
-            node = newNode
-        return node.next.val
+    def runProgram(
+        self,
+        i: int,
+        register: Dict[str, int],
+        send: Deque[int],
+        recieve: Deque[int],
+        count: bool,
+    ) -> int:
+        while 0 <= i < len(self.commands):
+            cmd = self.commands[i]
+            if cmd[0] in ["snd", "rcv"]:
+                val = cmd[1] if isinstance(cmd[1], int) else register[cmd[1]]
+            else:
+                val = cmd[2] if isinstance(cmd[2], int) else register[cmd[2]]
+            if cmd[0] == "snd":
+                if count:
+                    self.count += 1
+                send.append(val)
+            elif cmd[0] == "rcv":
+                if recieve:
+                    register[cmd[1]] = recieve.popleft()
+                else:
+                    return i
+            elif cmd[0] == "set":
+                register[cmd[1]] = val
+            elif cmd[0] == "add":
+                register[cmd[1]] += val
+            elif cmd[0] == "mul":
+                register[cmd[1]] *= val
+            elif cmd[0] == "mod":
+                register[cmd[1]] %= val
+            elif cmd[0] == "jgz":
+                jmp = cmd[1] if isinstance(cmd[1], int) else register[cmd[1]]
+                if jmp > 0:
+                    i += val
+                    continue
+            i += 1
+        return i
 
-    def getPosition2(self) -> int:
-        pos1Val = 0
-        currPos = 0
-        for i in range(1, 50_000_000):
-            currPos = ((currPos + self.step) % i + 1) % (i + 1)
-            if currPos == 1:
-                pos1Val = i
-        return pos1Val
+    def countSends(self) -> int:
+        queue0, queue1 = deque(), deque()
+        register1, register0 = defaultdict(lambda: 1), defaultdict(int)
+        p0 = self.runProgram(0, register1, queue1, queue0, False)
+        p1 = self.runProgram(0, register0, queue0, queue1, True)
+        while queue0 or queue1:
+            p0 = self.runProgram(p0, register1, queue1, queue0, False)
+            p1 = self.runProgram(p1, register0, queue0, queue1, True)
+        return self.count
 
 
 if __name__ == "__main__":
-    spinlock = Spinlock()
-    print("Day 17 part 1:", spinlock.getPosition())
-    print("Day 17 part 2:", spinlock.getPosition2())
-    # Total Runtime ~6.15s
+    duet = Duet()
+    print("Day 18 part 1:", duet.getRecover())
+    print("Day 18 part 2:", duet.countSends())
