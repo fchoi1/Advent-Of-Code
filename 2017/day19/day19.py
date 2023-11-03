@@ -55,6 +55,6 @@ class Tubes:
 
 
 if __name__ == "__main__":
-    tubes = Tubes(True)
+    tubes = Tubes()
     print("Day 19 part 1:", tubes.getPath())
     print("Day 19 part 1:", tubes.getSteps())
