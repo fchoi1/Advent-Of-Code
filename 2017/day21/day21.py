@@ -14,10 +14,10 @@ class GPU:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.particles = self.getInput()
-        self.getPermutations()
+        self.updatePermutations()
         self.grid = [".#.", "..#", "###"]
 
-    def getPermutations(self):
+    def updatePermutations(self) -> None:
         temp = self.particles.copy()
         for key, val in temp.items():
             rows = [list(x) for x in key.split("/")]
@@ -32,8 +32,7 @@ class GPU:
         return [list(row) for row in zip(*reversed(tile))]
 
     def generateKey(self, tile: List[List[str]]) -> str:
-        key = "/".join("".join(row) for row in tile)
-        return key
+        return "/".join("".join(row) for row in tile)
 
     def findMatch(self, rowStr: int) -> str:
         if rowStr in self.particles:
@@ -41,7 +40,7 @@ class GPU:
         else:
             return ""
 
-    def updateGrid(self, grid: List[List[str]], size: int):
+    def updateGrid(self, grid: List[List[str]], size: int) -> None:
         self.grid = [
             "".join([string.split("/")[i] for string in row])
             for row in grid
@@ -51,7 +50,7 @@ class GPU:
     def increaseGrid(self, grid: List[List[str]]) -> List[List[str]]:
         return [[self.findMatch(string) for string in row] for row in grid]
 
-    def getKeys(self, size: int):
+    def getKeys(self, size: int) -> List[List[str]]:
         pGrid = []
         for j in range(0, len(self.grid), size):
             pRows = []
