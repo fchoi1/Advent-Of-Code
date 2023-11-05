@@ -1,7 +1,7 @@
 from typing import Optional, Set, Tuple, List
 
 
-class GPU:
+class Virus:
     def getInput(self) -> List[List[str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
@@ -56,7 +56,7 @@ class GPU:
 
 
 if __name__ == "__main__":
-    gpu = GPU()
-    print("Day 22 part 1:", gpu.countBursts())
-    print("Day 22 part 2:", gpu.countBursts(True))
+    virus = Virus()
+    print("Day 22 part 1:", virus.countBursts())
+    print("Day 22 part 2:", virus.countBursts(True))
     # Total runtime ~5 seconds
