@@ -14,13 +14,19 @@ class GPU:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.particles = self.getInput()
+        self.getPermutations()
         self.grid = [".#.", "..#", "###"]
-        self.size = 3
-        print("init")
 
     def getPermutations(self):
-        for
-        pass
+        temp = self.particles.copy()
+        for key, val in temp.items():
+            rows = [list(x) for x in key.split("/")]
+            for _ in range(4):
+                rotated = self.rotate(rows)
+                flipped = rotated[::-1]
+                self.particles[self.generateKey(rotated)] = val
+                self.particles[self.generateKey(flipped)] = val
+                rows = rotated
 
     def rotate(self, tile: List[List[str]]) -> str:
         return [list(row) for row in zip(*reversed(tile))]
@@ -30,24 +36,17 @@ class GPU:
         return key
 
     def findMatch(self, rowStr: int) -> str:
-        rows = [list(x) for x in rowStr.split("/")]
-        for _ in range(4):
-            rotated = self.rotate(rows)
-            flipped = rotated[::-1]
-            if self.generateKey(rotated) in self.particles:
-                return self.particles[self.generateKey(rotated)]
-            if self.generateKey(flipped) in self.particles:
-                return self.particles[self.generateKey(flipped)]
-            rows = rotated
-        return ""
+        if rowStr in self.particles:
+            return self.particles[rowStr]
+        else:
+            return ""
 
     def updateGrid(self, grid: List[List[str]], size: int):
-        self.grid = []
-        for row in grid:
-            for i in range(size + 1):
-                rowStr = [string.split("/")[i] for string in row]
-                rowStr = "".join(rowStr)
-                self.grid.append(rowStr)
+        self.grid = [
+            "".join([string.split("/")[i] for string in row])
+            for row in grid
+            for i in range(size + 1)
+        ]
 
     def increaseGrid(self, grid: List[List[str]]) -> List[List[str]]:
         return [[self.findMatch(string) for string in row] for row in grid]
@@ -65,19 +64,16 @@ class GPU:
         return pGrid
 
     def countGrid(self, isPart2: Optional[bool] = False) -> int:
+        self.grid = [".#.", "..#", "###"]
         loops = 2 if self.useTest else 5
         if isPart2 and not self.useTest:
             loops = 18
         gridKey = []
-        print(loops)
-        for i in range(loops):
-            print(i)
-            divisor = 2 if self.size % 2 == 0 else 3
+        for _ in range(loops):
+            divisor = 2 if len(self.grid) % 2 == 0 else 3
             gridKey = self.getKeys(divisor)
             newGrid = self.increaseGrid(gridKey)
             self.updateGrid(newGrid, divisor)
-            self.size = len(self.grid)
-
         return sum(x == "#" for row in self.grid for x in row)
 
 
@@ -85,3 +81,4 @@ if __name__ == "__main__":
     gpu = GPU()
     print("Day 21 part 1:", gpu.countGrid())
     print("Day 21 part 2:", gpu.countGrid(True))
+    # Total runtime ~1.4s
