@@ -41,9 +41,7 @@ class GPU:
                 self.flagged.remove(node)
                 direction += 2
             elif node in self.infected:
-                if isPart2:
-                    self.flagged.add(node)
-                self.infected.remove(node)
+                self.flagged.add(node) if isPart2 else self.infected.remove(node)
                 direction += 1
             else:
                 if isPart2:
@@ -54,7 +52,6 @@ class GPU:
                 direction -= 1
             dx, dy = dirList[direction % 4]
             node = (node[0] + dx, node[1] + dy)
-
         return burst
 
 
