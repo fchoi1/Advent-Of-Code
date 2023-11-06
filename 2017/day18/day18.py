@@ -9,15 +9,10 @@ class Duet:
         with open(inputFile, "r") as file1:
             for line in file1.readlines():
                 line = line.strip().split(" ")
-                try:
-                    line[1] = int(line[1])
-                except ValueError:
-                    line[1] = line[1]
-                if len(line) == 3:
-                    try:
-                        line[2] = int(line[2])
-                    except ValueError:
-                        line[2] = line[2]
+                line[1:] = [
+                    int(item) if item.lstrip("-").isdigit() else item
+                    for item in line[1:]
+                ]
                 commands.append(line)
         return commands
 

@@ -1,0 +1,5 @@
+set d 2
+set e 2
+set g d
+mul g e
+sub g b
