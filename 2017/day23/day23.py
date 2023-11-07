@@ -1,5 +1,6 @@
 from typing import Optional, List
 from collections import defaultdict
+from math import sqrt
 
 
 class Coprocessor:
@@ -20,34 +21,29 @@ class Coprocessor:
         self.useTest = useTest
         self.commands = self.getInput()
 
-    def getMulCount(self) -> int:
-        self.register = defaultdict(int)
-        self.runCommands()
-        return self.mulCount
+    def isPrime(self, n: int) -> bool:
+        if n % 2 == 0:
+            return False
+        for i in range(3, int(sqrt(n)) + 1, 2):
+            if n % i == 0:
+                return False
+        return True
 
-    def runCommands(self) -> None:
+    def runCommands(self, skip: bool) -> None:
         index = mulCount = 0
         maxLen = len(self.commands)
-        count = 0
-        while 0 <= index < 25:
-            # if count > 60:
-            #     break
-            # count += 1
+        while 0 <= index < maxLen:
             cmd = self.commands[index]
-            # print(index, cmd, self.register)
-            if index == 11:
-                self.register["e"] = abs(self.register["b"])
-                self.register["g"] = 0
-                self.register["f"] = 0
-                index = 19
-                # print("skip", self.register)
-
-            if index == 23:
-                self.register["d"] = self.register["e"]
-                self.register["g"] = 0
+            if skip and index == 19:
+                self.register["e"] = self.register["b"]
+                self.register["f"] = self.isPrime(self.register["b"])
                 index += 1
-                print("skip", self.register)
-            # break
+                continue
+
+            if skip and index == 23:
+                self.register["d"] = self.register["b"]
+                index += 1
+                continue
 
             Y = cmd[2] if isinstance(cmd[2], int) else self.register[cmd[2]]
             if cmd[0] == "set":
@@ -63,17 +59,21 @@ class Coprocessor:
                     index += Y
                     continue
             index += 1
-        print("end", self.register)
         self.mulCount = mulCount
 
     def getRegisterH(self) -> int:
         self.register = defaultdict(int)
         self.register["a"] = 1
-        self.runCommands()
+        self.runCommands(True)
         return self.register["h"]
+
+    def getMulCount(self) -> int:
+        self.register = defaultdict(int)
+        self.runCommands(False)
+        return self.mulCount
 
 
 if __name__ == "__main__":
     coprocessor = Coprocessor()
-    # print("Day 23 part 1:", coprocessor.getMulCount())
+    print("Day 23 part 1:", coprocessor.getMulCount())
     print("Day 23 part 2:", coprocessor.getRegisterH())
