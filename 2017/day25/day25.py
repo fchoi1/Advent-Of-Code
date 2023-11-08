@@ -46,7 +46,7 @@ class Moat:
             return
 
         for link in bridges[end].copy():
-            bList.append([min(end, link), max(end, link)])
+            bList.append((min(end, link), max(end, link)))
             bridges[link].discard(end)
             bridges[end].discard(link)
             self.dfs(link, strength + end + link, bList, bridges)
