@@ -38,7 +38,7 @@ func main() {
 - [x] [2020](2020) (Python)
 - [ ] [2019](2019) (Golang - not started)
 - [ ] [2018](2018) (Javascript - not started)
-- [x] [2017](2017) (Python - in progress)
+- [x] [2017](2017) (Python)
 - [x] [2016](2016) (Golang)
 - [x] [2015](2015) (Javascript) 
 
