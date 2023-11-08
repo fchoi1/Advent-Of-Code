@@ -1,19 +1,6 @@
 from typing import Optional, Tuple
 
 
-class StateAction:
-    def __init__(self, val: bool, direction: int, nextState: str) -> None:
-        self.val = val
-        self.dir = direction
-        self.next = nextState
-
-
-class State:
-    def __init__(self, zeroAction: StateAction, oneAction: StateAction) -> None:
-        self.zero = zeroAction
-        self.one = oneAction
-
-
 class Turing:
     def getInput(self) -> Tuple:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
@@ -34,17 +21,17 @@ class Turing:
         # Hardcode
         if self.useTest:
             self.states = {
-                "A": State(StateAction(True, 1, "B"), StateAction(False, -1, "B")),
-                "B": State(StateAction(True, -1, "A"), StateAction(True, 1, "A")),
+                "A": [[True, 1, "B"], [False, -1, "B"]],
+                "B": [[True, -1, "A"], [True, 1, "A"]],
             }
         else:
             self.states = {
-                "A": State(StateAction(True, 1, "B"), StateAction(False, -1, "B")),
-                "B": State(StateAction(True, -1, "C"), StateAction(False, 1, "E")),
-                "C": State(StateAction(True, 1, "E"), StateAction(False, -1, "D")),
-                "D": State(StateAction(True, -1, "A"), StateAction(True, -1, "A")),
-                "E": State(StateAction(False, 1, "A"), StateAction(False, 1, "F")),
-                "F": State(StateAction(True, 1, "E"), StateAction(True, 1, "A")),
+                "A": [[True, 1, "B"], [False, -1, "B"]],
+                "B": [[True, -1, "C"], [False, 1, "E"]],
+                "C": [[True, 1, "E"], [False, -1, "D"]],
+                "D": [[True, -1, "A"], [True, -1, "A"]],
+                "E": [[False, 1, "A"], [False, 1, "F"]],
+                "F": [[True, 1, "E"], [True, 1, "A"]],
             }
 
     def getOnes(self) -> int:
@@ -52,14 +39,14 @@ class Turing:
         state = self.begin
         pos = 0
         for _ in range(self.steps):
-            action = self.states[state].one if pos in ones else self.states[state].zero
-            ones.add(pos) if action.val else ones.discard(pos)
-            pos += action.dir
-            state = action.next
+            action = self.states[state][pos in ones]
+            ones.add(pos) if action[0] else ones.discard(pos)
+            pos += action[1]
+            state = action[2]
         return len(ones)
 
 
 if __name__ == "__main__":
     turing = Turing()
     print("Day 25 part 1:", turing.getOnes())
-    # Total runtime ~2s
+    # Total runtime ~2.3s
