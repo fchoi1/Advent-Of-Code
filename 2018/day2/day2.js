@@ -49,16 +49,15 @@ class Inventory {
   }
 
   findCorrectID() {
-    let string;
-    this.IDs.forEach((id1, index1) => {
-      this.IDs.slice(index1 + 1).forEach((id2) => {
-        const result = this.isTarget(id1, id2);
+    for (let i = 0; i < this.IDs.length; i++) {
+      for (let j = i + 1; j < this.IDs.length; j++) {
+        const result = this.isTarget(this.IDs[i], this.IDs[j]);
         if (result.isTarget) {
-          string = id1.slice(0, result.index) + id1.slice(result.index + 1);
+          return this.IDs[i].slice(0, result.index) + this.IDs[i].slice(result.index + 1);
         }
-      });
-    });
-    return string;
+      }
+    }
+    return null;
   }
 }
 
