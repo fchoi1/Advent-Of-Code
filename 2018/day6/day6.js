@@ -20,12 +20,23 @@ class Alchemical {
   constructor(useTest = false) {
     this.useTest = useTest;
     [this.coordList, this.coordSet] = this.getInput();
-    [this.width, this.height] = this.getDimensions();
+    [this.minWidth, this.width, this.minHeight, this.height] = this.getDimensions();
     this.infinite = this.filterEdges();
-    console.log(this.coordList, this.coordSet, [this.width, this.height]);
+    this.grid = {};
+    this.updateGrid();
   }
 
-  getClosest(start) {
+  inBounds([x, y]) {
+    return x >= this.minWidth && x < this.width && y >= this.minHeight && y < this.height;
+  }
+
+  updateGrid() {
+    this.coordList.forEach((element) => {
+      this.updateElement(element);
+    });
+  }
+
+  updateElement(start) {
     let q = [start];
     const visited = new Set();
     const dir = [
@@ -34,6 +45,33 @@ class Alchemical {
       [1, 0],
       [-1, 0],
     ];
+    let step = 0;
+    while (q.length !== 0) {
+      const temp = [];
+      for (const coord of q) {
+        const key = `${coord[0]},${coord[1]}`;
+        if (visited.has(key)) continue;
+        visited.add(key);
+        if (!this.grid[key] || step < this.grid[key].step) {
+          this.grid[key] = { key: `${start[0]},${start[1]}`, step };
+        } else if (this.grid[key] && step === this.grid[key].step) {
+          this.grid[key].key = null;
+        }
+        for (const [dx, dy] of dir) {
+          const newCord = [coord[0] + dx, coord[1] + dy];
+          if (this.inBounds(newCord)) {
+            temp.push(newCord);
+          }
+        }
+      }
+      step += 1;
+      q = temp;
+    }
+  }
+
+  getClosest(start) {
+    let q = [start];
+    const visited = new Set();
     const closest = new Set();
     let found = false;
     while (q.length !== 0) {
@@ -46,10 +84,12 @@ class Alchemical {
         }
         if (visited.has(key)) continue;
         visited.add(key);
-        for (const [dx, dy] of dir) {
-          const newCord = [coord[0] + dx, coord[1] + dy];
-          temp.push(newCord);
-        }
+        const newCords = [];
+        newCords.push([coord[0] + 1, coord[1]]);
+        newCords.push([coord[0] - 1, coord[1]]);
+        newCords.push([coord[0], coord[1] + 1]);
+        newCords.push([coord[0], coord[1] + -1]);
+        temp.push(...newCords);
       }
       if (found) return closest;
       q = temp;
@@ -58,25 +98,27 @@ class Alchemical {
   }
 
   getDimensions() {
-    let maxX = 0;
-    let maxY = 0;
-    for (const [x, y] of this.coordList) {
-      if (x > maxX) maxX = x;
-      if (y > maxY) maxY = y;
-    }
-    return [maxX, maxY];
+    return this.coordList.reduce(
+      ([minX, maxX, minY, maxY], [x, y]) => [
+        Math.min(x, minX),
+        Math.max(x, maxX),
+        Math.min(y, minY),
+        Math.max(y, maxY),
+      ],
+      [Infinity, 0, Infinity, 0]
+    );
   }
 
   filterEdges() {
     let infinite = new Set();
-    for (let i = 0; i < this.width; i++) {
-      const bot = this.getClosest([0, i]);
-      const top = this.getClosest([this.height, i]);
+    for (let i = this.minWidth; i < this.width; i++) {
+      const top = this.getClosest([this.minHeight, i]);
+      const bot = this.getClosest([this.height, i]);
       if (top.size === 1) infinite = new Set([...infinite, ...top]);
       if (bot.size === 1) infinite = new Set([...infinite, ...bot]);
     }
-    for (let i = 0; i < this.hieght; i++) {
-      const left = this.getClosest([i, 0]);
+    for (let i = this.minHeight; i < this.height; i++) {
+      const left = this.getClosest([i, this.minWidth]);
       const right = this.getClosest([i, this.width]);
       if (left.size === 1) infinite = new Set([...infinite, ...left]);
       if (right.size === 1) infinite = new Set([...infinite, ...right]);
@@ -85,26 +127,34 @@ class Alchemical {
   }
 
   getLargestArea() {
-    const counts = {};
-    this.coordSet.forEach((element) => {
-      if (!this.infinite.has(element)) counts[element] = 0;
-    });
-    for (let i = 0; i < this.width; i++) {
-      console.log("checking", i);
-      for (let j = 0; j < this.height; j++) {
-        const closest = this.getClosest([i, j]);
-        if (closest.size == 1) {
-          const coord = closest.values().next().value;
-          if (coord in counts) {
-            counts[coord] += 1;
-          }
-        }
+    let currCount = 0;
+    let numCounts = {};
+    for (const coord of Object.values(this.grid)) {
+      if (coord.key && !this.infinite.has(coord.key)) {
+        numCounts[coord.key] = numCounts[coord.key] + 1 || 1;
+        currCount = Math.max(currCount, numCounts[coord.key]);
       }
     }
+    return currCount;
+  }
 
-    console.log("counts", counts);
+  isUnderDist(x, y, dist) {
+    return dist > this.coordList.reduce((prev, curr) => prev + Math.abs(curr[0] - x) + Math.abs(curr[1] - y), 0);
+  }
+
+  countRegions() {
+    let count = 0;
+    const region = this.useTest ? 32 : 10_000;
+    for (let i = this.minWidth; i < this.width; i++) {
+      for (let j = this.minHeight; j < this.height; j++) {
+        if (this.isUnderDist(i, j, region)) count += 1;
+      }
+    }
+    return count;
   }
 }
 
 const alchemical = new Alchemical();
 console.log("Day 6 part 1:", alchemical.getLargestArea());
+console.log("Day 6 part 2:", alchemical.countRegions());
+// Total Runtime 7.3s
