@@ -30,6 +30,7 @@ class Instructions {
 
   reset() {
     [this.preReq, this.dependantMap] = this.getInput();
+    this.length = Object.keys(this.dependantMap).length;
   }
 
   getOrder() {
@@ -60,42 +61,44 @@ class Instructions {
     const bonus = this.useTest ? 0 : 60;
     let workers = this.useTest
       ? [
-          [-1, ""],
-          [-1, ""],
+          [0, ""],
+          [0, ""],
         ]
       : [
-          [-1, ""],
-          [-1, ""],
-          [-1, ""],
-          [-1, ""],
-          [-1, ""],
+          [0, ""],
+          [0, ""],
+          [0, ""],
+          [0, ""],
+          [0, ""],
         ];
-    const nextList = Object.keys(this.preReq).filter((key) => this.preReq[key].size === 0);
     let time = 0;
-    while (nextList.length !== 0) {
+    const nextList = Object.keys(this.preReq).filter((key) => this.preReq[key].size === 0);
+    while (result.length < this.length) {
       const temp = [];
       nextList.sort((a, b) => b.localeCompare(a));
       for (let i = 0; i < workers.length; i++) {
         const curr = workers[i];
         if (curr[0] === 0) {
-          console.log("here")
-          result += curr[1];
-          this.updateDict(temp, nextChar);
-          curr[1] = "";
+          if (curr[1]) {
+            result += curr[1];
+            this.updateDict(temp, curr[1]);
+            curr[1] = "";
+          }
+          if (curr[0] === 0 && nextList.length > 0) {
+            const nextChar = nextList.pop();
+            curr[1] = nextChar;
+            curr[0] = nextChar.charCodeAt(0) - "A".charCodeAt(0) + bonus;
+          }
         }
-        if (curr[0] === -1 && nextList.length > 0) {
-          const nextChar = nextList.pop();
-          curr[1] = nextChar;
-          curr[0] = nextChar.charCodeAt(0) - ("A".charCodeAt(0) - 1);
-        }
-        if (curr[0] >= 0) curr[0] -= 1;
+        if (curr[0] > 0) curr[0] -= 1;
       }
       nextList.push(...temp);
+      time += 1;
     }
-    return result;
+    return time;
   }
 }
 
-const instructions = new Instructions(true);
+const instructions = new Instructions();
 console.log("Day 7 part 1:", instructions.getOrder());
 console.log("Day 7 part 2:", instructions.getDuration());
