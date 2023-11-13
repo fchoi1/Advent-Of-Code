@@ -30,7 +30,6 @@ class MarbleGame {
     let node = new Marble(0);
     node.next = node;
     node.prev = node;
-    const zero = node;
     let seventh, currPlayer;
     for (let i = 1; i < loops; i++) {
       currPlayer = i % this.players;
@@ -38,9 +37,7 @@ class MarbleGame {
       if (i % 23 == 0) {
         seventh = node;
         for (let i = 0; i <= 7; i++) seventh = seventh.prev;
-
         this.playerList[currPlayer] += i + seventh.next.val;
-
         node = seventh.next.next;
         seventh.next = node;
         node.prev = seventh;
@@ -56,17 +53,6 @@ class MarbleGame {
       }
     }
     return this.playerList.reduce((prev, curr) => Math.max(prev, curr), 0);
-  }
-
-  printList(node) {
-    const val = node.val;
-    node = node.next;
-    let string = String(val) + " ";
-    while (val !== node.val) {
-      string += String(node.val) + " ";
-      node = node.next;
-    }
-    console.log(string);
   }
 }
 
