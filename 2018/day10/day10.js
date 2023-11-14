@@ -31,6 +31,7 @@ class Stars {
   constructor(useTest = false) {
     this.useTest = useTest;
     this.starsList = this.getInput();
+    this.analyze();
   }
 
   getDimensions() {
@@ -38,57 +39,59 @@ class Stars {
       (prev, light) => {
         return [
           Math.min(prev[0], light.pos[0]),
-          Math.max(prev[0], light.pos[0]),
-          Math.min(prev[1], light.pos[1]),
-          Math.max(prev[1], light.pos[1]),
+          Math.max(prev[1], light.pos[0]),
+          Math.min(prev[2], light.pos[1]),
+          Math.max(prev[3], light.pos[1]),
         ];
       },
       [Infinity, 0, Infinity, 0]
     );
   }
 
-  printGrid(lightSet) {
-    const [minW, maxW, minH, maxH] = this.getDimensions();
-    console.log(minW, maxW, minH, maxH);
-
-    console.log("=========== print grid =========\n");
-    // for (let j = minH; j < maxH; j++) {
-    //   let string = "";
-    //   for (let i = minW; i < maxW; i++) {
-    //     let key = `${i},${j}`;
-    //     string += lightSet.has(key) ? "#" : ".";
-    //   }
-    //   console.log(string);
-    // }
+  printGrid() {
+    const [minW, maxW, minH, maxH] = this.dimensions;
+    for (let j = minH; j < maxH; j++) {
+      let string = "";
+      for (let i = minW; i < maxW; i++) {
+        let key = `${i},${j}`;
+        string += this.lightSet.has(key) ? "#" : ".";
+      }
+      console.log(string);
+    }
   }
-  getMessage() {
+
+  analyze() {
     let time = 0;
     let maxTime = this.useTest ? 10 : 20_000;
     let w = Infinity;
     let h = Infinity;
-    let h = 0;
+    let targetSet, dimensions;
     while (time < maxTime) {
       const lightSet = new Set();
       this.starsList.forEach((light) => {
         light.update();
         lightSet.add(light.key);
       });
+      const [minW, maxW, minH, maxH] = this.getDimensions();
 
-      if (time % 1_000 === 0) {
-        const [minW, maxW, minH, maxH] = this.getDimensions();
-        w = Math.min(w, maxW - minW);
-        h = Math.min(h, maxH - minH);
-
-        console.log(time, lightSet.size, [minW, maxW, minH, maxH], w, h);
-        // this.printGrid(lightSet);
+      if (maxW - minW < w || maxH - minH < h) {
+        w = maxW - minW;
+        h = maxH - minH;
+        targetSet = lightSet;
+        dimensions = [minW - 1, maxW + 2, minH - 1, maxH + 2];
+        this.time = time + 1;
       }
       time++;
     }
-    console.log([mw, w, mh, h]);
+    this.lightSet = targetSet;
+    this.dimensions = dimensions;
+  }
 
-    return 1;
+  getTime() {
+    return this.time;
   }
 }
 
 const stars = new Stars();
-console.log("Day 10 part 1:", stars.getMessage());
+console.log("Day 10 part 1:", stars.printGrid());
+console.log("Day 10 part 2:", stars.getTime());
