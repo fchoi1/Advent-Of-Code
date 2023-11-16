@@ -23,7 +23,6 @@ class Plants {
   constructor(useTest = false) {
     this.useTest = useTest;
     [this.initial, this.havePlant, this.noPlant] = this.getInput();
-    this.pots = new Set();
   }
 
   calcSum(string, offset) {
