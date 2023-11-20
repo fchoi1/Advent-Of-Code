@@ -22,7 +22,6 @@ class Game {
       [0, 1],
     ];
     [this.players, this.globins, this.elves] = this.getPlayers();
-    console.log([this.players, this.globins, this.elves]);
   }
 
   getPlayers() {
@@ -32,8 +31,8 @@ class Game {
     this.grid.forEach((row, j) => {
       row.forEach((char, i) => {
         if ("#.".includes(char)) return;
-        const player = { pos: [i, j], attack: 3, health: 200, type: char };
         const key = `${i},${j}`;
+        const player = { attack: 3, health: 200, type: char, pos: key };
         players.push([i, j]);
         if (char == "E") elves[key] = player;
         else if (char == "G") globins[key] = player;
@@ -59,98 +58,130 @@ class Game {
   }
 
   bfs(coord, targets, barriers) {
-    if (!this.isPath(coord[0], coord[1], barriers)) return Infinity;
+    let found = [];
+    if (!this.isPath(coord[0], coord[1], barriers)) return [];
     let q = [coord];
-    let steps = 0;
     const seen = new Set();
     while (q.length > 0) {
       let temp = [];
       for (const [x, y] of q) {
         const key = `${x},${y}`;
+        if (key in targets) found.push([x, y]);
         if (seen.has(key)) continue;
         seen.add(key);
-        if (key in targets) return steps;
         for (const [dx, dy] of this.dirMap) {
-          if (this.isPath(x + dx, y + dy, barriers)) {
-            temp.push([x + dx, y + dy]);
-          }
+          if (this.isPath(x + dx, y + dy, barriers)) temp.push([x + dx, y + dy]);
         }
       }
+      if (found.length > 0) {
+        this.sortReadingOrder(found);
+        return found[0];
+      }
       q = temp;
-      steps++;
     }
-    return Infinity;
+    return [];
+  }
+
+  generateAdj(targets) {
+    const targetSet = {};
+    Object.keys(targets).forEach((coord) => {
+      const [x, y] = coord.split(",").map((str) => parseInt(str));
+      this.dirMap.forEach(([dx, dy]) => (targetSet[`${x + dx},${y + dy}`] = null));
+    });
+    return targetSet;
   }
 
   getNextStep(x, y, targets, barriers) {
-    const closest = this.dirMap.map(([dx, dy]) => {
-      return this.bfs([x + dx, y + dy], targets, barriers);
-    });
-    console.log(x, y, closest);
-
-    const [minNumber, minIndex] = closest.reduce(
-      ([minNum, minIdx], num, idx) => (num < minNum ? [num, idx] : [minNum, minIdx]),
-      [Infinity, -1]
-    );
-    return minIndex === -1 ? [x, y] : [x + this.dirMap[minIndex][0], y + this.dirMap[minIndex][1]];
+    const closestTarget = this.bfs([x, y], this.generateAdj(targets), barriers);
+    if (closestTarget.length === 0) return [x, y];
+    const adjTargets = {};
+    this.dirMap.forEach(([dx, dy]) => (adjTargets[`${x + dx},${y + dy}`] = null));
+    return this.bfs(closestTarget, adjTargets, barriers);
   }
 
   findInRange(x, y, targets) {
-    let foundCoord = null;
-    let foundTarget = this.dirMap.some(([dx, dy]) => {
-      if (`${x + dx},${y + dy}` in targets && !foundCoord) {
-        foundCoord = [x + dx, y + dy];
-        return true;
+    let foundCoords = [];
+    let foundTarget = false;
+    this.dirMap.forEach(([dx, dy]) => {
+      if (`${x + dx},${y + dy}` in targets) {
+        foundCoords.push(`${x + dx},${y + dy}`);
+        foundTarget = true;
       }
-      return false;
     });
-    return [foundTarget, foundCoord];
+    return [foundTarget, foundCoords];
+  }
+
+  getLowsestHealth(target, foundCoords) {
+    return foundCoords.reduce(
+      (prev, coords) => {
+        if (target[coords].health < prev[0]) return [target[coords].health, coords];
+        return prev;
+      },
+      [Infinity, ""]
+    );
+  }
+
+  getScore(rounds) {
+    let score = 0;
+    if (Object.entries(this.elves).length !== 0 && Object.entries(this.globins).length === 0) {
+      for (let elf of Object.values(this.elves)) score += elf.health;
+    } else if (Object.entries(this.globins).length !== 0 && Object.entries(this.elves).length === 0) {
+      for (let globin of Object.values(this.globins)) score += globin.health;
+    }
+    return score * rounds;
   }
 
   getOutcome() {
     let rounds = 0;
-    while (rounds < 5 && Object.entries(this.elves).length !== 0 && Object.entries(this.globins).length !== 0) {
-      const nextRound = [];
+    let gameover = false;
+    while (rounds < 100) {
+      let nextRound = [];
       this.players.forEach((coord) => {
-        const [x, y] = coord;
+        if (gameover) return;
+        let [x, y] = coord;
         let player = `${x},${y}`;
         let targets, barriers;
 
         if (player in this.elves) {
           targets = this.globins;
           barriers = this.elves;
-        } else {
+        } else if (player in this.globins) {
           targets = this.elves;
           barriers = this.globins;
+        } else return;
+        if (Object.keys(targets).length === 0) {
+          gameover = true;
+          return;
         }
-
-        const [found, foundCoords] = this.findInRange(x, y, targets);
-        if (found) {
-          console.log(foundCoords, "in rnage", x, y, targets);
-          // attack
-          nextRound.push([x, y]);
-        } else {
+        let [found, foundCoords] = this.findInRange(x, y, targets);
+        if (!found) {
           const temp = barriers[player];
           delete barriers[player];
-          const [newX, newY] = this.getNextStep(x, y, targets, barriers);
-          console.log("nexy", newX, newY);
-          const updatedPlayer = `${newX},${newY}`;
+          [x, y] = this.getNextStep(x, y, targets, barriers);
+          const updatedPlayer = `${x},${y}`;
           barriers[updatedPlayer] = temp;
-          barriers[updatedPlayer].pos = [newX, newY];
-          nextRound.push([newX, newY]);
-          this.elves = player in this.elves ? barriers : targets;
-          this.globins = player in this.elves ? targets : barriers;
+          [found, foundCoords] = this.findInRange(x, y, targets);
         }
+        if (found) {
+          const [_, lowestHealthcoord] = this.getLowsestHealth(targets, foundCoords);
+          targets[lowestHealthcoord].health -= 3;
+          if (targets[lowestHealthcoord].health <= 0) {
+            delete targets[lowestHealthcoord];
+            nextRound = nextRound.filter(([x, y]) => `${x},${y}` !== lowestHealthcoord);
+          }
+        }
+        nextRound.push([x, y]);
+        this.elves = player in this.elves ? barriers : targets;
+        this.globins = player in this.elves ? targets : barriers;
       });
       this.players = nextRound;
       this.sortReadingOrder(this.players);
+      if (gameover) break;
       rounds++;
-      console.log("rounds", rounds, this.players, this.elves, this.globins);
     }
-    console.log(this.elves, this.globins, rounds);
-    return 1;
+    return this.getScore(rounds);
   }
 }
 
-const game = new Game(true);
+const game = new Game();
 console.log("Day 15 part 1:", game.getOutcome());
