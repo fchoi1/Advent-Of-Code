@@ -141,7 +141,6 @@ class Game {
         let [x, y] = coord;
         let player = `${x},${y}`;
         let targets, barriers;
-
         if (player in this.elves) {
           targets = this.globins;
           barriers = this.elves;
