@@ -21,10 +21,9 @@ class Game {
       [1, 0],
       [0, 1],
     ];
-    [this.players, this.globins, this.elves] = this.getPlayers();
   }
 
-  getPlayers() {
+  getPlayers(elvesAttack = 3) {
     const players = [];
     const globins = {};
     const elves = {};
@@ -32,7 +31,7 @@ class Game {
       row.forEach((char, i) => {
         if ("#.".includes(char)) return;
         const key = `${i},${j}`;
-        const player = { attack: 3, health: 200, type: char, pos: key };
+        const player = { attack: char === "E" ? elvesAttack : 3, health: 200, type: char, pos: key };
         players.push([i, j]);
         if (char == "E") elves[key] = player;
         else if (char == "G") globins[key] = player;
@@ -131,9 +130,10 @@ class Game {
     return score * rounds;
   }
 
-  getOutcome() {
+  runGame(elvesMustWin = false) {
     let rounds = 0;
     let gameover = false;
+    let elfDied = false;
     while (rounds < 100) {
       let nextRound = [];
       this.players.forEach((coord) => {
@@ -152,6 +152,7 @@ class Game {
           gameover = true;
           return;
         }
+        const attack = barriers[player].attack;
         let [found, foundCoords] = this.findInRange(x, y, targets);
         if (!found) {
           const temp = barriers[player];
@@ -163,8 +164,12 @@ class Game {
         }
         if (found) {
           const [_, lowestHealthcoord] = this.getLowsestHealth(targets, foundCoords);
-          targets[lowestHealthcoord].health -= 3;
+          targets[lowestHealthcoord].health -= attack;
           if (targets[lowestHealthcoord].health <= 0) {
+            if (elvesMustWin && targets[lowestHealthcoord].type === "E") {
+              elfDied = true;
+              return;
+            }
             delete targets[lowestHealthcoord];
             nextRound = nextRound.filter(([x, y]) => `${x},${y}` !== lowestHealthcoord);
           }
@@ -175,12 +180,28 @@ class Game {
       });
       this.players = nextRound;
       this.sortReadingOrder(this.players);
-      if (gameover) break;
+      if (elvesMustWin && elfDied) return -1;
+      if (gameover) return this.getScore(rounds);
       rounds++;
     }
-    return this.getScore(rounds);
+    return -1;
+  }
+
+  getOutcome(isPart2 = false) {
+    [this.players, this.globins, this.elves] = this.getPlayers();
+    if (!isPart2) return this.runGame(false);
+    let score = this.runGame(true);
+    let attack = 4;
+    while (score === -1) {
+      [this.players, this.globins, this.elves] = this.getPlayers(attack);
+      score = this.runGame(true);
+      attack++;
+    }
+    return score;
   }
 }
 
 const game = new Game();
 console.log("Day 15 part 1:", game.getOutcome());
+console.log("Day 15 part 2:", game.getOutcome(true));
+// Total runtime ~1.5s
