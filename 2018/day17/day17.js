@@ -25,21 +25,6 @@ class Reservoir {
     this.dropWater(500, 0, []);
   }
 
-  printGrid() {
-    console.log("\nGRID");
-    for (let j = 0; j <= this.maxY + 1; j++) {
-      let str = "";
-      for (let i = this.minX; i < this.maxX; i++) {
-        const key = `${i},${j}`;
-        if (this.walls.has(key)) str += "#";
-        else if (this.stillWater.has(key)) str += "~";
-        else if (this.running.has(key)) str += "|";
-        else str += ".";
-      }
-      console.log(str);
-    }
-  }
-
   getWalls() {
     const walls = new Set();
     let maxY = 0;
