@@ -57,10 +57,6 @@ class LumberYard {
     else if (acre === "#") return trees >= 1 && lumber >= 1 ? "#" : ".";
   }
 
-  printMap() {
-    this.forestMap.forEach((row) => console.log(row.join("")));
-  }
-
   getResources(isPart2) {
     this.forestMap = this.getInput();
     let time = 0;
