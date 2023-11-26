@@ -83,7 +83,6 @@ class RoomMap {
     let temp = "";
     while (char < this.route.length) {
       sym = this.route[char];
-      console.log(sym, char, this.route);
       if ("|)".includes(sym)) {
         routes.push(currRoute + temp);
         temp = "";
