@@ -15,6 +15,10 @@ class Room {
       west: east,
     };
   }
+  addOpposite(dir, room) {
+    const dirMap = ["east", "south", "west", "north"];
+    this.doors[dirMap["WNES".indexOf(dir)]] = room;
+  }
 }
 
 class RoomMap {
@@ -30,137 +34,81 @@ class RoomMap {
   constructor(useTest = false) {
     this.useTest = useTest;
     this.route = this.getInput();
-    this.dirMap = {
-      E: "east",
-      S: "south",
-      W: "west",
-      N: "north",
-    };
-    this.dirCoord = {
-      E: [1, 0],
-      S: [0, 1],
-      W: [-1, 0],
-      N: [0, -1],
-    };
-    this.steps = 0;
+    this.routeList = [];
     this.start = new Room([0, 0], {});
     this.rooms = { "0,0": this.start };
-    this.dim = { max: { x: 0, y: 0 }, min: { x: Infinity, y: Infinity } };
-    this.runRoute(1, this.start);
-    console.log(this.dim);
+    this.addRoutes(this.start.key, 1, []);
+    [this.steps, this.roomCount] = this.analyzeRoom(this.start);
   }
 
-  runRoute(char, room) {
-    while (char < this.route.length) {
+  addRoutes(startLoc, pos, stack) {
+    let room = this.rooms[startLoc];
+    for (let char = pos; char < this.route.length; char++) {
       let sym = this.route[char];
-      if (sym === "(") {
-        const [newChar, subRoutes] = this.getRoutes(char + 1, "");
-        subRoutes.forEach((route) => {
-          const newRoom = this.checkRooms(room, route);
-          this.runRoute(newChar, newRoom);
-        });
-        return;
-      }
       if (sym === "$") return;
-      room = this.getNewRoom(room, sym);
-      char++;
+      else if ("ESWN".includes(sym)) room = this.getNewRoom(room, sym);
+      else if (sym === "(") {
+        stack.push(room.key);
+        this.addRoutes(room.key, char + 1, stack);
+        return;
+      } else if (sym === "|") {
+        room = this.rooms[stack.slice(-1)[0]];
+      } else if (sym === ")") stack.pop();
     }
   }
 
   getNewRoom(room, dir) {
-    const nextDir = this.dirMap[dir];
-    const [dx, dy] = this.dirCoord[dir];
-    if (room.doors[nextDir]) room.doors[nextDir];
+    const dirMap = ["east", "south", "west", "north"];
+    const dirCoord = [
+      [1, 0],
+      [0, 1],
+      [-1, 0],
+      [0, -1],
+    ];
+    const nextDir = dirMap["ESWN".indexOf(dir)];
+    const [dx, dy] = dirCoord["ESWN".indexOf(dir)];
+    const key = `${room.loc[0] + dx},${room.loc[1] + dy}`;
+    if (this.rooms[key]) {
+      room.doors[nextDir] = this.rooms[key];
+      this.rooms[key].addOpposite(dir, room);
+      return this.rooms[key];
+    }
     const newRoom = new Room([room.loc[0] + dx, room.loc[1] + dy], { [nextDir]: room });
-    if (room.loc[0] + dx > this.dim.max.x) this.dim.max.x = room.loc[0] + dx;
-    if (room.loc[1] + dy > this.dim.max.y) this.dim.max.y = room.loc[1] + dy;
-    if (room.loc[0] + dx < this.dim.min.x) this.dim.min.x = room.loc[0] + dx;
-    if (room.loc[1] + dy < this.dim.min.y) this.dim.min.y = room.loc[1] + dy;
-
     this.rooms[newRoom.key] = newRoom;
-    return newRoom;
+    return this.rooms[newRoom.key];
   }
 
-  checkRooms(room, path) {
-    path.split("").forEach((dir) => (room = this.getNewRoom(room, dir)));
-    return room;
-  }
-
-  getRoutes(char, currRoute) {
-    const routes = [];
-    let sym = this.route[char];
-    let temp = "";
-    let nested = [];
-    while (char < this.route.length) {
-      sym = this.route[char];
-      // console.log(temp, sym, char);
-      if ("|)".includes(sym)) {
-        if (nested[1]) nested[1].forEach((subRoute) => routes.push(currRoute + subRoute + temp)); // not yet
-        else routes.push(currRoute + temp);
-        // console.log("temp", temp, nested, routes);
-        temp = "";
-        if (sym === ")") break;
-      } else if (sym === "(") {
-        nested = this.getRoutes(char + 1, temp);
-        char = nested[0];
-        temp = this.route[char];
-        if (temp === ")") {
-          if (nested[1]) nested[1].forEach((subRoute) => routes.push(currRoute + subRoute)); // not yet
-          break;
-        }
-      } else temp += sym;
-      char++;
-    }
-    // routes.push(currRoute + temp);
-    // console.log("return ", char, routes);
-    return [char + 1, routes];
-  }
-
-  printGrid() {
-    let top, bot, mid, key;
-    for (let j = this.dim.min.y - 1; j < this.dim.max.y + 1; j++) {
-      top = "";
-      bot = "";
-      mid = "";
-      for (let i = this.dim.min.x - 1; i < this.dim.max.x + 1; i++) {
-        key = `${i},${j}`;
-        top += this.rooms[key]?.doors.north ? "#-#" : "###";
-        bot += this.rooms[key]?.doors.south ? "#-#" : "###";
-        if (key === "0,0") mid += "000";
-        else if (this.rooms[key]?.doors.west && this.rooms[key]?.doors.east) mid += "|.|";
-        else if (!this.rooms[key]?.doors.west && !this.rooms[key]?.doors.east) mid += "#.#";
-        else if (this.rooms[key]?.doors.west) mid += "|.#";
-        else if (this.rooms[key]?.doors.east) mid += "#.|";
-        else mid += "###";
+  analyzeRoom(room) {
+    let q = [room];
+    const seen = new Set();
+    let over1000 = new Set();
+    let steps = 0;
+    const doorCount = this.useTest ? 16 : 1000;
+    while (q.length > 0) {
+      let temp = [];
+      for (const room of q) {
+        seen.add(room.key);
+        Object.values(room.doors).forEach((door) => {
+          if (door && !seen.has(door.key)) temp.push(door);
+        });
       }
-      console.log(top);
-      console.log(mid);
-      console.log(bot);
+      q = temp;
+      steps++;
+      if (steps >= doorCount) over1000 = new Set([...over1000, ...temp.map((door) => door.key)]);
     }
+    return [steps - 1, over1000.size];
   }
 
   getFurthestRoom() {
-    this.printGrid();
-    this.getFurthestSteps(this.start, 0, new Set());
-    console.log(this.furthest);
     return this.steps;
   }
 
-  getFurthestSteps(room, steps, seen) {
-    if (seen.has(room.key)) return [0, room];
-    seen.add(room.key);
-    Object.values(room.doors).forEach((door) => {
-      if (door) {
-        const [maxSteps, endRoom] = this.getFurthestSteps(door, steps + 1, seen);
-        if (maxSteps > this.steps) {
-          this.steps = maxSteps;
-          this.furthest = endRoom;
-        }
-      }
-    });
-    return [steps, room];
+  getDoorCount() {
+    return this.roomCount;
   }
 }
 
 const roomMap = new RoomMap();
 console.log("Day 20 part 1:", roomMap.getFurthestRoom());
+console.log("Day 20 part 2:", roomMap.getDoorCount());
+// Total runtime 0.63s
