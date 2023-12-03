@@ -5,7 +5,7 @@ class Encoding:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [int(x.strip()) for x in x.readlines()]
+            return [int(x.strip()) for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

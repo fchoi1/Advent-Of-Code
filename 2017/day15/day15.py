@@ -5,7 +5,7 @@ class Generators:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [int(x.strip().split(" ")[-1]) for x in file1.readlines()]
+            return [int(x.strip().split(" ")[-1]) for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -26,7 +26,7 @@ class Generators:
 
         if not isPart2:
             return num
-        
+
         while num % multiple != 0:
             num = (num * factor) % self.product
         return num

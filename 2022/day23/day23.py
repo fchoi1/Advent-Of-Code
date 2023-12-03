@@ -5,7 +5,7 @@ class Elves:
     def getInput(self) -> List[str]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [list(x.strip()) for x in file1.readlines()]
+            return [list(x.strip()) for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -117,20 +117,6 @@ class Elves:
             minX = min(x, minX)
             minY = min(y, minY)
         return [maxX, maxY, minX, minY]
-
-    # For debugging
-    def printPosition(self):
-        maxX, maxY, minX, minY = self.getMaxDimensions()
-        width = maxX - minX + 1
-        length = maxY - minY + 1
-        dataMap = [["." for _ in range(width)] for _ in range(length)]
-        dataMap[-minY][-minX] = "O"
-        for coords in self.positions:
-            x, y = map(int, coords.split(","))
-            dataMap[y - minY][x - minX] = "#"
-
-        for row in dataMap:
-            print(" ".join(row))
 
 
 if __name__ == "__main__":

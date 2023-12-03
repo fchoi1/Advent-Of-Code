@@ -6,7 +6,7 @@ class Customs:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
             group, data = [], []
-            for line in file1.readlines():
+            for line in file1:
                 if not line.strip():
                     data.append(group)
                     group = []

@@ -16,7 +16,7 @@ class Memory:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         data = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = line.strip().split(" = ")
                 if line[0] == "mask":
                     data.append(("mask", line[1]))

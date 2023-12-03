@@ -6,7 +6,7 @@ class Recitation:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [int(x) for x in file1.readlines()[0].split(",")]
+            return [int(x) for x in file1.readline().split(",")]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

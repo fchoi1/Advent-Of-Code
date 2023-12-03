@@ -13,7 +13,6 @@ class HexGrid:
         self.pos = [0, 0, 0]  # Q R P
         self.maxDist = 0
         self.runSteps()
-        print(len(self.steps), self.pos)
 
     def getDistance(self) -> int:
         return sum(abs(x) for x in self.pos) // 2

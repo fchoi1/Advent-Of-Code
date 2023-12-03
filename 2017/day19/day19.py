@@ -6,7 +6,7 @@ class Tubes:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         tubeMap = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = line.replace("\n", "")
                 tubeMap.append(list(line))
         return tubeMap

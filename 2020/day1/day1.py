@@ -5,7 +5,7 @@ class Report:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [int(x.strip()) for x in file1.readlines()]
+            return [int(x.strip()) for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

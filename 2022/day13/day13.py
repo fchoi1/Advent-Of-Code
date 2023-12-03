@@ -6,28 +6,18 @@ class Signal:
     def getInput1(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
             data = []
             dataPair = []
-            for line in Lines:
+            dataLiteral = []
+            for line in file1:
                 if not line.strip():
                     data.append(dataPair)
                     dataPair = []
                     continue
-                my_list = ast.literal_eval(line.strip())
-                dataPair.append(my_list)
+                dataPair.append(ast.literal_eval(line.strip()))
+                dataLiteral.append(ast.literal_eval(line.strip()))
             data.append(dataPair)
-            return data
-
-    def getInput2(self) -> List:
-        inputFile = "input-test.txt" if self.useTest else "input.txt"
-        with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
-            data = []
-            for line in Lines:
-                if line.strip():
-                    data.append(ast.literal_eval(line.strip()))
-            return data
+            return data, dataLiteral
 
     def compareList(self, left: List, right: List) -> bool:
         rightLength = len(right)
@@ -86,8 +76,7 @@ class Signal:
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
-        self.inputData1 = self.getInput1()
-        self.inputData2 = self.getInput2()
+        self.inputData1, self.inputData2 = self.getInput1()
 
         self.firstPacket = 2
         self.secondPacket = 6

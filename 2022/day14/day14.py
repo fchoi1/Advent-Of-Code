@@ -5,13 +5,12 @@ class Cave:
     def getInput(self) -> List[Tuple[int]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
             data = []
             self.maxY = self.maxX = float("-inf")
             self.minX = float("inf")
             self.minY = 0
 
-            for line in Lines:
+            for line in file1:
                 elements = line.split("->")
                 tuples_list = []
                 for element in elements:

@@ -51,7 +51,13 @@ class Jigsaw:
                 isMonster = True
                 for dx, dy in self.monster:
                     newX, newY = x + dx, y + dy
-                    if newX < 0 or newX >= width or newY < 0 or newY >= height or picture[newY][newX] != "#":
+                    if (
+                        newX < 0
+                        or newX >= width
+                        or newY < 0
+                        or newY >= height
+                        or picture[newY][newX] != "#"
+                    ):
                         isMonster = False
                         break
                 if isMonster:
@@ -91,7 +97,9 @@ class Jigsaw:
         for tileId, _ in self.borders.values():
             if tileId in temp:
                 total *= tileId
-                self.corners[tileId] = [tile[1] for tile in self.borders.values() if tileId == tile[0]]
+                self.corners[tileId] = [
+                    tile[1] for tile in self.borders.values() if tileId == tile[0]
+                ]
             else:
                 temp.add(tileId)
         return total
@@ -116,7 +124,6 @@ class Jigsaw:
     def getMonsters(self) -> int:
         monsters = 0
         picture = self.removeBorders(self.buildPicture())
-        # self.printPicture(picture) # for debug
         for _ in range(2):
             for _ in range(3):
                 picture = self.rotate(picture, "left")
@@ -125,16 +132,13 @@ class Jigsaw:
 
         return sum(row.count("#") for row in picture) - monsters * len(self.monster)
 
-    def printPicture(self, picture: List[List[str]]) -> None:
-        print(picture)
-        for row in picture:
-            print("".join(row))
-
     def removeBorders(self, picture: List) -> List[List[str]]:
         updatedPicture = []
         for pictureRow in picture:
             for i in range(1, len(pictureRow[0]) - 1):
-                strRow = "".join(["".join(tile[i][1 : self.length - 1]) for tile in pictureRow])
+                strRow = "".join(
+                    ["".join(tile[i][1 : self.length - 1]) for tile in pictureRow]
+                )
                 updatedPicture.append(list(strRow))
         return updatedPicture
 
@@ -179,7 +183,8 @@ class Jigsaw:
                     elif pos == 3:  # left
                         currTile = self.flip(self.rotate(currTile, "right"), "y")
                 elif bottomEdge[::-1] in self.tilesMap and not all(
-                    currTileId == tileId for tileId, _ in self.tilesMap[bottomEdge[::-1]]
+                    currTileId == tileId
+                    for tileId, _ in self.tilesMap[bottomEdge[::-1]]
                 ):
                     for tileId, pos in self.tilesMap[bottomEdge[::-1]]:
                         if currTileId != tileId:

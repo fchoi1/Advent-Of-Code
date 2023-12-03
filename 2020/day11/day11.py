@@ -5,7 +5,7 @@ class Seat:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [x.strip() for x in file1.readlines()]
+            return [x.strip() for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -73,7 +73,6 @@ class Seat:
         for y in range(self.length):
             seatRow = []
             for x in range(self.width):
-                # print('curr', x, y, self.seats[y][x])
                 if self.seats[y][x] == "#" and shouldBeEmpty((x, y)):
                     seatRow.append("L")
                     hasSeatsChanged = True

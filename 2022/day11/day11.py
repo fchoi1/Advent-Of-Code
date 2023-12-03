@@ -39,7 +39,7 @@ class MonkeyGame:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [x.strip() for x in file1.readlines()]
+            return [x.strip() for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -58,7 +58,9 @@ class MonkeyGame:
         for monkey in self.Monkeys:
             monkey.updateDivisor(lcm)
 
-    def getOperation(self, operation: str, value: int = 0) -> Callable[[int], Union[int, float]] | None:
+    def getOperation(
+        self, operation: str, value: int = 0
+    ) -> Callable[[int], Union[int, float]] | None:
         match operation:
             case "+":
                 return lambda x: x + value if value else x + x
@@ -124,12 +126,6 @@ class MonkeyGame:
             rounds = 20
         for _ in range(rounds):
             self.playRound()
-
-    # For Debugging
-    def getMonkeys(self) -> None:
-        for i, monkey in enumerate(self.Monkeys):
-            print("Monkey #", i, "--------------------------------")
-            monkey.printInfo()
 
     def getInspectedTimes(self, isPart2: Optional[bool] = False) -> int:
         self.worry = not isPart2

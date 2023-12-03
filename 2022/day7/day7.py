@@ -5,7 +5,7 @@ class Folder:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [x.strip() for x in file1.readlines()]
+            return [x.strip() for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -33,7 +33,6 @@ class Folder:
                 self.currentFolder[arguments[1]] = {}
             elif arguments[0].isdigit():
                 self.currentFolder[arguments[1]] = int(arguments[0])
-        # print(self.folder)
         pass
 
     def getFolderSize(self, folder: Dict[str, Any]) -> int:

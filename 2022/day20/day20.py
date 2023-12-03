@@ -12,23 +12,15 @@ class Grove:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [int(item.strip()) for item in file1.readlines()]
+            return [int(item.strip()) for item in file1]
 
-    def __init__(self, useTest: Optional[bool] = False, decrypt: Optional[int] = 811589153) -> None:
+    def __init__(
+        self, useTest: Optional[bool] = False, decrypt: Optional[int] = 811589153
+    ) -> None:
         self.useTest = useTest
         self.mapFile = self.getInput()
         self.length = len(self.mapFile)
         self.decryption = decrypt
-
-    # For Debugging
-    def printList(self, node: Node) -> None:
-        arr = []
-        nextNode = node
-        while nextNode != node.left:
-            arr.append(nextNode.val)
-            nextNode = nextNode.right
-        arr.append(nextNode.val)
-        print(arr)
 
     def applyDecryption(self, mapFile: List[int]) -> List[int]:
         return [self.decryption * val for val in mapFile]
@@ -76,7 +68,7 @@ class Grove:
         return (zeroNode, nodeList)
 
     # at  most the order gets moved once or not, somehow track position on input
-    def getCoods(self, applyDecrypt: bool) -> int:
+    def getCoods(self, applyDecrypt: Optional[bool] = False) -> int:
         mapFile = self.applyDecryption(self.mapFile) if applyDecrypt else self.mapFile
         loops = 10 if applyDecrypt else 1
 

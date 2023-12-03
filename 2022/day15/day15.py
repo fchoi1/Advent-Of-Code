@@ -6,10 +6,9 @@ class Beacon:
     def getInput(self) -> List[List[Tuple[int]]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
             data = []
             delimiters = ["Sensor at x=", ", y=", ": closest beacon is at x="]
-            for line in Lines:
+            for line in file1:
                 coords = list(
                     map(
                         int,

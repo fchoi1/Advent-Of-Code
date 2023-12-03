@@ -8,7 +8,7 @@ class MonkeyMap:
         data = []
         delimiters = [""]
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = line.replace("\n", "")
                 line = re.split("|".join(map(re.escape, delimiters)), line)[1:-1]
                 data.append(line)

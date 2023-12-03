@@ -7,7 +7,7 @@ class Registers:
         registers = {}
         commands = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 s = line.strip().split(" ")
                 registers[s[0]] = 0
                 commands.append([s[0], s[1], int(s[2]), s[4], s[5], int(s[6])])

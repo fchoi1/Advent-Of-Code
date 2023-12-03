@@ -7,7 +7,7 @@ class Moat:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         bridges = defaultdict(set)
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = line.strip().split("/")
                 bridges[int(line[0])].add(int(line[1]))
                 bridges[int(line[1])].add(int(line[0]))

@@ -5,7 +5,7 @@ class Cubes:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [list(x.strip()) for x in file1.readlines()]
+            return [list(x.strip()) for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False, rounds: Optional[int] = 6) -> None:
         self.useTest = useTest

@@ -5,7 +5,7 @@ class Adapter:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return set([int(x.strip()) for x in file1.readlines()])
+            return set([int(x.strip()) for x in file1])
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -13,8 +13,6 @@ class Adapter:
         self.target = max(self.adapter)
         self.adapter.add(0)  #  add  starting
         self.visited = {}
-
-        print(len(self.adapter))
 
     def getDiff(self) -> int:
         curr = 0
@@ -52,7 +50,11 @@ class Adapter:
         if num >= self.target:
             return 1
 
-        total = sum(self.findValidPathsDFS(num + i) for i in range(1, 4) if (num + i) in self.adapter)
+        total = sum(
+            self.findValidPathsDFS(num + i)
+            for i in range(1, 4)
+            if (num + i) in self.adapter
+        )
 
         self.visited[num] = total
         return total

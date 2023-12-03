@@ -5,7 +5,7 @@ class CPU:
     def getInput(self) -> List[List[str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [int(line.strip()) for line in file1.readlines()]
+            return [int(line.strip()) for line in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

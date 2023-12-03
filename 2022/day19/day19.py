@@ -7,7 +7,6 @@ class Minerals:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
             blueprints = []
             delimiters = [
                 "Each ore robot costs ",
@@ -18,12 +17,14 @@ class Minerals:
                 " ore and ",
                 " obsidian.",
             ]
-            for line in Lines:
+            for line in file1:
                 line = line.strip()
                 prices = list(
                     map(
                         int,
-                        re.split("|".join(map(re.escape, delimiters)), line.strip())[1:7],
+                        re.split("|".join(map(re.escape, delimiters)), line.strip())[
+                            1:7
+                        ],
                     )
                 )
                 # [ore, clay, obsidian, geode]
@@ -122,7 +123,10 @@ class Minerals:
             options.append(
                 [
                     i,
-                    all(resource >= cost for resource, cost in zip(resources, mineralCost)),
+                    all(
+                        resource >= cost
+                        for resource, cost in zip(resources, mineralCost)
+                    ),
                 ]
             )
         return options

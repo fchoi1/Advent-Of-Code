@@ -7,7 +7,7 @@ class Checksum:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         data = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 data.append([int(x) for x in line.split()])
         return data
 

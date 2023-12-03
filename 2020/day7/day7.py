@@ -8,14 +8,16 @@ class Haversacks:
         with open(inputFile, "r") as file1:
             data = {}
             delimiters = "|".join(map(re.escape, [" bags contain ", " ", ", ", "."]))
-            for line in file1.readlines():
+            for line in file1:
                 line = line.strip().replace(" bags", "").replace(" bag", "")
                 splited = re.split(delimiters, line)
                 connections = []
                 if splited[3] == "no":
                     continue
                 for i in range(3, 3 + len(splited[4:]), 3):
-                    connections.append((int(splited[i]), splited[i + 1] + splited[i + 2]))
+                    connections.append(
+                        (int(splited[i]), splited[i + 1] + splited[i + 2])
+                    )
                 data["".join(splited[:2])] = connections
             return data
 

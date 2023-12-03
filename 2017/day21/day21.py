@@ -6,7 +6,7 @@ class GPU:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         enhance = {}
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = line.strip().split(" => ")
                 enhance[line[0]] = line[1]
         return enhance

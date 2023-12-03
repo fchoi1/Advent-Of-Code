@@ -7,7 +7,7 @@ class Turing:
         begin = ""
         steps = 0
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = line.strip()[:-1]
                 if "Begin" in line:
                     begin = line.split(" ")[3]

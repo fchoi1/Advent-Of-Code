@@ -7,7 +7,7 @@ class Passport:
         with open(inputFile, "r") as file1:
             data = []
             passport = {}
-            for line in file1.readlines():
+            for line in file1:
                 line = line.strip()
                 if not line:
                     data.append(passport)

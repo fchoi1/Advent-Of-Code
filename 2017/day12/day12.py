@@ -7,7 +7,7 @@ class Plumber:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         pipeMap = defaultdict(set)
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = line.strip().split(" <-> ")
                 for end in line[1].split(","):
                     pipeMap[int(line[0])].add(int(end))

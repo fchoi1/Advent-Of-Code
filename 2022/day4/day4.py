@@ -1,10 +1,9 @@
 from typing import List, Optional
 
-
 def getInput(useTest) -> List[str]:
     inputFile = "input-test.txt" if useTest else "input.txt"
     with open(inputFile, "r") as file1:
-        return [x.strip() for x in file1.readlines()]
+        return [x.strip() for x in file1]
 
 
 def main(useTest: Optional[bool] = False) -> None:

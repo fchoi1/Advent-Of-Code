@@ -6,7 +6,7 @@ class Cube:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         games = []
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 sets = line.strip().split(": ")[1].split("; ")
                 colors = [0, 0, 0]
                 for s in sets:

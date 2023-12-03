@@ -20,7 +20,7 @@ class GPU:
         particles = {}
         delimiters = "|".join(map(re.escape, ["=<", ">,", ">"]))
         with open(inputFile, "r") as file1:
-            for i, line in enumerate(file1.readlines()):
+            for i, line in enumerate(file1):
                 string = re.split(delimiters, line.strip())
                 pos = list(map(int, string[1].split(",")))
                 vel = list(map(int, string[3].split(",")))

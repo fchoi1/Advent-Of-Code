@@ -5,7 +5,7 @@ class Passphrase:
     def getInput(self) -> List[List[str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [line.strip().split(" ") for line in file1.readlines()]
+            return [line.strip().split(" ") for line in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest

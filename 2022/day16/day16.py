@@ -18,10 +18,9 @@ class Valves:
     def getInput(self) -> Tuple[Dict[str, int], Dict[str, List[str]]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
             valves = {}
             tunnels = {}
-            for line in Lines:
+            for line in file1:
                 line = line.strip()
                 valve = line.split()[1]
                 valves[valve] = int(line.split("=")[1].split(";")[0])

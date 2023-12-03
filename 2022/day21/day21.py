@@ -9,7 +9,7 @@ class Monkeys:
         equations = {}
         delimiters = [": ", " "]
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 line = re.split("|".join(map(re.escape, delimiters)), line.strip())
                 if len(line) == 2:
                     constants[line[0]] = int(line[1])

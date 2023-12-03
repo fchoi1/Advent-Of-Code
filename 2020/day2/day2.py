@@ -6,10 +6,9 @@ class Password:
     def getInput(self) -> List:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            Lines = file1.readlines()
             passwords, letters = [], []
             delimiters = "|".join(map(re.escape, ["-", " ", ": "]))
-            for line in Lines:
+            for line in file1:
                 splited = re.split(delimiters, line.strip())
                 passwords.append(splited[3])
                 letters.append([int(splited[0]), int(splited[1]), splited[2]])

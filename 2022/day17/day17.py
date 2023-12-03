@@ -49,7 +49,10 @@ class Rocks:
 
         for i in range(width):
             for j in range(height):
-                if self.chamber[y + j][x + i] == "#" and self.rocks[rockType][j][i] == "#":
+                if (
+                    self.chamber[y + j][x + i] == "#"
+                    and self.rocks[rockType][j][i] == "#"
+                ):
                     return True
         return False
 
@@ -64,7 +67,9 @@ class Rocks:
 
         # Acutal Drop Piece Logic
         while not self.isOverlap(coords, rockNum):
-            moveHorizontal = -1 if self.windData[self.wind % self.windLength] == "<" else 1
+            moveHorizontal = (
+                -1 if self.windData[self.wind % self.windLength] == "<" else 1
+            )
             if not self.isOverlap([coords[0] + moveHorizontal, coords[1]], rockNum):
                 coords[0] += moveHorizontal
 
@@ -83,7 +88,9 @@ class Rocks:
             for j in range(height):
                 if self.rocks[rockNum][j][i] == "#":
                     self.chamber[y + j][x + i] = "#"
-                    self.chamberHeights[x + i] = max(self.chamberHeights[x + i], y + j + 1)
+                    self.chamberHeights[x + i] = max(
+                        self.chamberHeights[x + i], y + j + 1
+                    )
 
     def getRockHeight(self, numRocks: int) -> int:
         self.fullReset()
@@ -133,16 +140,9 @@ class Rocks:
 
     # Convertting row data to binary state representation
     def getState(self, rows: List[str]):
-        return [[int("".join(row).replace("#", "1").replace(".", "0"), 2) for row in rows]]
-
-    # Used for debugging and visualization
-    def printChamber(self, start: Optional[int] = None, end: Optional[int] = None):
-        if not start or not end:
-            start = 0
-            end = len(self.chamber)
-        for i, row in enumerate(reversed(self.chamber[start:end])):
-            print(len(self.chamber) - i, "".join(row))
-        print()
+        return [
+            [int("".join(row).replace("#", "1").replace(".", "0"), 2) for row in rows]
+        ]
 
 
 if __name__ == "__main__":

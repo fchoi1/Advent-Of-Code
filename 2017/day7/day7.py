@@ -17,7 +17,7 @@ class Circus:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         nodeMap = {}
         with open(inputFile, "r") as file1:
-            for line in file1.readlines():
+            for line in file1:
                 strings = line.strip().split(" -> ")
                 parentInfo = strings[0].split(" ")
                 parentNode = parentInfo[0]
