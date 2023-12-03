@@ -56,7 +56,6 @@ func (this *Scramble) makeRotateMap() {
 		val %= N
 		this.rotateMap[val] = i
 	}
-	fmt.Println(this.rotateMap)
 }
 func reverseSlice(slice []rune) {
 	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {

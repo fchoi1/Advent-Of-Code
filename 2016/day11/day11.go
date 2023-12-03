@@ -254,7 +254,6 @@ func (this *Elevator) moveChips(elevator Elevator) int {
 	queue = append(queue, elevator)
 
 	for len(queue) > 0 {
-		fmt.Println("STEP", steps)
 		temp := []Elevator{}
 
 		for _, elevator := range queue {
@@ -328,7 +327,6 @@ func (this *Elevator) getMinSteps(isPart2 bool) int {
 		elevator.permutations = append(elevator.permutations, "el", "di")
 		elevator.Floors[1] = floor
 	}
-	fmt.Println(elevator.Floors)
 	return this.moveChips(elevator)
 }
 

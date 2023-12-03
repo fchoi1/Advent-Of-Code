@@ -73,8 +73,6 @@ func (rocket *Rocket) getDistance() int {
 	return 1
 }
 
-
-
 func main() {
 	rocket := &Rocket{
 		UseTest:  false,
