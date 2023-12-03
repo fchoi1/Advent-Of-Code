@@ -1,7 +1,7 @@
 from typing import List, Optional, Set, Tuple
 
 
-class Cube:
+class Engine:
     def getInput(self) -> List[List[int]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
@@ -76,6 +76,6 @@ class Cube:
 
 
 if __name__ == "__main__":
-    cube = Cube()
-    print("Day 3 part 1:", cube.getTotal())
-    print("Day 3 part 2:", cube.getGearRatio())
+    engine = Engine()
+    print("Day 3 part 1:", engine.getTotal())
+    print("Day 3 part 2:", engine.getGearRatio())
