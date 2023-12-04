@@ -26,7 +26,7 @@ class Engine:
 
     def checkNum(self, x: int, y: int, seen: Set[Tuple[int]]) -> int:
         char, num = self.engines[y][x], ""
-        while char in "0123456789":
+        while char.isdigit():
             x -= 1
             char = self.engines[y][x]
         x += 1
@@ -34,7 +34,7 @@ class Engine:
         if (x, y) in seen:
             return 0
         seen.add((x, y))
-        while char in "0123456789":
+        while char.isdigit():
             num += char
             x += 1
             if x >= len(self.engines[0]):
@@ -52,7 +52,7 @@ class Engine:
             if (
                 0 <= newX < len(self.engines[0])
                 and 0 <= newY < len(self.engines)
-                and char in "0123456789"
+                and char.isdigit()
             ):
                 n = self.checkNum(newX, newY, seen)
                 if n != 0:
@@ -65,7 +65,7 @@ class Engine:
     def checkEngine(self) -> None:
         for j, row in enumerate(self.engines):
             for i, char in enumerate(row):
-                if char not in "0123456789.":
+                if not char.isdigit() and char != ".":
                     self.checkAround(i, j)
 
     def getTotal(self) -> int:
