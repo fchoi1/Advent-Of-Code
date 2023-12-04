@@ -21,21 +21,21 @@ class Cube:
         self.useTest = useTest
         self.games = self.getInput()
         self.max = [12, 13, 14]
+        self.total = 0
+        self.power = 0
         self.runGames()
 
     def runGames(self) -> int:
-        self.total = 0
-        self.power = 0
         for i in range(len(self.games)):
             game = self.games[i]
             self.power += game[0] * game[1] * game[2]
             if all(game[j] <= self.max[j] for j in range(3)):
                 self.total += i + 1
 
-    def getTotal(self):
+    def getTotal(self) -> int:
         return self.total
 
-    def getPower(self):
+    def getPower(self) -> int:
         return self.power
 
 

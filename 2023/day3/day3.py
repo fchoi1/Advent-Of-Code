@@ -42,7 +42,7 @@ class Engine:
             char = self.engines[y][x]
         return int(num)
 
-    def checkAround(self, x: int, y: int):
+    def checkAround(self, x: int, y: int) -> None:
         total = 0
         nums = []
         seen = set()
