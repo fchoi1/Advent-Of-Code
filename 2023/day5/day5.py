@@ -68,7 +68,7 @@ class Seed:
                 overlap = [max(s, start), min(e, start + inc)]
                 after = [max(start + inc, s), e]
                 if before[1] > before[0]:
-                    newRanges.append(before)
+                    temp.append(before)
                 if after[1] > after[0]:
                     temp.append(after)
                 if overlap[1] > overlap[0]:
