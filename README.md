@@ -45,4 +45,4 @@ func main() {
 
 ## AOC 2023
 
-<a href="https://adventofcode.com/2022"><img src="2022/calendar.svg" width="80%" /></a>
+<a href="https://adventofcode.com/2023"><img src="2022/calendar.svg" width="80%" /></a>
