@@ -5,7 +5,7 @@ class Rope:
     def getInput(self) -> List[int]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
-            return [x.strip() for x in file1]
+            return [x.strip().split() for x in file1]
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
@@ -14,23 +14,16 @@ class Rope:
         self.visitedOnceLast = 1
         self.visitedSingle = set()
         self.visitedLast = set()
-
         self.head = [0, 0]
         self.tails = []
         self.createTails(9)
 
     def createTails(self, number: int) -> None:
-        for i in range(number):
+        for _ in range(number):
             self.tails.append([0, 0])
 
-    def tailInRange(self, head: List[int], tail: List[int]) -> bool:
-        return head[0] - 1 <= tail[0] <= head[0] + 1 and head[1] - 1 <= tail[1] <= head[1] + 1
-
-    def tailInRow(self, head: List[int], tail: List[int]) -> int:
-        return head[0] - tail[0]
-
-    def tailInCol(self, head: List[int], tail: List[int]) -> int:
-        return head[1] - tail[1]
+    def tailInRange(self, h: List[int], t: List[int]) -> bool:
+        return h[0] - 1 <= t[0] <= h[0] + 1 and h[1] - 1 <= t[1] <= h[1] + 1
 
     def moveHead(self, direction: str, steps: int) -> None:
         dirSteps = {"R": [1, 0], "L": [-1, 0], "U": [0, 1], "D": [0, -1]}
@@ -39,16 +32,13 @@ class Rope:
             self.head[1] = self.head[1] + dirSteps[direction][1]
 
             for i in range(len(self.tails)):
-                if i == 0:
-                    currHead = self.head
-                else:
-                    currHead = self.tails[i - 1]
+                currHead = self.head if i == 0 else self.tails[i - 1]
 
                 if self.tailInRange(currHead, self.tails[i]):
                     break
 
-                rowValue = self.tailInRow(currHead, self.tails[i])
-                colValue = self.tailInCol(currHead, self.tails[i])
+                rowValue = currHead[0] - self.tails[i][0]
+                colValue = currHead[1] - self.tails[i][1]
                 if rowValue != 0:
                     rowValue /= abs(rowValue)
                 if colValue != 0:
@@ -69,16 +59,11 @@ class Rope:
         return len(self.visitedLast)
 
     def moveRope(self) -> None:
-        for instruction in self.inputData:
-            [direction, steps] = [
-                instruction.split(" ")[0],
-                int(instruction.split(" ")[1]),
-            ]
-            self.moveHead(direction, steps)
+        for direction, steps in self.inputData:
+            self.moveHead(direction, int(steps))
 
 
 if __name__ == "__main__":
-    """This isexecuted when run from the command line"""
     rope = Rope()
     print("Day 9 part 1:", rope.getUniqueSingleTail())
     print("Day 9 part 2:", rope.getUniqueLastTail())

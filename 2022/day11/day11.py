@@ -59,9 +59,9 @@ class MonkeyGame:
             monkey.updateDivisor(lcm)
 
     def getOperation(
-        self, operation: str, value: int = 0
+        self, op: str, value: int = 0
     ) -> Callable[[int], Union[int, float]] | None:
-        match operation:
+        match op:
             case "+":
                 return lambda x: x + value if value else x + x
             case "-":
@@ -140,7 +140,6 @@ class MonkeyGame:
 
 
 if __name__ == "__main__":
-    """This isexecuted when run from the command line"""
     monkeyGame = MonkeyGame()
     print("Day 11 part 1:", monkeyGame.getInspectedTimes())
     print("Day 11 part 2:", monkeyGame.getInspectedTimes(True))

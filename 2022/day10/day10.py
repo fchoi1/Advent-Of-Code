@@ -20,7 +20,7 @@ class Tube:
 
     def runProgram(self) -> None:
         for row in self.inputData:
-            commandArr = row.split(" ")
+            commandArr = row.split()
             self.updateCRT()
             self.cycle += 1
             self.checkSignalStrength()
@@ -29,7 +29,7 @@ class Tube:
                 self.updateCRT()
                 self.cycle += 1
                 self.checkSignalStrength()
-                self.value += int(row.split(" ")[1])
+                self.value += int(commandArr[1])
 
     def checkSignalStrength(self) -> None:
         if self.cycle in self.signalStrengths:
@@ -48,12 +48,10 @@ class Tube:
 
     def printCRT(self) -> None:
         for row in self.CRT:
-            print("  ".join(row))
-        pass
+            print(" ".join(row))
 
 
 if __name__ == "__main__":
-    """This isexecuted when run from the command line"""
     tube = Tube()
     print("Day 10 part 1:", tube.getTotalSum())
     print("Day 10 part 2:", tube.printCRT())
