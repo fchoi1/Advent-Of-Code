@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 
 
-class Mirage:
+class Expansion:
     def getInput(self) -> List[List[str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
@@ -49,6 +49,6 @@ class Mirage:
 
 
 if __name__ == "__main__":
-    mirage = Mirage()
-    print("Day 11 part 1:", mirage.getTotal())
-    print("Day 11 part 2:", mirage.getTotal(True))
+    expansion = Expansion()
+    print("Day 11 part 1:", expansion.getTotal())
+    print("Day 11 part 2:", expansion.getTotal(True))
