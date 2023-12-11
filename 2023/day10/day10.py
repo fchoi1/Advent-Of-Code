@@ -110,5 +110,5 @@ class Mirage:
 
 if __name__ == "__main__":
     mirage = Mirage()
-    print("Day 9 part 1:", mirage.getFurthest())
-    print("Day 9 part 2:", mirage.getHoles())
+    print("Day 10 part 1:", mirage.getFurthest())
+    print("Day 10 part 2:", mirage.getHoles())
