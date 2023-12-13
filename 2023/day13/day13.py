@@ -1,59 +1,82 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 
 class Springs:
-    def getInput(self) -> List[Tuple[str, List[int]]]:
+    def getInput(self) -> List[List[List[str]]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
-        patternList = []
-        pattern = []
+        pList = []
+        p = []
         with open(inputFile, "r") as file1:
             for line in file1:
                 line = line.strip()
                 if not line:
-                    patternList.append(pattern)
-                    pattern = []
+                    pList.append(p)
+                    p = []
                     continue
-                pattern.append(line)
-            patternList.append(pattern)
-            return patternList
+                p.append(line)
+            pList.append(p)
+            return pList
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.patternList = self.getInput()
-        for pattern in self.patternList:
-            print(pattern)
+        self.vert = [[0] * len(self.patternList) for _ in range(2)]
+        self.hor = [[0] * len(self.patternList) for _ in range(2)]
+        self.getMirrors()
+        self.getMirrors(True)
 
-    def getTotal(self, isPart2: Optional[bool] = False) -> int:
-        total = 0
-
-        for pattern in self.patternList:
+    def getMirrors(self, getSecond: Optional[bool] = False) -> None:
+        for k, pattern in enumerate(self.patternList):
             m = len(pattern[0])
             n = len(pattern)
-            for i in range(m - 1):
-                reflectY = True
+            for i in range(1, m):
                 length = min(m - i, i)
+                byOne = False
+                if getSecond and self.vert[not getSecond][k] == i:
+                    continue
                 for row in pattern:
-                    print(row[i - length : i], row[i + 1 : i + 1 + length])
-                    if row[i - length : i] != row[i + 1 : i + 1 + length]:
-                        reflectY = False
-                        break
-                if reflectY:
-                    lineY = i
-            # for j in range(n - 1):
-            #     reflectX = True
-            #     length = min(n - j, j)
-            #     for row in pattern:
-            #         print(row[i - length : i], row[i + 1 : i + 1 + length])
-            #         if row[i - length : i] != row[i + 1 : i + 1 + length]:
-            #             reflectX = False
-            #             break
-            #     if reflectY:
-            #         lineY = i
+                    str1 = row[i - length : i]
+                    str2 = row[i : i + length][::-1]
+                    if getSecond:
+                        count = self.getDiff(str1, str2)
+                        if (str1 != str2 and byOne) or count > 1:
+                            break
+                        if count == 1:
+                            byOne = True
+                    else:
+                        if str1 != str2:
+                            break
+                else:
+                    self.vert[getSecond][k] = i
+                    continue
+            for j in range(1, n):
+                length = min(n - j, j)
+                byOne = False
+                if getSecond and self.hor[not getSecond][k] == j:
+                    continue
+                for i in range(m):
+                    str1 = "".join(col[i] for col in pattern[j - length : j])
+                    str2 = "".join(col[i] for col in pattern[j : j + length][::-1])
+                    if getSecond:
+                        count = self.getDiff(str1, str2)
+                        if (str1 != str2 and byOne) or count > 1:
+                            break
+                        if count == 1:
+                            byOne = True
+                    else:
+                        if str1 != str2:
+                            break
+                else:
+                    self.hor[getSecond][k] = j
 
-        return total
+    def getDiff(self, str1: str, str2: str) -> int:
+        return sum(1 for char1, char2 in zip(str1, str2) if char1 != char2)
+
+    def getTotal(self, isPart2: Optional[bool] = False) -> int:
+        return sum(self.hor[isPart2]) * 100 + sum(self.vert[isPart2])
 
 
 if __name__ == "__main__":
-    springs = Springs(True)
+    springs = Springs()
     print("Day 13 part 1:", springs.getTotal())
-    # print("Day 13 part 2:", springs.getTotal(True))
+    print("Day 13 part 2:", springs.getTotal(True))
