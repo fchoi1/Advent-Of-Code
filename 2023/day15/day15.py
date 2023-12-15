@@ -10,7 +10,6 @@ class Library:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.data = self.getInput()
-        self.boxes = [{"list": []} for _ in range(256)]
 
     def getHash(self, string) -> int:
         hashValue = 0
@@ -23,10 +22,10 @@ class Library:
 
     def getTotal(self) -> int:
         total = 0
+        boxes = [{"list": []} for _ in range(256)]
         for line in self.data:
             label, val = line.split("=") if "=" in line else line.split("-")
-            box = self.getHash(label)
-            currBox = self.boxes[box]
+            currBox = boxes[self.getHash(label)]
 
             if val:
                 if label in currBox:
@@ -40,7 +39,7 @@ class Library:
                 currBox["list"][index] = 0
                 del currBox[label]
 
-        for i, box in enumerate(self.boxes):
+        for i, box in enumerate(boxes):
             rank = 0
             for val in box["list"]:
                 if val == 0:
