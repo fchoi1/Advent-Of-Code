@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 
-class Springs:
+class Mirrors:
     def getInput(self) -> List[List[List[str]]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         pList = []
@@ -77,6 +77,6 @@ class Springs:
 
 
 if __name__ == "__main__":
-    springs = Springs()
-    print("Day 13 part 1:", springs.getTotal())
-    print("Day 13 part 2:", springs.getTotal(True))
+    mirrors = Mirrors()
+    print("Day 13 part 1:", mirrors.getTotal())
+    print("Day 13 part 2:", mirrors.getTotal(True))

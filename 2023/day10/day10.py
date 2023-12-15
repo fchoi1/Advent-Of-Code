@@ -1,7 +1,7 @@
 from typing import List, Optional, Set, Tuple
 
 
-class Mirage:
+class Pipe:
     def getInput(self) -> List[List[int]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
@@ -109,6 +109,6 @@ class Mirage:
 
 
 if __name__ == "__main__":
-    mirage = Mirage()
-    print("Day 10 part 1:", mirage.getFurthest())
-    print("Day 10 part 2:", mirage.getHoles())
+    pipe = Pipe()
+    print("Day 10 part 1:", pipe.getFurthest())
+    print("Day 10 part 2:", pipe.getHoles())
