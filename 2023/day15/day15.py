@@ -10,7 +10,6 @@ class Library:
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.data = self.getInput()
-        self.curr = 0
         self.boxes = [{"list": []} for _ in range(256)]
 
     def getHash(self, string) -> int:
