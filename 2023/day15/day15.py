@@ -52,4 +52,4 @@ class Library:
 if __name__ == "__main__":
     library = Library()
     print("Day 15 part 1:", library.getHashSum())
-    print("Day 15 part 1:", library.getTotal())
+    print("Day 15 part 2:", library.getTotal())
