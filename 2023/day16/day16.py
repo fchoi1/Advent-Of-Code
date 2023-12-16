@@ -87,4 +87,4 @@ if __name__ == "__main__":
     lava = Lava()
     print("Day 16 part 1:", lava.getE())
     print("Day 16 part 2:", lava.getMax())
-    # Total runtime ~1.67s
+    # Total runtime ~1.18s
