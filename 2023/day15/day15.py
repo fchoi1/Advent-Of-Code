@@ -2,7 +2,7 @@ from typing import List, Optional
 
 
 class Library:
-    def getInput(self) -> List[List[List[str]]]:
+    def getInput(self) -> List[str]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
             return file1.readline().strip().split(",")

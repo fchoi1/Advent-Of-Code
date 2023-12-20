@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 
 
 class Dish:
-    def getInput(self) -> List[List[List[str]]]:
+    def getInput(self) -> List[List[str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
             return [list(x.strip()) for x in file1]
@@ -66,7 +66,7 @@ class Dish:
         remain = (loops - index) % cycle
         return scores[index : index + cycle][remain]
 
-    def getOneShift(self):
+    def getOneShift(self) -> int:
         self.shift(*self.ranges[0], 0)
         return self.getScore()
 

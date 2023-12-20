@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple, Set
 
 
 class Lava:
-    def getInput(self) -> List[List[List[str]]]:
+    def getInput(self) -> List[List[str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
             return [list(x.strip()) for x in file1]
@@ -13,7 +13,7 @@ class Lava:
         self.w = len(self.map[0])
         self.h = len(self.map)
 
-    def inBounds(self, x, y):
+    def inBounds(self, x:int, y:int) -> bool:
         return 0 <= x < self.w and 0 <= y < self.h
 
     def moveBeam(
@@ -22,7 +22,7 @@ class Lava:
         pos: Tuple[int],
         seen: Set[Tuple[int]],
         energy: Set[Tuple[int]],
-    ):
+    )-> Tuple[Set[int]]:
         dx, dy = d
         x, y = pos
         if (x, y, d) in seen:
@@ -41,7 +41,7 @@ class Lava:
             seen, energy = self.moveBeam(d, p, seen, energy)
         return seen, energy
 
-    def getMoveList(self, sym: str, d: Tuple[int], pos: Tuple[int]):
+    def getMoveList(self, sym: str, d: Tuple[int], pos: Tuple[int]) -> List[Tuple[int]]:
         m = []
         dx, dy = d
         x, y = pos
@@ -74,7 +74,7 @@ class Lava:
     ) -> int:
         return len(self.moveBeam(direction, start, set(), set())[1])
 
-    def getMax(self):
+    def getMax(self) -> int:
         t = 0
         for i in range(len(self.map)):
             t = max(t, self.getE((0, 1), (i, 0)), self.getE((0, -1), (i, self.h - 1)))

@@ -1,8 +1,8 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 
 class Lava:
-    def getInput(self) -> List[List[List[str]]]:
+    def getInput(self) -> List[Tuple[int, str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         cmd = []
         with open(inputFile, "r") as file1:
@@ -19,10 +19,10 @@ class Lava:
         self.cmd = self.getInput()
         self.dirMap = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
-    def det(self, pos1, pos2):
+    def det(self, pos1: List[int], pos2: List[int]) -> int:
         return pos1[0] * pos2[1] - pos2[0] * pos1[1]
 
-    def getTotal(self, isPart2=False):
+    def getTotal(self, isPart2: Optional[bool] = False) -> int:
         x, y, total = 0, 0, 0
         for dir_, steps, newDir, newSteps in self.cmd:
             direction = newDir if isPart2 else "RDLU".index(dir_)
@@ -36,4 +36,4 @@ class Lava:
 if __name__ == "__main__":
     lava = Lava()
     print("Day 18 part 1:", lava.getTotal())
-    print("Day 18 part 1:", lava.getTotal(True))
+    print("Day 18 part 2:", lava.getTotal(True))
