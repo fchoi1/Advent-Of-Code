@@ -3,7 +3,7 @@ import copy
 
 
 class Aplenty:
-    def getInput(self) -> Tuple[Dict[List[str]], List[int]]:
+    def getInput(self) -> Tuple[Dict[str, List[str]], List[int]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         workflows = {}
         inputs = []
