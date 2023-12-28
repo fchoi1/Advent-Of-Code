@@ -1,13 +1,13 @@
-from typing import List, Optional, Tuple, Dict
+from typing import Optional, Tuple
 from collections import deque, defaultdict
+from math import lcm
 
 
-class Aplenty:
+class Pulse:
     def getInput(self) -> Tuple:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         broadcast = []
-        flip = {}
-        conj = {}
+        flip, conj = {}, {}
         with open(inputFile, "r") as file1:
             for line in file1:
                 line = line.strip()
@@ -20,38 +20,35 @@ class Aplenty:
                 else:
                     split = line.split(" -> ")
                     conj[split[0][1:]] = split[1].split(", ")
-
             return broadcast, flip, conj
 
     def __init__(self, useTest: Optional[bool] = False) -> None:
         self.useTest = useTest
         self.broadast, self.flip, self.conj = self.getInput()
-        self.setup()
-        print(self.broadast, self.flip, self.conj, self.val, self.Cin)
 
-    def setup(self) -> int:
+    def reset(self) -> int:
         self.val = {}
         self.Cin = defaultdict(list)
+        for key, outputs in [*self.conj.items(), *self.flip.items()]:
+            self.val[key] = 0
+            for n in outputs:
+                if n in self.conj:
+                    self.Cin[n].append(key)
 
-        def process(mapping):
-            for key, outputs in mapping.items():
-                self.val[key] = 0
-                for n in outputs:
-                    if n in self.conj:
-                        self.Cin[n].append(key)
-
-        process(self.flip)
-        process(self.conj)
-
-    def broadcast(self):
+    def broadcast(
+        self,
+        feed: Optional[str] = "",
+        presses: Optional[int] = 0,
+    ):
         signals = [(x, 0) for x in self.broadast]
         q = deque(signals)
-        c = 0
-        self.counts[0] += len(self.broadast)
-        while q and c < 8:
-            c += 1
+        self.counts[0] += 1
+        output = "output" if self.useTest else "rx"
+        while q:
             curr, signal = q.popleft()
-            self.counts[signal] +=1  
+            self.counts[signal] += 1
+            if curr == output:
+                continue
             if curr in self.flip:
                 if signal:
                     continue
@@ -59,22 +56,36 @@ class Aplenty:
                 s = [(x, self.val[curr]) for x in self.flip[curr]]
             elif curr in self.conj:
                 self.val[curr] = 0 if all(self.val[x] for x in self.Cin[curr]) else 1
+                if feed and feed in self.conj[curr] and self.val[curr]:
+                    self.cycles[curr] = presses
                 s = [(x, self.val[curr]) for x in self.conj[curr]]
             q.extend(s)
-            print(curr, self.val, q)
-        print(q, self.val, s)
 
     def getTotal(self):
-        total = 1
+        self.reset()
         self.counts = [0, 0]
-        for _ in range(1):
-            print()
+        for _ in range(1000):
             self.broadcast()
-        print(self.counts)
-        return total
+        return self.counts[0] * self.counts[1]
+
+    def getButtonPress(self):
+        self.reset()
+        # Assumed feed is a conjunction
+        for key, outputs in self.conj.items():
+            if "rx" in outputs:
+                feed = key
+                break
+        self.cycles = {name: None for name in self.Cin[feed]}
+        counter = 0
+        while True:
+            counter += 1
+            self.broadcast(feed, counter)
+            if all(self.cycles[key] for key in self.Cin[feed]):
+                break
+        return lcm(*self.cycles.values())
 
 
 if __name__ == "__main__":
-    aplenty = Aplenty(True)
-    print("Day 20 part 1:", aplenty.getTotal())
-    # Total Runtime ~1.6s
+    pulse = Pulse()
+    print("Day 20 part 1:", pulse.getTotal())
+    print("Day 20 part 2:", pulse.getButtonPress())
