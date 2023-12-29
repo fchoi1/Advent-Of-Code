@@ -26,7 +26,7 @@ class Pulse:
         self.useTest = useTest
         self.broadast, self.flip, self.conj = self.getInput()
 
-    def reset(self) -> int:
+    def reset(self) -> None:
         self.val = {}
         self.Cin = defaultdict(list)
         for key, outputs in [*self.conj.items(), *self.flip.items()]:
@@ -39,7 +39,7 @@ class Pulse:
         self,
         feed: Optional[str] = "",
         presses: Optional[int] = 0,
-    ):
+    ) -> None:
         signals = [(x, 0) for x in self.broadast]
         q = deque(signals)
         self.counts[0] += 1
@@ -61,14 +61,14 @@ class Pulse:
                 s = [(x, self.val[curr]) for x in self.conj[curr]]
             q.extend(s)
 
-    def getTotal(self):
+    def getTotal(self) -> int:
         self.reset()
         self.counts = [0, 0]
         for _ in range(1000):
             self.broadcast()
         return self.counts[0] * self.counts[1]
 
-    def getButtonPress(self):
+    def getButtonPress(self) -> int:
         self.reset()
         # Assumed feed is a conjunction
         for key, outputs in self.conj.items():
