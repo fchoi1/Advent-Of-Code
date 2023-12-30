@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple, Set
 
 
-class Aplenty:
+class Walk:
     def getInput(self) -> List[List[str]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         with open(inputFile, "r") as file1:
@@ -93,7 +93,7 @@ class Aplenty:
 
 
 if __name__ == "__main__":
-    aplenty = Aplenty()
-    print("Day 23 part 1:", aplenty.getTotal())
-    print("Day 23 part 2:", aplenty.getTotal(True))
+    walk = Walk()
+    print("Day 23 part 1:", walk.getTotal())
+    print("Day 23 part 2:", walk.getTotal(True))
     # Total Runtime
