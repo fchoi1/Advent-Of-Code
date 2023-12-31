@@ -1,8 +1,8 @@
 from typing import List, Optional, Tuple
 from sympy import solve, Integer, symbols
 
-class Hailstones:
 
+class Hailstones:
     def getInput(self) -> List[Tuple[int]]:
         inputFile = "input-test.txt" if self.useTest else "input.txt"
         hailstones = []
