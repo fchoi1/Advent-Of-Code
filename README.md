@@ -33,7 +33,7 @@ func main() {
 
 ## Completed
 
-- [ ] [2023](2023) (Python - in progress)
+- [X] [2023](2023) (Python)
 - [X] [2022](2022) (Python)
 - [ ] [2021](2021)  ???
 - [X] [2020](2020) (Python)
