@@ -49,12 +49,10 @@ class Walk:
 
     def dfs(self, p2: bool, pos: Tuple[int], seen: Set[Tuple[int]], steps: int) -> None:
         if pos == self.end:
-            print(steps, self.length)
             self.length = max(self.length, steps)
             return
         if pos in seen:
             return
-        prev = None
         seen.add(pos)
         steps += 1
         x, y = pos
@@ -79,15 +77,13 @@ class Walk:
                 prev, p, s = self.cache[routes[0]]
             seen.add(prev)
             self.dfs(p2, p, seen, steps + s)
+            seen.remove(prev)
         elif len(routes) > 1:
             for r in routes:
                 self.dfs(p2, r, seen, steps)
-        if prev:
-            seen.remove(prev)
         seen.remove(pos)
 
     def getTotal(self, isPart2: Optional[bool] = False) -> int:
-        self.seen = set()
         self.dfs(isPart2, self.start, set(), 0)
         return self.length
 
@@ -96,4 +92,4 @@ if __name__ == "__main__":
     walk = Walk()
     print("Day 23 part 1:", walk.getTotal())
     print("Day 23 part 2:", walk.getTotal(True))
-    # Total Runtime
+    # Total Runtime ~182.95s
