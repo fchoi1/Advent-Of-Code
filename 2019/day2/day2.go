@@ -1,85 +1,71 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"io/ioutil"
-	"strings"
+	"os"
 	"strconv"
+	"strings"
 )
 
 type Rocket struct {
-	UseTest     bool
-	Directions  [][]interface{}
-	Position	[]int
-	first		[]int
+	UseTest bool
+	IntCode []int
 }
 
-
-func (rocket *Rocket) getInput() {
+func (this *Rocket) getInput() {
 	inputFile := "input.txt"
-	if rocket.UseTest {
+	if this.UseTest {
 		inputFile = "input-test.txt"
 	}
-
-	data, _ := ioutil.ReadFile(inputFile)
-	line := strings.TrimSpace(string(data))
-	parts := strings.Split(line, ", ")
-	rocket.Directions = make([][]interface{}, len(parts))
-
-	for i, part := range parts {
-		direction := string(part[0])
-		distanceStr := strings.TrimPrefix(part, direction)
-		distance, _ := strconv.Atoi(strings.TrimSpace(distanceStr))
-		rocket.Directions[i] = []interface{}{direction, distance}
-	}
-}
-
-func (rocket *Rocket) travel(){
-	seenMap := make(map[string]bool)
-	dirMap := map[string][2]int{
-		"N": {0, 1},
-		"S": {0, -1},
-		"E": {1, 0},
-		"W": {-1, 0},
-	}
-	dirStr := "NESW"
-	currentDirIndex := 0
-
-	for _, direction := range rocket.Directions {
-		roatation := direction[0].(string)
-    	steps := direction[1].(int) 
-
-		if roatation == "R" {
-			currentDirIndex = (currentDirIndex + 1) % len(dirStr)
-		} else if roatation == "L" {
-			currentDirIndex = (currentDirIndex - 1 + len(dirStr)) % len(dirStr)
-		}
-		currentDir := string(dirStr[currentDirIndex])
-		movement := dirMap[currentDir]
-		
-		for i := 0; i < steps; i++ {
-			rocket.Position[0] += movement[0] 
-			rocket.Position[1] += movement[1] 
-			strKey := strconv.Itoa(rocket.Position[0]) + "," + strconv.Itoa(rocket.Position[1])
-			if seenMap[strKey] && len(rocket.first) <= 0 {
-				rocket.first = append(rocket.first, rocket.Position[0], rocket.Position[1])
-			}
-			seenMap[strKey] = true
+	file, _ := os.Open(inputFile)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		strNum := strings.Split(line, ",")
+		for _, n := range strNum {
+			num, _ := strconv.Atoi(n)
+			this.IntCode = append(this.IntCode, num)
 		}
 	}
+
+	defer file.Close()
 }
 
-func (rocket *Rocket) getDistance() int {
-	return 1
+func (this *Rocket) getFuel() int {
+	total := 0
+	index := 0
+
+	for index < len(this.IntCode)-3 {
+		code := this.IntCode[index]
+		var res int
+		a := this.IntCode[index+1]
+		b := this.IntCode[index+2]
+		c := this.IntCode[index+3]
+		fmt.Println(a, b, c)
+		if code == 99 {
+			fmt.Println("broke", code, a, b, c)
+			return 1
+		} else if code == 1 {
+			res = this.IntCode[a] + this.IntCode[b]
+		} else if code == 2 {
+			res = this.IntCode[a] * this.IntCode[b]
+		}
+		this.IntCode[c] = res
+		fmt.Println(res, index, this.IntCode)
+		index += 4
+
+	}
+	fmt.Println((this.IntCode))
+	return total
 }
 
 func main() {
 	rocket := &Rocket{
-		UseTest:  false,
-		Position: []int{0,0},
-		first: []int{},
+		UseTest: true,
+		IntCode: []int{},
 	}
 	rocket.getInput()
-	rocket.travel()
-	fmt.Println("Day 1 part 1:", rocket.getDistance())
+	fmt.Println("Day 1 part 1:", rocket.getFuel())
+	fmt.Println("Day 1 part 2:", rocket.getFuel())
 }
