@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 type Taxi struct {
-	UseTest     bool
-	Directions  [][]interface{}
-	Position	[]int
-	first		[]int
+	UseTest    bool
+	Directions [][]interface{}
+	Position   []int
+	first      []int
 }
 
 func Abs(x int) int {
@@ -40,7 +40,7 @@ func (taxi *Taxi) getInput() {
 	}
 }
 
-func (taxi *Taxi) travel(){
+func (taxi *Taxi) travel() {
 	seenMap := make(map[string]bool)
 	dirMap := map[string][2]int{
 		"N": {0, 1},
@@ -53,7 +53,7 @@ func (taxi *Taxi) travel(){
 
 	for _, direction := range taxi.Directions {
 		roatation := direction[0].(string)
-    	steps := direction[1].(int) 
+		steps := direction[1].(int)
 
 		if roatation == "R" {
 			currentDirIndex = (currentDirIndex + 1) % len(dirStr)
@@ -62,10 +62,10 @@ func (taxi *Taxi) travel(){
 		}
 		currentDir := string(dirStr[currentDirIndex])
 		movement := dirMap[currentDir]
-		
+
 		for i := 0; i < steps; i++ {
-			taxi.Position[0] += movement[0] 
-			taxi.Position[1] += movement[1] 
+			taxi.Position[0] += movement[0]
+			taxi.Position[1] += movement[1]
 			strKey := strconv.Itoa(taxi.Position[0]) + "," + strconv.Itoa(taxi.Position[1])
 			if seenMap[strKey] && len(taxi.first) <= 0 {
 				taxi.first = append(taxi.first, taxi.Position[0], taxi.Position[1])
@@ -76,18 +76,18 @@ func (taxi *Taxi) travel(){
 }
 
 func (taxi *Taxi) getDistance() int {
-	return Abs(taxi.Position[0] ) +  Abs(taxi.Position[1])
+	return Abs(taxi.Position[0]) + Abs(taxi.Position[1])
 }
 
 func (taxi *Taxi) getFirst() int {
-	return Abs(taxi.first[0] ) +  Abs(taxi.first[1])
+	return Abs(taxi.first[0]) + Abs(taxi.first[1])
 }
 
 func main() {
 	taxi := &Taxi{
 		UseTest:  false,
-		Position: []int{0,0},
-		first: []int{},
+		Position: []int{0, 0},
+		first:    []int{},
 	}
 	taxi.getInput()
 	taxi.travel()
