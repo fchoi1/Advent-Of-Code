@@ -8,12 +8,12 @@ import (
 	"strings"
 )
 
-type Rocket struct {
+type Alarm struct {
 	UseTest bool
 	IntCode []int
 }
 
-func (this *Rocket) getInput() {
+func (this *Alarm) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -32,7 +32,7 @@ func (this *Rocket) getInput() {
 	defer file.Close()
 }
 
-func (this *Rocket) runProgram(input1 int, input2 int) int {
+func (this *Alarm) runProgram(input1 int, input2 int) int {
 	this.getInput()
 	index := 0
 	this.IntCode[1] = input1
@@ -57,11 +57,11 @@ func (this *Rocket) runProgram(input1 int, input2 int) int {
 	return this.IntCode[0]
 }
 
-func (this *Rocket) getOutput() int {
+func (this *Alarm) getOutput() int {
 	return this.runProgram(12, 2)
 }
 
-func (this *Rocket) getOutput2() int {
+func (this *Alarm) getOutput2() int {
 	target := 19690720
 	for i := 0; i < 100; i++ {
 		for j := 0; j < 100; j++ {
@@ -74,10 +74,10 @@ func (this *Rocket) getOutput2() int {
 }
 
 func main() {
-	rocket := &Rocket{
+	alarm := &Alarm{
 		UseTest: false,
 		IntCode: []int{},
 	}
-	fmt.Println("Day 2 part 1:", rocket.getOutput())
-	fmt.Println("Day 2 part 2:", rocket.getOutput2())
+	fmt.Println("Day 2 part 1:", alarm.getOutput())
+	fmt.Println("Day 2 part 2:", alarm.getOutput2())
 }
