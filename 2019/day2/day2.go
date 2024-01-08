@@ -20,6 +20,7 @@ func (this *Rocket) getInput() {
 	}
 	file, _ := os.Open(inputFile)
 	scanner := bufio.NewScanner(file)
+	this.IntCode = []int{}
 	for scanner.Scan() {
 		line := scanner.Text()
 		strNum := strings.Split(line, ",")
@@ -28,13 +29,14 @@ func (this *Rocket) getInput() {
 			this.IntCode = append(this.IntCode, num)
 		}
 	}
-
 	defer file.Close()
 }
 
-func (this *Rocket) getFuel() int {
-	total := 0
+func (this *Rocket) runProgram(input1 int, input2 int) int {
+	this.getInput()
 	index := 0
+	this.IntCode[1] = input1
+	this.IntCode[2] = input2
 
 	for index < len(this.IntCode)-3 {
 		code := this.IntCode[index]
@@ -42,30 +44,40 @@ func (this *Rocket) getFuel() int {
 		a := this.IntCode[index+1]
 		b := this.IntCode[index+2]
 		c := this.IntCode[index+3]
-		fmt.Println(a, b, c)
 		if code == 99 {
-			fmt.Println("broke", code, a, b, c)
-			return 1
+			return this.IntCode[0]
 		} else if code == 1 {
 			res = this.IntCode[a] + this.IntCode[b]
 		} else if code == 2 {
 			res = this.IntCode[a] * this.IntCode[b]
 		}
 		this.IntCode[c] = res
-		fmt.Println(res, index, this.IntCode)
 		index += 4
-
 	}
-	fmt.Println((this.IntCode))
-	return total
+	return this.IntCode[0]
+}
+
+func (this *Rocket) getOutput() int {
+	return this.runProgram(12, 2)
+}
+
+func (this *Rocket) getOutput2() int {
+	target := 19690720
+	for i := 0; i < 100; i++ {
+		for j := 0; j < 100; j++ {
+			if target == this.runProgram(i, j) {
+				return 100*i + j
+			}
+		}
+	}
+	return -1
 }
 
 func main() {
 	rocket := &Rocket{
-		UseTest: true,
+		UseTest: false,
 		IntCode: []int{},
 	}
-	rocket.getInput()
-	fmt.Println("Day 1 part 1:", rocket.getFuel())
-	fmt.Println("Day 1 part 2:", rocket.getFuel())
+	fmt.Println("Day 2 part 1:", rocket.getOutput())
+	fmt.Println("Day 2 part 2:", rocket.getOutput2())
 }

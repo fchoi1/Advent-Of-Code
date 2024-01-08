@@ -49,6 +49,7 @@ func (this *Wire) getInput() {
 }
 
 func (this *Wire) travel() {
+	this.getInput()
 	dirMap := map[string][2]int{
 		"U": {0, 1},
 		"D": {0, -1},
@@ -121,8 +122,7 @@ func main() {
 		Line2:    []string{},
 		Line1:    []string{},
 	}
-	wire.getInput()
 	wire.travel()
-	fmt.Println("Day 1 part 1:", wire.getDistance())
-	fmt.Println("Day 1 part 2:", wire.getMinSteps())
+	fmt.Println("Day 3 part 1:", wire.getDistance())
+	fmt.Println("Day 3 part 2:", wire.getMinSteps())
 }
