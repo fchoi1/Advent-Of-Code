@@ -9,10 +9,12 @@ import (
 	"strings"
 )
 
-type Rocket struct {
-	UseTest bool
-	Line2   []string
-	Line1   []string
+type Wire struct {
+	UseTest  bool
+	Line2    []string
+	Line1    []string
+	minSteps int
+	dist     int
 }
 
 func abs(x int) int {
@@ -28,7 +30,7 @@ func max(a, b int) int {
 	return b
 }
 
-func (this *Rocket) getInput() {
+func (this *Wire) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -46,88 +48,81 @@ func (this *Rocket) getInput() {
 	defer file.Close()
 }
 
-func (this *Rocket) getDistance(isPart2 bool) int {
+func (this *Wire) travel() {
 	dirMap := map[string][2]int{
-		"U": {0, -1},
-		"D": {0, 1},
+		"U": {0, 1},
+		"D": {0, -1},
 		"L": {-1, 0},
 		"R": {1, 0},
 	}
 	seen1, seen2 := make(map[[2]int]int), make(map[[2]int]int)
 	sc1, sc2 := 0, 0
 	pos1, pos2 := [2]int{0, 0}, [2]int{0, 0}
-	dist, minSteps := math.MaxInt64, math.MaxInt64
 	length := max(len(this.Line1), len(this.Line2))
 
 	for i := 0; i < length; i++ {
-		println("steps", sc1, sc2)
 		if i < len(this.Line1) {
-			dir1 := string(this.Line1[i][0])
-			step1, _ := strconv.Atoi(this.Line1[i][1:])
-			j := 0
-			for j < step1 {
-				pos1[0] += dirMap[dir1][0]
-				pos1[1] += dirMap[dir1][1]
-				_, stepSeen := seen1[pos1]
-				if !stepSeen {
+			dir := string(this.Line1[i][0])
+			steps, _ := strconv.Atoi(this.Line1[i][1:])
+			for j := 0; j < steps; j++ {
+				sc1++
+				pos1[0], pos1[1] = pos1[0]+dirMap[dir][0], pos1[1]+dirMap[dir][1]
+				if _, stepSeen := seen1[pos1]; !stepSeen {
 					seen1[pos1] = sc1
 				}
-				count, exists := seen2[pos1]
-				if exists {
-					fmt.Println("intersect", pos1)
-
-					if dist > abs(pos1[0])+abs(pos1[1]) {
-						dist = abs(pos1[0]) + abs(pos1[1])
+				if count, exists := seen2[pos1]; exists {
+					dist := abs(pos1[0]) + abs(pos1[1])
+					if this.dist > dist {
+						this.dist = dist
 					}
-					if minSteps > count+seen1[pos1] {
-						minSteps = count + seen1[pos1]
+					minStep := count + seen1[pos1]
+					if this.minSteps > minStep {
+						this.minSteps = minStep
 					}
-
 				}
-				j += 1
-				sc1 += 1
 			}
 		}
 		if i < len(this.Line2) {
-			dir2 := string(this.Line2[i][0])
-			step2, _ := strconv.Atoi(this.Line2[i][1:])
-			k := 0
-			for k < step2 {
-				pos2[0] += dirMap[dir2][0]
-				pos2[1] += dirMap[dir2][1]
-				_, stepSeen := seen2[pos2]
-				if !stepSeen {
+			dir := string(this.Line2[i][0])
+			steps, _ := strconv.Atoi(this.Line2[i][1:])
+			for j := 0; j < steps; j++ {
+				sc2++
+				pos2[0], pos2[1] = pos2[0]+dirMap[dir][0], pos2[1]+dirMap[dir][1]
+				if _, stepSeen := seen2[pos2]; !stepSeen {
 					seen2[pos2] = sc2
 				}
-				count, exists := seen1[pos2]
-				if exists {
-					fmt.Println("intersect", pos2)
-					if dist > abs(pos2[0])+abs(pos2[1]) {
-						dist = abs(pos2[0]) + abs(pos2[1])
+				if count, exists := seen1[pos2]; exists {
+					dist := abs(pos2[0]) + abs(pos2[1])
+					if this.dist > dist {
+						this.dist = dist
 					}
-					if minSteps > count+seen2[pos2] {
-						minSteps = count + seen2[pos1]
+					minStep := count + seen2[pos2]
+					if this.minSteps > minStep {
+						this.minSteps = minStep
 					}
 				}
-				k += 1
-				sc2 += 2
 			}
 		}
 	}
-	fmt.Println(dist, minSteps,)
-	if isPart2 {
-		return minSteps
-	}
-	return dist
+}
+
+func (this *Wire) getDistance() int {
+	return this.dist
+}
+func (this *Wire) getMinSteps() int {
+	return this.minSteps
 }
 
 func main() {
-	rocket := &Rocket{
-		UseTest: true,
-		Line2:   []string{},
-		Line1:   []string{},
+	wire := &Wire{
+		UseTest:  false,
+		minSteps: math.MaxInt64,
+		dist:     math.MaxInt64,
+		Line2:    []string{},
+		Line1:    []string{},
 	}
-	rocket.getInput()
-	fmt.Println("Day 1 part 1:", rocket.getDistance(false))
-	fmt.Println("Day 1 part 1:", rocket.getDistance(true))
+	wire.getInput()
+	wire.travel()
+	fmt.Println("Day 1 part 1:", wire.getDistance())
+	fmt.Println("Day 1 part 2:", wire.getMinSteps())
 }
