@@ -38,7 +38,7 @@ func (this *Alarm) runProgram(input1 int, input2 int) int {
 	this.IntCode[1] = input1
 	this.IntCode[2] = input2
 
-	for index < len(this.IntCode)-3 {
+	for index < len(this.IntCode) {
 		code := this.IntCode[index]
 		var res int
 		a := this.IntCode[index+1]
