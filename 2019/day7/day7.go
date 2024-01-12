@@ -140,7 +140,6 @@ func (this *Asteroids) getCombo(values []int) [][]int {
 }
 
 func (this *Asteroids) getOutput(isPart2 bool) int {
-	this.getInput()
 	var comboList [][]int
 	var outputs []int
 	nextIndex := [5]int{0, 0, 0, 0, 0}
