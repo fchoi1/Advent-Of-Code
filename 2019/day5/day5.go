@@ -13,20 +13,6 @@ type Asteroids struct {
 	IntCode []int
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func (this *Asteroids) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
