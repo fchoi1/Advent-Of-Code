@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type Asteroids struct {
+type Image struct {
 	UseTest bool
 	layers  [][][]int
 	data    string
@@ -29,7 +29,7 @@ func intListToString(numbers []int) string {
 	return strings.Join(strNumbers, "")
 }
 
-func (this *Asteroids) getInput() {
+func (this *Image) getInput() {
 	inputFile := "input.txt"
 	this.width = 25
 	this.height = 6
@@ -47,7 +47,7 @@ func (this *Asteroids) getInput() {
 	defer file.Close()
 }
 
-func (this *Asteroids) formatLayers() {
+func (this *Image) formatLayers() {
 	slice := this.width * this.height
 	this.layers = make([][][]int, 0)
 	loops := len(this.data) / slice
@@ -65,7 +65,7 @@ func (this *Asteroids) formatLayers() {
 	}
 }
 
-func (this *Asteroids) getOutput() int {
+func (this *Image) getOutput() int {
 	maxCount := math.MaxInt64
 	maxLayer := 0
 	for i := range this.layers {
@@ -78,7 +78,7 @@ func (this *Asteroids) getOutput() int {
 	return this.getCount(maxLayer, 1) * this.getCount(maxLayer, 2)
 }
 
-func (this *Asteroids) getCount(layer int, val int) int {
+func (this *Image) getCount(layer int, val int) int {
 	count := 0
 	for _, row := range this.layers[layer] {
 		for _, n := range row {
@@ -90,7 +90,7 @@ func (this *Asteroids) getCount(layer int, val int) int {
 	return count
 }
 
-func (this *Asteroids) printImage() {
+func (this *Image) printImage() {
 	image := this.layers[0]
 	for _, layers := range this.layers[1:] {
 		for y, row := range layers {
@@ -108,12 +108,12 @@ func (this *Asteroids) printImage() {
 }
 
 func main() {
-	asteroids := &Asteroids{
+	image := &Image{
 		UseTest: false,
 	}
-	asteroids.getInput()
-	fmt.Println("Day 8 part 1:", asteroids.getOutput())
+	image.getInput()
+	fmt.Println("Day 8 part 1:", image.getOutput())
 	fmt.Println("Day 8 part 2:")
-	asteroids.printImage()
+	image.printImage()
 
 }

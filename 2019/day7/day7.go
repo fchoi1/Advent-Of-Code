@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type Asteroids struct {
+type Amplifier struct {
 	UseTest   bool
 	IntCode   []int
 	comboList [][]int
@@ -30,7 +30,7 @@ func contains(slice []int, value int) bool {
 	return false
 }
 
-func (this *Asteroids) getInput() {
+func (this *Amplifier) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -48,7 +48,7 @@ func (this *Asteroids) getInput() {
 	}
 	defer file.Close()
 }
-func (this *Asteroids) parseOpCode(n int) (int, []int) {
+func (this *Amplifier) parseOpCode(n int) (int, []int) {
 	code := n % 100
 	rest := strconv.Itoa(n / 100)
 	arr := []int{}
@@ -62,7 +62,7 @@ func (this *Asteroids) parseOpCode(n int) (int, []int) {
 	return code, arr
 }
 
-func (this *Asteroids) runProgram(index int, intCode []int, input []int) ([]int, int) {
+func (this *Amplifier) runProgram(index int, intCode []int, input []int) ([]int, int) {
 	output := []int{}
 	for index < len(intCode) {
 		code, params := this.parseOpCode(intCode[index])
@@ -133,13 +133,13 @@ func backtrack(values []int, currCombo []int, result *[][]int) {
 	}
 }
 
-func (this *Asteroids) getCombo(values []int) [][]int {
+func (this *Amplifier) getCombo(values []int) [][]int {
 	var res [][]int
 	backtrack(values, []int{}, &res)
 	return res
 }
 
-func (this *Asteroids) getOutput(isPart2 bool) int {
+func (this *Amplifier) getOutput(isPart2 bool) int {
 	var comboList [][]int
 	var outputs []int
 	nextIndex := [5]int{0, 0, 0, 0, 0}
@@ -183,12 +183,12 @@ func (this *Asteroids) getOutput(isPart2 bool) int {
 }
 
 func main() {
-	asteroids := &Asteroids{
+	amplifier := &Amplifier{
 		UseTest: false,
 		IntCode: []int{},
 	}
-	asteroids.getInput()
-	fmt.Println("Day 7 part 1:", asteroids.getOutput(false))
-	fmt.Println("Day 7 part 2:", asteroids.getOutput(true))
+	amplifier.getInput()
+	fmt.Println("Day 7 part 1:", amplifier.getOutput(false))
+	fmt.Println("Day 7 part 2:", amplifier.getOutput(true))
 
 }
