@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -15,6 +16,7 @@ type Monitor struct {
 	asteroids    [][]int
 	currAsteroid []int
 	maxCount     int
+	asteroid200  int
 }
 
 type AsteroidResult struct {
@@ -33,30 +35,39 @@ func abs(x int) int {
 	return x
 }
 
-func parseNumbers(key string) []int {
+func parseNumbers(key string) []float64 {
 	parts := strings.Split(key, ",")
-	num1, _ := strconv.Atoi(parts[0])
-	num2, _ := strconv.Atoi(parts[1])
-	return []int{num2, num1}
+	num1, _ := strconv.ParseFloat(parts[0], 64)
+	num2, _ := strconv.ParseFloat(parts[1], 64)
+	return []float64{num2, num1}
 }
 
-func parseMap(locMap map[string][]int) [][]int {
-	asteroidList := [][]int{}
+func parseMap(locMap map[string][]int) [][]float64 {
+	asteroidList := [][]float64{}
 	for key, value := range locMap {
 		parsed := parseNumbers(key)
-		parsed = append(parsed, value...)
+		parsed = append(parsed, float64(value[0]), float64(value[1]))
 		asteroidList = append(asteroidList, parsed)
 	}
 	sortFunc := func(i, j int) bool {
-		if asteroidList[i][0] > asteroidList[j][0] {
-			return true
-		} else if asteroidList[i][0] < asteroidList[j][0] {
-			return false
+		if asteroidList[i][0] == asteroidList[j][0] {
+			return asteroidList[i][1] < asteroidList[j][1]
 		}
-		return asteroidList[i][1] < asteroidList[j][1]
+		return asteroidList[i][0] > asteroidList[j][0]
 	}
 	sort.Slice(asteroidList, sortFunc)
 	return asteroidList
+}
+
+func parseAndReplaceInfinity(str string) int {
+	if str == "+Inf" {
+		return math.MaxInt
+	} else if str == "-Inf" {
+		return math.MinInt
+	} else {
+		num, _ := strconv.Atoi(str)
+		return num
+	}
 }
 
 func (this *Monitor) getInput() {
@@ -97,8 +108,11 @@ func (this *Monitor) getVisible(currAsteroid []int) AsteroidResult {
 		}
 		slope := float64(y-currY) / float64(x-currX)
 		result := "0"
-		if x > currX || (x == currX && y > currY) {
+		if x > currX || (x == currX && y <= currY) {
 			result = "1"
+		}
+		if math.IsInf(slope, 1) {
+			slope = math.Inf(-1)
 		}
 		slopeStr := strconv.FormatFloat(slope, 'f', -1, 64)
 		key := slopeStr + "," + result
@@ -110,14 +124,7 @@ func (this *Monitor) getVisible(currAsteroid []int) AsteroidResult {
 		if getDist(currAsteroid, asteroid) < getDist(currAsteroid, seen[key]) {
 			seen[key] = asteroid
 		}
-
 	}
-	// if currX == 26 && currY == 29 {
-	// 	// fmt.Println(seen)
-	// }
-	// if currX == 1 && currY == 1 {
-	// 	// fmt.Println(seen)
-	// }
 	return AsteroidResult{count, seen}
 }
 
@@ -125,32 +132,24 @@ func (this *Monitor) analyzeAsteroids() {
 	maxCount := 0
 	currAsteroid := []int{}
 	destroyLimit := 200
-	// if this.UseTest {
-	// 	destroyLimit = 2
-	// }
 	currSeen := make(map[string][]int)
 	for _, asteroid := range this.asteroids {
 		AR := this.getVisible(asteroid)
-
 		if maxCount < AR.count {
 			maxCount = AR.count
 			currAsteroid = asteroid
 			currSeen = AR.seen
-
 		}
 	}
 	this.currAsteroid = currAsteroid
 	this.maxCount = maxCount
-
 	asteroidList := parseMap(currSeen)
-	fmt.Println(this.currAsteroid, "doe", asteroidList)
 
 	if len(asteroidList) < destroyLimit {
-		fmt.Println("loop again")
+		fmt.Println("loop again") // Too lazy to implement
 	} else {
-		fmt.Println("found", asteroidList[destroyLimit])
+		this.asteroid200 = int(asteroidList[destroyLimit-1][2]*100 + asteroidList[destroyLimit-1][3])
 	}
-	// fmt.Println(asteroidList)
 }
 
 func (this *Monitor) getMaxCount() int {
@@ -158,12 +157,12 @@ func (this *Monitor) getMaxCount() int {
 }
 
 func (this *Monitor) get200th() int {
-	return 1
+	return this.asteroid200
 }
 
 func main() {
 	monitor := &Monitor{
-		UseTest: true,
+		UseTest: false,
 	}
 	monitor.getInput()
 	monitor.analyzeAsteroids()
