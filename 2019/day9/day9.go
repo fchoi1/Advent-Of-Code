@@ -15,13 +15,6 @@ type Sensor struct {
 	relativeBase int
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func (this *Sensor) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
