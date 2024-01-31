@@ -41,12 +41,8 @@ func min(a, b int) int {
 
 func (this *Office) findLocation(startPos []int) {
 	// BFS
-	dirMap := [][]int{
-		{0, -1},
-		{0, 1},
-		{1, 0},
-		{-1, 0},
-	}
+	dirMap := [][]int{{0, -1}, {1, 0}, {0, 1}, {-1, 0}}
+
 	visited := make(map[string]bool)
 	var queue [][]int
 	queue = append(queue, startPos)
