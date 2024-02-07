@@ -3,29 +3,19 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 )
 
-type Monitor struct {
-	UseTest      bool
-	rockMap      [][]rune
-	asteroids    [][]int
-	currAsteroid []int
-	maxCount     int
-	asteroid200  int
+type Jupiter struct {
+	UseTest bool
+	moons   []Moon
 }
 
-type AsteroidResult struct {
-	count int
-	seen  map[string][]int
-}
-
-func getDist(loc1, loc2 []int) int {
-	return abs(loc1[0]-loc2[0]) + abs(loc1[1]-loc2[1])
+type Moon struct {
+	position []int
+	velocity []int
 }
 
 func abs(x int) int {
@@ -35,137 +25,138 @@ func abs(x int) int {
 	return x
 }
 
-func parseNumbers(key string) []float64 {
-	parts := strings.Split(key, ",")
-	num1, _ := strconv.ParseFloat(parts[0], 64)
-	num2, _ := strconv.ParseFloat(parts[1], 64)
-	return []float64{num2, num1}
+func gcd(a, b int) int {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
 }
 
-func parseMap(locMap map[string][]int) [][]float64 {
-	asteroidList := [][]float64{}
-	for key, value := range locMap {
-		parsed := parseNumbers(key)
-		parsed = append(parsed, float64(value[0]), float64(value[1]))
-		asteroidList = append(asteroidList, parsed)
-	}
-	sortFunc := func(i, j int) bool {
-		if asteroidList[i][0] == asteroidList[j][0] {
-			return asteroidList[i][1] < asteroidList[j][1]
-		}
-		return asteroidList[i][0] > asteroidList[j][0]
-	}
-	sort.Slice(asteroidList, sortFunc)
-	return asteroidList
+func lcm(a, b int) int {
+	return (a * b) / gcd(a, b)
 }
 
-func parseAndReplaceInfinity(str string) int {
-	if str == "+Inf" {
-		return math.MaxInt
-	} else if str == "-Inf" {
-		return math.MinInt
-	} else {
-		num, _ := strconv.Atoi(str)
-		return num
-	}
-}
-
-func (this *Monitor) getInput() {
+func (this *Jupiter) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
 	}
 	file, _ := os.Open(inputFile)
 	scanner := bufio.NewScanner(file)
+	this.moons = []Moon{}
 	for scanner.Scan() {
 		line := scanner.Text()
-		this.rockMap = append(this.rockMap, []rune(line))
+		splitted := strings.FieldsFunc(line, func(r rune) bool {
+			return r == '=' || r == ',' || r == '>'
+		})
+		x, _ := strconv.Atoi(splitted[1])
+		y, _ := strconv.Atoi(splitted[3])
+		z, _ := strconv.Atoi(splitted[5])
+		newMoon := Moon{[]int{x, y, z}, []int{0, 0, 0}}
+		this.moons = append(this.moons, newMoon)
 	}
-	this.asteroids = this.getAsteroids()
 	defer file.Close()
 }
 
-func (this *Monitor) getAsteroids() [][]int {
-	asteroids := [][]int{}
-	for y, row := range this.rockMap {
-		for x, val := range row {
-			if val == '#' {
-				asteroids = append(asteroids, []int{x, y})
+func (this *Jupiter) updateVel(moon1 Moon, moon2 Moon) {
+	for i := 0; i < 3; i++ {
+		if moon1.position[i] > moon2.position[i] {
+			moon1.velocity[i] -= 1
+			moon2.velocity[i] += 1
+		} else if moon2.position[i] > moon1.position[i] {
+			moon1.velocity[i] += 1
+			moon2.velocity[i] -= 1
+		}
+	}
+}
+
+func (this *Jupiter) updateMoons() {
+	for i, moon1 := range this.moons[:len(this.moons)-1] {
+		for _, moon2 := range this.moons[i+1:] {
+			this.updateVel(moon1, moon2)
+		}
+	}
+	for _, moon := range this.moons {
+		for i := 0; i < 3; i++ {
+			moon.position[i] += moon.velocity[i]
+		}
+	}
+}
+
+func (this *Jupiter) runSim() {
+	totalSteps := 1000
+	if this.UseTest {
+		totalSteps = 100
+	}
+	for steps := 0; steps < totalSteps; steps++ {
+		this.updateMoons()
+	}
+}
+
+func (this *Jupiter) getEnergy() int {
+	this.getInput()
+	this.runSim()
+	totalEnergy := 0
+	for _, moon := range this.moons {
+		pot := 0
+		kin := 0
+		for i := 0; i < 3; i++ {
+			pot += abs(moon.position[i])
+			kin += abs(moon.velocity[i])
+		}
+		totalEnergy += pot * kin
+	}
+	return totalEnergy
+}
+
+func (this *Jupiter) allSeen(isSeen []int) bool {
+	for _, seen := range isSeen {
+		if seen == 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func (this *Jupiter) getStrKey() []string {
+	keys := make([]string, 3)
+	for _, moon := range this.moons {
+		keys[0] += strconv.Itoa(moon.position[0]) + "," + strconv.Itoa(moon.velocity[0]) + ","
+		keys[1] += strconv.Itoa(moon.position[1]) + "," + strconv.Itoa(moon.velocity[1]) + ","
+		keys[2] += strconv.Itoa(moon.position[2]) + "," + strconv.Itoa(moon.velocity[2]) + ","
+	}
+	return keys
+}
+
+func (this *Jupiter) getLoop() int {
+	this.getInput()
+	loops := []int{0, 0, 0}
+	initial := this.getStrKey()
+	visitedList := make([]map[string]bool, 4)
+	for i := range visitedList {
+		visitedList[i] = make(map[string]bool)
+	}
+	step := 0
+	for {
+		step += 1
+		this.updateMoons()
+		strKeys := this.getStrKey()
+		for i := 0; i < 3; i++ {
+			if loops[i] == 0 && strKeys[i] == initial[i] {
+				loops[i] = step
 			}
 		}
-	}
-	return asteroids
-}
-
-func (this *Monitor) getVisible(currAsteroid []int) AsteroidResult {
-	count := 0
-	seen := make(map[string][]int)
-	currX, currY := currAsteroid[0], currAsteroid[1]
-	for _, asteroid := range this.asteroids {
-		x, y := asteroid[0], asteroid[1]
-		if x == currX && y == currY {
-			continue
-		}
-		slope := float64(y-currY) / float64(x-currX)
-		result := "0"
-		if x > currX || (x == currX && y <= currY) {
-			result = "1"
-		}
-		if math.IsInf(slope, 1) {
-			slope = math.Inf(-1)
-		}
-		slopeStr := strconv.FormatFloat(slope, 'f', -1, 64)
-		key := slopeStr + "," + result
-		_, exists := seen[key]
-		if !exists {
-			count++
-			seen[key] = asteroid
-		}
-		if getDist(currAsteroid, asteroid) < getDist(currAsteroid, seen[key]) {
-			seen[key] = asteroid
+		if this.allSeen(loops) {
+			break
 		}
 	}
-	return AsteroidResult{count, seen}
-}
-
-func (this *Monitor) analyzeAsteroids() {
-	maxCount := 0
-	currAsteroid := []int{}
-	destroyLimit := 200
-	currSeen := make(map[string][]int)
-	for _, asteroid := range this.asteroids {
-		AR := this.getVisible(asteroid)
-		if maxCount < AR.count {
-			maxCount = AR.count
-			currAsteroid = asteroid
-			currSeen = AR.seen
-		}
-	}
-	this.currAsteroid = currAsteroid
-	this.maxCount = maxCount
-	asteroidList := parseMap(currSeen)
-
-	if len(asteroidList) < destroyLimit {
-		fmt.Println("loop again") // Too lazy to implement
-	} else {
-		this.asteroid200 = int(asteroidList[destroyLimit-1][2]*100 + asteroidList[destroyLimit-1][3])
-	}
-}
-
-func (this *Monitor) getMaxCount() int {
-	return this.maxCount
-}
-
-func (this *Monitor) get200th() int {
-	return this.asteroid200
+	return lcm(lcm(loops[0], loops[1]), loops[2])
 }
 
 func main() {
-	monitor := &Monitor{
+	jupiter := &Jupiter{
 		UseTest: false,
 	}
-	monitor.getInput()
-	monitor.analyzeAsteroids()
-	fmt.Println("Day 9 part 1:", monitor.getMaxCount())
-	fmt.Println("Day 9 part 2:", monitor.get200th())
+	fmt.Println("Day 12 part 1:", jupiter.getEnergy())
+	fmt.Println("Day 12 part 2:", jupiter.getLoop())
 }
