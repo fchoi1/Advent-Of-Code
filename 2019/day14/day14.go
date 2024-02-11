@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type GameMap struct {
+type Stoichiometry struct {
 	UseTest    bool
 	productMap map[string]Formula
 	oreCount   int
@@ -46,7 +46,7 @@ func mapToString(m map[string]int) string {
 	return strings.Join(keyValueStrings, ",")
 }
 
-func (this *GameMap) getInput() {
+func (this *Stoichiometry) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -71,7 +71,7 @@ func (this *GameMap) getInput() {
 	defer file.Close()
 }
 
-func (this *GameMap) countOres(target string, targetQuantity int, extra map[string]int) int {
+func (this *Stoichiometry) countOres(target string, targetQuantity int, extra map[string]int) int {
 	oreCount := 0
 	if target == "ORE" {
 		return targetQuantity
@@ -105,13 +105,13 @@ func (this *GameMap) countOres(target string, targetQuantity int, extra map[stri
 	return oreCount
 }
 
-func (this *GameMap) countFuel() int {
+func (this *Stoichiometry) countFuel() int {
 	extra := make(map[string]int)
 	this.oreCount = this.countOres("FUEL", 1, extra)
 	return this.oreCount
 }
 
-func (this *GameMap) getMaxFuel() int {
+func (this *Stoichiometry) getMaxFuel() int {
 	max := 1_000_000_000_000
 	min := 1_000_000_000_000 / this.oreCount
 	var mid int
@@ -129,10 +129,10 @@ func (this *GameMap) getMaxFuel() int {
 }
 
 func main() {
-	gameMap := &GameMap{
+	stoichiometry := &Stoichiometry{
 		UseTest: false,
 	}
-	gameMap.getInput()
-	fmt.Println("Day 14 part 1:", gameMap.countFuel())
-	fmt.Println("Day 14 part 2:", gameMap.getMaxFuel())
+	stoichiometry.getInput()
+	fmt.Println("Day 14 part 1:", stoichiometry.countFuel())
+	fmt.Println("Day 14 part 2:", stoichiometry.getMaxFuel())
 }
