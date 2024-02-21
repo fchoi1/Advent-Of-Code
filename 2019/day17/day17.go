@@ -35,7 +35,7 @@ func (this *Scaffolding) getInput() {
 			this.IntCode = append(this.IntCode, num)
 		}
 		// additional space needed
-		for i := 0; i < 3800; i++ {
+		for i := 0; i < 8000; i++ {
 			this.IntCode = append(this.IntCode, 0)
 		}
 	}
@@ -157,7 +157,7 @@ func (this *Scaffolding) getInstructions() {
 	}
 	dirStr := "L"
 	direction := 3
-	var commandStr string
+	commandStr := ""
 
 	pos := this.start
 	var newX, newY, count int
@@ -250,5 +250,5 @@ func main() {
 	}
 	scaffolding.calculate()
 	fmt.Println("Day 17 part 1:", scaffolding.getAlignment())
-	fmt.Println("Day 17 part 1:", scaffolding.getDust())
+	fmt.Println("Day 17 part 2:", scaffolding.getDust())
 }
