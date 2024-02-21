@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type Scaffolding struct {
+type GameMap struct {
 	UseTest      bool
 	IntCode      []int
 	relativeBase int
@@ -18,7 +18,7 @@ type Scaffolding struct {
 	dust         int
 }
 
-func (this *Scaffolding) getInput() {
+func (this *GameMap) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -35,13 +35,13 @@ func (this *Scaffolding) getInput() {
 			this.IntCode = append(this.IntCode, num)
 		}
 		// additional space needed
-		for i := 0; i < 3800; i++ {
+		for i := 0; i < 8000; i++ {
 			this.IntCode = append(this.IntCode, 0)
 		}
 	}
 	defer file.Close()
 }
-func (this *Scaffolding) parseOpCode(n int) (int, []int) {
+func (this *GameMap) parseOpCode(n int) (int, []int) {
 	code := n % 100
 	rest := strconv.Itoa(n / 100)
 	arr := []int{}
@@ -55,7 +55,7 @@ func (this *Scaffolding) parseOpCode(n int) (int, []int) {
 	return code, arr
 }
 
-func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]int, int) {
+func (this *GameMap) runProgram(index int, intCode []int, input []int) ([]int, int) {
 	output := []int{}
 
 	for index < len(intCode) {
@@ -129,7 +129,7 @@ func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]in
 	return output, -1
 }
 
-func (this *Scaffolding) calculate() int {
+func (this *GameMap) calculate() int {
 	this.parseMap()
 	for y := 0; y < len(this.grid)-1; y++ {
 		for x := 0; x < len(this.grid[0]); x++ {
@@ -151,13 +151,13 @@ func (this *Scaffolding) calculate() int {
 	return this.alignment
 }
 
-func (this *Scaffolding) getInstructions() {
+func (this *GameMap) getInstructions() {
 	dirMap := [][]int{
 		{0, -1}, {1, 0}, {0, 1}, {-1, 0},
 	}
 	dirStr := "L"
 	direction := 3
-	var commandStr string
+	commandStr := ""
 
 	pos := this.start
 	var newX, newY, count int
@@ -212,7 +212,7 @@ func (this *Scaffolding) getInstructions() {
 	this.dust = out[len(out)-1]
 }
 
-func (this *Scaffolding) getAscii(str string) []int {
+func (this *GameMap) getAscii(str string) []int {
 	asciiValues := []int{}
 	for _, char := range str {
 		asciiValues = append(asciiValues, int(char))
@@ -220,7 +220,7 @@ func (this *Scaffolding) getAscii(str string) []int {
 	return asciiValues
 }
 
-func (this *Scaffolding) parseMap() [][]string {
+func (this *GameMap) parseMap() [][]string {
 	this.getInput()
 	output, _ := this.runProgram(0, this.IntCode, []int{})
 	row := []string{}
@@ -236,19 +236,19 @@ func (this *Scaffolding) parseMap() [][]string {
 	return this.grid
 }
 
-func (this *Scaffolding) getAlignment() int {
+func (this *GameMap) getAlignment() int {
 	return this.alignment
 }
-func (this *Scaffolding) getDust() int {
+func (this *GameMap) getDust() int {
 	return this.dust
 }
 
 func main() {
-	scaffolding := &Scaffolding{
+	gameMap := &GameMap{
 		UseTest: false,
 		IntCode: []int{},
 	}
-	scaffolding.calculate()
-	fmt.Println("Day 17 part 1:", scaffolding.getAlignment())
-	fmt.Println("Day 17 part 1:", scaffolding.getDust())
+	gameMap.calculate()
+	fmt.Println("Day 17 part 1:", gameMap.getAlignment())
+	fmt.Println("Day 17 part 1:", gameMap.getDust())
 }
