@@ -12,7 +12,6 @@ type FFT struct {
 	UseTest   bool
 	numstr    string
 	numLength int
-	sumVal    int
 }
 
 func (this *FFT) getInput() {
