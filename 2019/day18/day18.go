@@ -23,12 +23,10 @@ type Coord struct {
 }
 
 type Robot struct {
-	UseTest   bool
-	grid      [][]rune
-	adjGrid   map[rune][]Coord
-	start     []int
-	starts    [][]int
-	totalKeys int
+	UseTest bool
+	grid    [][]rune
+	adjGrid map[rune][]Coord
+	start   []int
 }
 
 func runeInString(str string, target rune) bool {
@@ -56,6 +54,9 @@ func (this *Robot) getInput() {
 	}
 	file, _ := os.Open(inputFile)
 	scanner := bufio.NewScanner(file)
+	this.grid = [][]rune{}
+	this.adjGrid = make(map[rune][]Coord)
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		this.grid = append(this.grid, []rune(line))
@@ -70,18 +71,25 @@ func (this *Robot) getInput() {
 	defer file.Close()
 }
 
-func (this *Robot) generateList() {
-	this.adjGrid = make(map[rune][]Coord)
+func (this *Robot) generateList(x1 int, x2 int, y1 int, y2 int) int {
+	var totalKeys int
 	for y, row := range this.grid {
+		if y <= y1 || y >= y2 {
+			continue
+		}
 		for x, char := range row {
+			if x <= x1 || x >= x2 {
+				continue
+			}
 			if char != '.' && char != '#' {
-				if !unicode.IsUpper(char) {
-					this.totalKeys++
+				if !unicode.IsUpper(char) || unicode.IsDigit(char) || char == '@' {
+					totalKeys++
 				}
 				this.generate(char, []int{x, y})
 			}
 		}
 	}
+	return totalKeys
 }
 
 func (this *Robot) inRange(x int, y int) bool {
@@ -92,9 +100,10 @@ func (this *Robot) inRange(x int, y int) bool {
 	return this.grid[y][x] != '#'
 }
 
-// shortest paths,
 func (this *Robot) generate(startName rune, start []int) {
-	this.adjGrid[startName] = []Coord{}
+	if _, ok := this.adjGrid[startName]; !ok {
+		this.adjGrid[startName] = []Coord{}
+	}
 	var steps, x, y int
 	var key string
 	q := [][]int{start}
@@ -126,13 +135,8 @@ func (this *Robot) generate(startName rune, start []int) {
 	}
 }
 
-func (this *Robot) bfs(starts []rune) int {
-
-	q := []Node{}
-
-	for _, r := range starts {
-		q = append(q, Node{r, string(r), "", 0})
-	}
+func (this *Robot) bfs(start rune, totalKeys int, isPart2 bool) int {
+	q := []Node{{start, string(start), "", 0}}
 	seen := make(map[string]int)
 	minSteps := math.MaxInt32
 	for len(q) > 0 {
@@ -144,16 +148,19 @@ func (this *Robot) bfs(starts []rune) int {
 					continue
 				}
 			}
+			if node.steps > minSteps {
+				continue
+			}
 			seen[strKey] = node.steps
-			if len(node.keys) == this.totalKeys {
+			if len(node.keys) == totalKeys {
 				if node.steps < minSteps {
 					minSteps = node.steps
 				}
 			}
 
 			for _, coord := range this.adjGrid[node.name] {
-
-				if node.name == coord.name || unicode.IsUpper(coord.name) && !runeInString(node.keys, unicode.ToLower(coord.name)) {
+				if node.name == coord.name ||
+					(!isPart2 && unicode.IsUpper(coord.name) && !runeInString(node.keys, unicode.ToLower(coord.name))) {
 					continue
 				}
 
@@ -168,20 +175,17 @@ func (this *Robot) bfs(starts []rune) int {
 				temp = append(temp, Node{coord.name, sortString(newKeys), sortString(newDoors), node.steps + coord.steps})
 			}
 		}
-		if minSteps < math.MaxInt32 {
-			return minSteps
-		}
 		q = temp
 	}
-	return -1
+	return minSteps
 }
 
 func (this *Robot) getSteps() int {
 	this.getInput()
-	this.generateList()
-	return this.bfs([]rune{'@'})
+	return this.bfs('@', this.generateList(0, len(this.grid[0]), 0, len(this.grid)), false)
 }
 func (this *Robot) getSteps2() int {
+	// cheesed
 	this.getInput()
 	this.grid[this.start[1]][this.start[0]] = '#'
 	this.grid[this.start[1]-1][this.start[0]] = '#'
@@ -192,21 +196,18 @@ func (this *Robot) getSteps2() int {
 	this.grid[this.start[1]-1][this.start[0]+1] = '2'
 	this.grid[this.start[1]-1][this.start[0]-1] = '3'
 	this.grid[this.start[1]+1][this.start[0]-1] = '4'
-	this.generateList()
-	for key, val := range this.adjGrid {
-		fmt.Println()
-		fmt.Print(string(key), " ==> ")
-		for _, coord := range val {
-			fmt.Print("  ", string(coord.name), ":", coord.steps)
-		}
-	}
-	return this.bfs([]rune{'1', '2', '3', '4'})
+
+	keys1 := this.generateList(len(this.grid[0])/2, len(this.grid[0]), len(this.grid)/2, len(this.grid[0]))
+	keys2 := this.generateList(len(this.grid[0])/2, len(this.grid[0]), 0, len(this.grid)/2)
+	keys3 := this.generateList(0, len(this.grid[0])/2, 0, len(this.grid)/2)
+	keys4 := this.generateList(0, len(this.grid[0])/2, len(this.grid)/2, len(this.grid[0]))
+	return this.bfs('1', keys1, true) + this.bfs('2', keys2, true) + this.bfs('3', keys3, true) + this.bfs('4', keys4, true)
 }
 
 func main() {
 	robot := &Robot{
 		UseTest: false,
 	}
-	// fmt.Println("Day 18 part 1:", robot.getSteps())
+	fmt.Println("Day 18 part 1:", robot.getSteps())
 	fmt.Println("Day 18 part 2:", robot.getSteps2())
 }
