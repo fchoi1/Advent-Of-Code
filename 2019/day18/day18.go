@@ -210,4 +210,5 @@ func main() {
 	}
 	fmt.Println("Day 18 part 1:", robot.getSteps())
 	fmt.Println("Day 18 part 2:", robot.getSteps2())
+	// Total Runtime ~22.83s
 }
