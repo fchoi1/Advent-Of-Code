@@ -12,7 +12,6 @@ type GameMap struct {
 	UseTest      bool
 	IntCode      []int
 	relativeBase int
-	grid         [][]int
 }
 
 func (this *GameMap) getInput() {

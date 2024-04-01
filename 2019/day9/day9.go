@@ -11,7 +11,6 @@ import (
 type Sensor struct {
 	UseTest      bool
 	IntCode      []int
-	comboList    [][]int
 	relativeBase int
 }
 

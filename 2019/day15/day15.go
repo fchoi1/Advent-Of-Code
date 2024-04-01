@@ -12,7 +12,6 @@ type GameMap struct {
 	UseTest      bool
 	IntCode      []int
 	relativeBase int
-	grid         map[string]rune
 }
 type Program struct {
 	IntCode []int
