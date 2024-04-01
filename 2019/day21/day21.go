@@ -8,17 +8,13 @@ import (
 	"strings"
 )
 
-type Scaffolding struct {
+type Springdroid struct {
 	UseTest      bool
 	IntCode      []int
 	relativeBase int
-	alignment    int
-	start        [2]int
-	grid         [][]string
-	dust         int
 }
 
-func (this *Scaffolding) getInput() {
+func (this *Springdroid) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -35,13 +31,13 @@ func (this *Scaffolding) getInput() {
 			this.IntCode = append(this.IntCode, num)
 		}
 		// additional space needed
-		for i := 0; i < 8000; i++ {
+		for i := 0; i < 100; i++ {
 			this.IntCode = append(this.IntCode, 0)
 		}
 	}
 	defer file.Close()
 }
-func (this *Scaffolding) parseOpCode(n int) (int, []int) {
+func (this *Springdroid) parseOpCode(n int) (int, []int) {
 	code := n % 100
 	rest := strconv.Itoa(n / 100)
 	arr := []int{}
@@ -55,7 +51,7 @@ func (this *Scaffolding) parseOpCode(n int) (int, []int) {
 	return code, arr
 }
 
-func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]int, int) {
+func (this *Springdroid) runProgram(index int, intCode []int, input []int) ([]int, int) {
 	output := []int{}
 
 	for index < len(intCode) {
@@ -128,16 +124,55 @@ func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]in
 	}
 	return output, -1
 }
+func (this *Springdroid) debug(output []int) {
+	var builder strings.Builder
+	for _, asciiInt := range output {
+		builder.WriteString(string(asciiInt))
+	}
+	result := builder.String()
+	fmt.Println("res", result)
+}
 
-func (this *Scaffolding) getDust() int {
-	return this.dust
+func (this *Springdroid) getHull(isPart2 bool) int {
+	this.getInput()
+
+	commands := []string{
+		"NOT C J\n",
+		"AND D J\n",
+		"NOT A T\n",
+		"OR T J\n",
+		"WALK\n",
+	}
+	if isPart2 {
+		commands = []string{
+			"NOT C J\n",
+			"AND D J\n",
+			"AND H J\n",
+			"NOT A T\n",
+			"OR T J\n",
+			"NOT B T\n",
+			"AND D T\n",
+			"OR T J\n",
+			"RUN\n",
+		}
+	}
+	inputs := []int{}
+	for _, str := range commands {
+		for _, char := range str {
+			inputs = append(inputs, int(char))
+		}
+	}
+	output, _ := this.runProgram(0, this.IntCode, inputs)
+	// this.debug(output)
+	return output[len(output)-1]
 }
 
 func main() {
-	scaffolding := &Scaffolding{
+	Springdroid := &Springdroid{
 		UseTest: false,
 		IntCode: []int{},
 	}
-	scaffolding.calculate()
-	fmt.Println("Day 17 part 1:", scaffolding.getDust())
+	Springdroid.getInput()
+	fmt.Println("Day 21 part 1:", Springdroid.getHull(false))
+	fmt.Println("Day 21 part 2:", Springdroid.getHull(true))
 }
