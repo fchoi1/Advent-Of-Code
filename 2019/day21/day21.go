@@ -37,6 +37,7 @@ func (this *Springdroid) getInput() {
 	}
 	defer file.Close()
 }
+
 func (this *Springdroid) parseOpCode(n int) (int, []int) {
 	code := n % 100
 	rest := strconv.Itoa(n / 100)
@@ -124,6 +125,7 @@ func (this *Springdroid) runProgram(index int, intCode []int, input []int) ([]in
 	}
 	return output, -1
 }
+
 func (this *Springdroid) debug(output []int) {
 	var builder strings.Builder
 	for _, asciiInt := range output {
