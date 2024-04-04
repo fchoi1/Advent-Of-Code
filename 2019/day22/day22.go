@@ -101,6 +101,7 @@ func (this *Shuffler) getCard(isPart2 bool) int {
 		_, cardVal := this.shuffle(card, length, loop)
 		return cardVal
 	}
+	if this.UseTest{}
 
 	position, _ := this.shuffle(card, length, loop)
 	return position
@@ -108,7 +109,7 @@ func (this *Shuffler) getCard(isPart2 bool) int {
 
 func main() {
 	shuffler := &Shuffler{
-		UseTest: false,
+		UseTest: true,
 	}
 	shuffler.getInput()
 	fmt.Println("Day 22 part 1:", shuffler.getCard(false))
