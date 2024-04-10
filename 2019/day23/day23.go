@@ -8,17 +8,23 @@ import (
 	"strings"
 )
 
-type Scaffolding struct {
-	UseTest      bool
-	IntCode      []int
+type Computer struct {
+	intCode      []int
+	receive      []int
 	relativeBase int
-	alignment    int
-	start        [2]int
-	grid         [][]string
-	dust         int
+	index        int
+	id           int
+}
+type Network struct {
+	UseTest   bool
+	IntCode   []int
+	computers []*Computer
+	firstY    int
+	NATy      int
+	NATx      int
 }
 
-func (this *Scaffolding) getInput() {
+func (this *Network) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -26,7 +32,6 @@ func (this *Scaffolding) getInput() {
 	file, _ := os.Open(inputFile)
 	scanner := bufio.NewScanner(file)
 	this.IntCode = []int{}
-	this.relativeBase = 0
 	for scanner.Scan() {
 		line := scanner.Text()
 		strNum := strings.Split(line, ",")
@@ -35,13 +40,13 @@ func (this *Scaffolding) getInput() {
 			this.IntCode = append(this.IntCode, num)
 		}
 		// additional space needed
-		for i := 0; i < 8000; i++ {
+		for i := 0; i < 10_000; i++ {
 			this.IntCode = append(this.IntCode, 0)
 		}
 	}
 	defer file.Close()
 }
-func (this *Scaffolding) parseOpCode(n int) (int, []int) {
+func (this *Network) parseOpCode(n int) (int, []int) {
 	code := n % 100
 	rest := strconv.Itoa(n / 100)
 	arr := []int{}
@@ -55,9 +60,8 @@ func (this *Scaffolding) parseOpCode(n int) (int, []int) {
 	return code, arr
 }
 
-func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]int, int) {
+func (this *Network) runProgram(index int, relativeBase int, intCode []int, input []int) ([]int, int) {
 	output := []int{}
-
 	for index < len(intCode) {
 		code, params := this.parseOpCode(intCode[index])
 		if code == 99 {
@@ -69,7 +73,7 @@ func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]in
 		if params[0] == 0 {
 			a = intCode[a]
 		} else if params[0] == 2 {
-			a = intCode[a+this.relativeBase]
+			a = intCode[a+relativeBase]
 		}
 
 		switch code {
@@ -79,7 +83,7 @@ func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]in
 					return output, index
 				}
 				if params[0] == 2 {
-					intCode[intCode[index+1]+this.relativeBase] = input[0]
+					intCode[intCode[index+1]+relativeBase] = input[0]
 				} else {
 					intCode[intCode[index+1]] = input[0]
 				}
@@ -90,7 +94,7 @@ func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]in
 			index += 2
 			continue
 		case 9:
-			this.relativeBase += a
+			relativeBase += a
 			index += 2
 			continue
 		}
@@ -98,11 +102,11 @@ func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]in
 		if params[1] == 0 {
 			b = intCode[b]
 		} else if params[1] == 2 {
-			b = intCode[b+this.relativeBase]
+			b = intCode[b+relativeBase]
 		}
 
 		if params[2] == 2 {
-			c += this.relativeBase
+			c += relativeBase
 		}
 		switch code {
 		case 1:
@@ -129,15 +133,74 @@ func (this *Scaffolding) runProgram(index int, intCode []int, input []int) ([]in
 	return output, -1
 }
 
-func (this *Scaffolding) getPacket() int {
-	this.getInput()
-	return 1
+func (this *Network) allDone() bool {
+	for _, computer := range this.computers {
+		if len(computer.receive) > 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func (this *Network) runNetwork() {
+	// Make computers
+	for i := 0; i < 50; i++ {
+		intCodeCopy := make([]int, len(this.IntCode))
+		copy(intCodeCopy, this.IntCode)
+		newComp := Computer{intCodeCopy, []int{}, 0, 0, i}
+		_, newComp.index = this.runProgram(newComp.index, newComp.relativeBase, newComp.intCode, []int{newComp.id})
+		this.computers = append(this.computers, &newComp)
+	}
+	seen := make(map[int]bool)
+	// Run Network
+	for {
+		for _, computer := range this.computers {
+			var output []int
+			if len(computer.receive) == 0 {
+				computer.receive = []int{-1}
+			}
+
+			output, computer.index = this.runProgram(computer.index, computer.relativeBase, computer.intCode, computer.receive)
+			for i := 0; i < len(output); i += 3 {
+				target := output[i]
+				X := output[i+1]
+				Y := output[i+2]
+				if target == 255 {
+					if this.firstY == 0 {
+						this.firstY = Y
+					}
+					this.NATx, this.NATy = X, Y
+				} else {
+					this.computers[target].receive = append(this.computers[target].receive, X, Y)
+				}
+			}
+			// Reset Recieved
+			computer.receive = []int{}
+		}
+		if this.allDone() {
+			if _, ok := seen[this.NATy]; ok {
+				break
+			}
+			seen[this.NATy] = true
+			this.computers[0].receive = []int{this.NATx, this.NATy}
+		}
+	}
+}
+
+func (this *Network) getPacket() int {
+	return this.firstY
+}
+func (this *Network) getNATy() int {
+	return this.NATy
 }
 
 func main() {
-	scaffolding := &Scaffolding{
+	network := &Network{
 		UseTest: false,
 		IntCode: []int{},
 	}
-	fmt.Println("Day 23 part 1:", scaffolding.getPacket())
+	network.getInput()
+	network.runNetwork()
+	fmt.Println("Day 23 part 1:", network.getPacket())
+	fmt.Println("Day 23 part 2:", network.getNATy())
 }
