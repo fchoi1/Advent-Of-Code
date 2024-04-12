@@ -46,7 +46,7 @@ func (this *Rocket) getFuel(isPart2 bool) int {
 
 func main() {
 	rocket := &Rocket{
-		UseTest: true,
+		UseTest: false,
 		Masses:  []int{},
 	}
 	rocket.getInput()

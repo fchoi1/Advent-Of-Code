@@ -109,7 +109,7 @@ func (this *Shuffler) getCard(isPart2 bool) int {
 
 func main() {
 	shuffler := &Shuffler{
-		UseTest: true,
+		UseTest: false,
 	}
 	shuffler.getInput()
 	fmt.Println("Day 22 part 1:", shuffler.getCard(false))
