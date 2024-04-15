@@ -4,27 +4,17 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
-type Shuffler struct {
+type LifeGame struct {
 	UseTest bool
 	grid    [][]rune
 	height  int
 	width   int
 }
 
-func isEmpty(grid [][]rune) bool {
-	for _, row := range grid {
-		for _, val := range row {
-			if val == '#' {
-				return false
-			}
-		}
-	}
-	return true
-}
-
-func (this *Shuffler) getInput() {
+func (this *LifeGame) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -42,7 +32,7 @@ func (this *Shuffler) getInput() {
 	defer file.Close()
 }
 
-func (this *Shuffler) generateKey(grid [][]rune) string {
+func (this *LifeGame) generateKey(grid [][]rune) string {
 	var str string
 	for _, row := range grid {
 		for _, val := range row {
@@ -53,7 +43,7 @@ func (this *Shuffler) generateKey(grid [][]rune) string {
 	return str
 }
 
-func (this *Shuffler) countBugs(grid [][]rune, x int, y int) int {
+func (this *LifeGame) countBugs(grid [][]rune, x int, y int) int {
 	var count int
 	for _, dir := range [][]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} {
 		dx, dy := dir[0], dir[1]
@@ -66,7 +56,7 @@ func (this *Shuffler) countBugs(grid [][]rune, x int, y int) int {
 	return count
 }
 
-func (this *Shuffler) countBugs2(grid [][]rune, innerGrid [][]rune, outerGrid [][]rune, x int, y int) int {
+func (this *LifeGame) countBugs2(grid [][]rune, innerGrid [][]rune, outerGrid [][]rune, x int, y int) int {
 	var count int
 	if x == 2 && y == 2 {
 		return 0
@@ -76,13 +66,13 @@ func (this *Shuffler) countBugs2(grid [][]rune, innerGrid [][]rune, outerGrid []
 
 		if len(innerGrid) > 0 && x+dx == 2 && y+dy == 2 {
 			for i := 0; i < 5; i++ {
-				if dx == 1 && innerGrid[i][0] == '#' {
+				if dx == -1 && innerGrid[i][4] == '#' {
 					count++
-				} else if dx == -1 && innerGrid[i][4] == '#' {
+				} else if dx == 1 && innerGrid[i][0] == '#' {
+					count++
+				} else if dy == -1 && innerGrid[4][i] == '#' {
 					count++
 				} else if dy == 1 && innerGrid[0][i] == '#' {
-					count++
-				} else if dx == -1 && innerGrid[4][i] == '#' {
 					count++
 				}
 			}
@@ -108,9 +98,6 @@ func (this *Shuffler) countBugs2(grid [][]rune, innerGrid [][]rune, outerGrid []
 			}
 		}
 		if x+dx >= 0 && x+dx < this.width && y+dy >= 0 && y+dy < this.height {
-			// if x+dx == 2 && y+dy == 2 {
-			// 	continue
-			// }
 			if grid[y+dy][x+dx] == '#' {
 				count++
 			}
@@ -119,7 +106,7 @@ func (this *Shuffler) countBugs2(grid [][]rune, innerGrid [][]rune, outerGrid []
 	return count
 }
 
-func (this *Shuffler) runRound(grid, inner, outer [][]rune, isPart2 bool) [][]rune {
+func (this *LifeGame) runRound(grid, inner, outer [][]rune, isPart2 bool) [][]rune {
 	temp := [][]rune{}
 	if len(grid) == 0 {
 		grid = make([][]rune, 5)
@@ -127,19 +114,17 @@ func (this *Shuffler) runRound(grid, inner, outer [][]rune, isPart2 bool) [][]ru
 			grid[i] = []rune{46, 46, 46, 46, 46}
 		}
 	}
-	fmt.Println("grid", grid, inner, outer)
 
 	for y, row := range grid {
 		tempRow := []rune{}
 		for x, bug := range row {
-			if x == 2 && y == 2 {
-				tempRow = append(tempRow, '.')
-				continue
-			}
 			var bugs int
 			if isPart2 {
+				if x == 2 && y == 2 {
+					tempRow = append(tempRow, '.')
+					continue
+				}
 				bugs = this.countBugs2(grid, inner, outer, x, y)
-				// fmt.Println("bugs", x, y, bugs)
 			} else {
 				bugs = this.countBugs(grid, x, y)
 			}
@@ -154,7 +139,7 @@ func (this *Shuffler) runRound(grid, inner, outer [][]rune, isPart2 bool) [][]ru
 	return temp
 }
 
-func (this *Shuffler) runLife() {
+func (this *LifeGame) runLife() {
 	seen := make(map[string]bool)
 	key := this.generateKey(this.grid)
 	seen[key] = true
@@ -168,7 +153,7 @@ func (this *Shuffler) runLife() {
 	}
 }
 
-func (this *Shuffler) getRating() int {
+func (this *LifeGame) getRating() int {
 	this.getInput()
 	this.runLife()
 	val := 1
@@ -184,57 +169,42 @@ func (this *Shuffler) getRating() int {
 	return rating
 }
 
-func (this *Shuffler) getBugs() int {
+func (this *LifeGame) getBugs() int {
 	this.getInput()
-	time := 10
-	grids := make([][][]rune, time*2)
+	time := 200
+	if this.UseTest {
+		time = 10
+	}
+	grids := make([][][]rune, (time+1)*2)
 	var t int
 	grids[time] = this.grid
-	for t < time+1 {
-
-		prevInnerGrid := this.runRound(grids[time], grids[time-1], grids[time+1], true)
-		prevOuterGrid := prevInnerGrid
-		fmt.Println("lvl 0", t)
-		for _, row := range prevInnerGrid {
-			fmt.Println(string(row))
-		}
-
-		for i := 0; i < time-1; i++ {
-			// mid
-			tempInner := this.runRound(grids[time-i-1], grids[time-i-2], grids[time-i], true)
-			grids[time-i] = prevInnerGrid
-			prevInnerGrid = tempInner
-
-			tempOuter := this.runRound(grids[time+i+1], grids[time+i], grids[time+i+2], true)
-			grids[time+i] = prevOuterGrid
-			prevOuterGrid = tempOuter
-			fmt.Println("loop", i)
-
-			if isEmpty(tempInner) || isEmpty(tempOuter) {
-				fmt.Println("BROKEN")
-				break
+	for t < time {
+		tempGrid := make([][][]rune, (time+1)*2)
+		var prevGrid [][]rune
+		for i, grid := range grids {
+			if i == 0 || i == len(tempGrid)-1 {
+				prevGrid = grid
+				continue
 			}
-
-			// middle
-			// grids[200] =
-			// outward
+			tempGrid[i] = this.runRound(grid, grids[i+1], prevGrid, true)
+			prevGrid = grid
 		}
+		grids = tempGrid
 		t += 1
 	}
-
-	for x, grid := range grids {
-		fmt.Println("DEPTH #", x-time)
+	var totalBugs int
+	for _, grid := range grids {
 		for _, row := range grid {
-			fmt.Println(string(row))
+			totalBugs += strings.Count(string(row), "#")
 		}
 	}
-	return 1
+	return totalBugs
 }
 
 func main() {
-	shuffler := &Shuffler{
-		UseTest: true,
+	lifeGame := &LifeGame{
+		UseTest: false,
 	}
-	// fmt.Println("Day 24 part 1:", shuffler.getRating())
-	fmt.Println("Day 24 part 2:", shuffler.getBugs())
+	fmt.Println("Day 24 part 1:", lifeGame.getRating())
+	fmt.Println("Day 24 part 2:", lifeGame.getBugs())
 }
