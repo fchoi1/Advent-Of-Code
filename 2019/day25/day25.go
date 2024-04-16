@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type Network struct {
+type Cryostasis struct {
 	UseTest      bool
 	IntCode      []int
 	grid         [][]int
@@ -52,7 +52,7 @@ func getCmbinations(vals []string) [][]string {
 	return result
 }
 
-func (this *Network) getInput() {
+func (this *Cryostasis) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
@@ -75,7 +75,7 @@ func (this *Network) getInput() {
 	}
 	defer file.Close()
 }
-func (this *Network) parseOpCode(n int) (int, []int) {
+func (this *Cryostasis) parseOpCode(n int) (int, []int) {
 	code := n % 100
 	rest := strconv.Itoa(n / 100)
 	arr := []int{}
@@ -89,7 +89,7 @@ func (this *Network) parseOpCode(n int) (int, []int) {
 	return code, arr
 }
 
-func (this *Network) runProgram(index int, intCode []int, input []int) ([]int, int) {
+func (this *Cryostasis) runProgram(index int, intCode []int, input []int) ([]int, int) {
 	output := []int{}
 	for index < len(intCode) {
 		code, params := this.parseOpCode(intCode[index])
@@ -162,7 +162,7 @@ func (this *Network) runProgram(index int, intCode []int, input []int) ([]int, i
 	return output, -1
 }
 
-func (this *Network) getItems() int {
+func (this *Cryostasis) getItems() int {
 	commands := []string{
 		"east", "take food ration",
 		"east", "take manifold",
@@ -180,14 +180,14 @@ func (this *Network) getItems() int {
 	return index
 }
 
-func (this *Network) reset(index int, items []string) int {
+func (this *Cryostasis) reset(index int, items []string) int {
 	for _, item := range items {
 		_, index = this.runProgram(index, this.IntCode, getAscii("drop "+item+"\n"))
 	}
 	return index
 }
 
-func (this *Network) sendDroid() string {
+func (this *Cryostasis) sendDroid() string {
 	var output []int
 	index := this.getItems()
 	items := []string{"food ration", "manifold", "jam", "fuel cell", "spool of cat6", "prime number", "loom", "mug"}
@@ -209,10 +209,10 @@ func (this *Network) sendDroid() string {
 }
 
 func main() {
-	network := &Network{
+	cryostasis := &Cryostasis{
 		UseTest: false,
 		IntCode: []int{},
 	}
-	network.getInput()
-	fmt.Println("Day 25 part 1:", network.sendDroid())
+	cryostasis.getInput()
+	fmt.Println("Day 25 part 1:", cryostasis.sendDroid())
 }

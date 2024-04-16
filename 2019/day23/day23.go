@@ -39,10 +39,6 @@ func (this *Network) getInput() {
 			num, _ := strconv.Atoi(n)
 			this.IntCode = append(this.IntCode, num)
 		}
-		// additional space needed
-		for i := 0; i < 10_000; i++ {
-			this.IntCode = append(this.IntCode, 0)
-		}
 	}
 	defer file.Close()
 }
