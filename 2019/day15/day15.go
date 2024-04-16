@@ -8,24 +8,33 @@ import (
 	"strings"
 )
 
-type GameMap struct {
-	UseTest      bool
-	IntCode      []int
-	relativeBase int
+type OxygenSystem struct {
+	UseTest    bool
+	IntCode    []int
+	grid       [][]rune
+	minSteps   int
+	oxygen     []int
+	oxygenTime int
 }
-type Program struct {
-	IntCode []int
+type Node struct {
+	IntCode      []int
+	x            int
+	y            int
+	relativeBase int
+	index        int
+	key          string
 }
 
-func (this *GameMap) getInput() {
+func (this *OxygenSystem) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {
 		inputFile = "input-test.txt"
 	}
 	file, _ := os.Open(inputFile)
 	scanner := bufio.NewScanner(file)
+
 	this.IntCode = []int{}
-	this.relativeBase = 0
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		strNum := strings.Split(line, ",")
@@ -34,13 +43,13 @@ func (this *GameMap) getInput() {
 			this.IntCode = append(this.IntCode, num)
 		}
 		// additional space need
-		for i := 0; i < 15; i++ {
+		for i := 0; i < 1_000; i++ {
 			this.IntCode = append(this.IntCode, 0)
 		}
 	}
 	defer file.Close()
 }
-func (this *GameMap) parseOpCode(n int) (int, []int) {
+func (this *OxygenSystem) parseOpCode(n int) (int, []int) {
 	code := n % 100
 	rest := strconv.Itoa(n / 100)
 	arr := []int{}
@@ -54,13 +63,13 @@ func (this *GameMap) parseOpCode(n int) (int, []int) {
 	return code, arr
 }
 
-func (this *GameMap) runProgram(index int, intCode []int, input []int) ([]int, int) {
+func (this *OxygenSystem) runProgram(index int, relativeBase int, intCode []int, input []int) ([]int, int, int) {
 	output := []int{}
 
 	for index < len(intCode) {
 		code, params := this.parseOpCode(intCode[index])
 		if code == 99 {
-			return output, -1
+			return output, -1, relativeBase
 		}
 
 		a, b, c := intCode[index+1], intCode[index+2], intCode[index+3]
@@ -68,17 +77,17 @@ func (this *GameMap) runProgram(index int, intCode []int, input []int) ([]int, i
 		if params[0] == 0 {
 			a = intCode[a]
 		} else if params[0] == 2 {
-			a = intCode[a+this.relativeBase]
+			a = intCode[a+relativeBase]
 		}
 
 		switch code {
 		case 3, 4:
 			if code == 3 {
 				if len(input) == 0 {
-					return output, index
+					return output, index, relativeBase
 				}
 				if params[0] == 2 {
-					intCode[intCode[index+1]+this.relativeBase] = input[0]
+					intCode[intCode[index+1]+relativeBase] = input[0]
 				} else {
 					intCode[intCode[index+1]] = input[0]
 				}
@@ -89,7 +98,7 @@ func (this *GameMap) runProgram(index int, intCode []int, input []int) ([]int, i
 			index += 2
 			continue
 		case 9:
-			this.relativeBase += a
+			relativeBase += a
 			index += 2
 			continue
 		}
@@ -97,11 +106,11 @@ func (this *GameMap) runProgram(index int, intCode []int, input []int) ([]int, i
 		if params[1] == 0 {
 			b = intCode[b]
 		} else if params[1] == 2 {
-			b = intCode[b+this.relativeBase]
+			b = intCode[b+relativeBase]
 		}
 
 		if params[2] == 2 {
-			c += this.relativeBase
+			c += relativeBase
 		}
 		switch code {
 		case 1:
@@ -125,31 +134,111 @@ func (this *GameMap) runProgram(index int, intCode []int, input []int) ([]int, i
 		}
 		index += 4
 	}
-	return output, -1
+	return output, -1, relativeBase
 }
 
-func (this *GameMap) countPanels() int {
+func (this *OxygenSystem) fillOxygen() {
+
+	q := [][]int{this.oxygen}
+	this.grid[this.oxygen[1]][this.oxygen[0]] = '.'
+	var steps int
+	for len(q) > 0 {
+		temp := [][]int{}
+		for _, node := range q {
+			x, y := node[0], node[1]
+			if this.grid[y][x] != '.' {
+				continue
+			}
+			this.grid[y][x] = 'O'
+			for _, dir := range [][]int{{0, -1}, {0, 1}, {1, 0}, {-1, 0}} {
+				temp = append(temp, []int{x + dir[0], y + dir[1]})
+			}
+		}
+		q = temp
+		if len(q) == 0 {
+			break
+		}
+		steps++
+	}
+	this.oxygenTime = steps - 1
+}
+
+func (this *OxygenSystem) makeGrid() {
+	length := 45
+	this.grid = make([][]rune, length)
+	for i := range this.grid {
+		this.grid[i] = make([]rune, length)
+		for j := range this.grid[i] {
+			this.grid[i][j] = '#'
+		}
+	}
+	dirMap := [][]int{{0, -1}, {0, 1}, {1, 0}, {-1, 0}}
+	intCode := make([]int, len(this.IntCode))
+	copy(intCode, this.IntCode)
+
+	q := []Node{{intCode, length / 2, length / 2, 0, 0, strconv.Itoa(length/2) + "," + strconv.Itoa(length/2)}}
+	seen := make(map[string]bool)
+
+	var steps int
+	for len(q) > 0 && steps < 1000 {
+		temp := []Node{}
+		for _, node := range q {
+			seen[node.key] = true
+
+			for _, dir := range []int{1, 2, 3, 4} {
+
+				relBase := node.relativeBase
+				intCode := make([]int, len(node.IntCode))
+				copy(intCode, node.IntCode)
+				index := node.index
+
+				out, index, relBase := this.runProgram(index, relBase, intCode, []int{dir})
+
+				x := node.x + dirMap[dir-1][0]
+				y := node.y + dirMap[dir-1][1]
+				key := strconv.Itoa(x) + "," + strconv.Itoa(y)
+
+				if out[0] == 2 {
+					this.grid[y][x] = 'X'
+					if this.minSteps == 0 {
+						this.oxygen = []int{x, y}
+						this.minSteps = steps + 1
+					}
+				} else if out[0] == 1 {
+					this.grid[y][x] = '.'
+					if _, ok := seen[key]; ok {
+						continue
+					}
+					temp = append(temp, Node{intCode, x, y, relBase, index, key})
+				} else {
+					this.grid[y][x] = '#'
+				}
+			}
+		}
+		q = temp
+		steps++
+	}
+}
+
+func (this *OxygenSystem) runSystem() {
 	this.getInput()
-	fmt.Println(len(this.IntCode))
-	return 1
+	this.makeGrid()
+	this.fillOxygen()
 }
 
-func (this *GameMap) bfs() int {
-	coordMap := make(map[string]Program)
-	fmt.Println(coordMap)
-	return 1
+func (this *OxygenSystem) findOxygen() int {
+	return this.minSteps
 }
 
-// func (this *GameMap) getScore() int {
-// 	this.getInput()
-// 	return 1
-// }
+func (this *OxygenSystem) runOxygen() int {
+	return this.oxygenTime
+}
 
 func main() {
-	gameMap := &GameMap{
+	oxygenSystem := &OxygenSystem{
 		UseTest: false,
-		IntCode: []int{},
 	}
-	fmt.Println("Day 15 part 1:", gameMap.countPanels())
-	// fmt.Println("Day 13 part 2:", gameMap.getScore())
+	oxygenSystem.runSystem()
+	fmt.Println("Day 15 part 1:", oxygenSystem.findOxygen())
+	fmt.Println("Day 15 part 2:", oxygenSystem.runOxygen())
 }
