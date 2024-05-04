@@ -15,7 +15,7 @@ type Sonar struct {
 func (this *Sonar) getInput() {
 	inputFile := "input.txt"
 	if this.useTest {
-		inputFile = "input-text.txt"
+		inputFile = "input-test.txt"
 	}
 
 	file, _ := os.Open(inputFile)
