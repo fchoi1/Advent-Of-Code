@@ -21,6 +21,7 @@ func (this *Binary) getInput() {
 
 	file, _ := os.Open(inputFile)
 	scanner := bufio.NewScanner(file)
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		this.binaryList = append(this.binaryList, line)
