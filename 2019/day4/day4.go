@@ -14,20 +14,6 @@ type Container struct {
 	end     int
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func (this *Container) getInput() {
 	inputFile := "input.txt"
 	if this.UseTest {

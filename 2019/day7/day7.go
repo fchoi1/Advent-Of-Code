@@ -14,13 +14,6 @@ type Amplifier struct {
 	comboList [][]int
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func contains(slice []int, value int) bool {
 	for _, v := range slice {
 		if v == value {
