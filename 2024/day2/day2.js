@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-class Day2 {
+class Report {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
@@ -59,6 +59,6 @@ class Day2 {
   }
 }
 
-const day2 = new Day2();
-console.log("Day 2 part 1:", day2.getArea());
-console.log("Day 2 part 2:", day2.getArea(true));
+const report = new Report();
+console.log("Day 2 part 1:", report.getArea());
+console.log("Day 2 part 2:", report.getArea(true));
