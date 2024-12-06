@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-class Report {
+class Guard {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
@@ -113,7 +113,7 @@ class Report {
   }
 }
 
-const report = new Report();
-console.log("Day 6 part 1:", report.countDistinct());
-console.log("Day 6 part 2:", report.getLoopCount());
+const guard = new Guard();
+console.log("Day 6 part 1:", guard.countDistinct());
+console.log("Day 6 part 2:", guard.getLoopCount());
 // time: ~9.2s
