@@ -86,7 +86,6 @@ class Pebbles {
     let key;
     let sides = 0;
     console.log("LETTER", area);
-    // console.log("\n\nEdges", edges);
     let count = 0;
     while (startkey !== key) {
       count += 1;
