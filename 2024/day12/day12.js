@@ -107,14 +107,7 @@ class Pebbles {
       currY -= this.directions[dir][1];
       console.log("curr", currX, currY, this.directions[dir]);
 
-      // console.log(
-      //   "leftKey",
-      //   `${currX + this.directions[(dir + 4 - 1) % 4][0]},${
-      //     currY + this.directions[(dir + 4 - 1) % 4][1]
-      //   }`,
-      //   currX,
-      //   currY
-      // );
+
 
       if (
         edges.has(`${currX + lx},${currY + ly}`) &&
