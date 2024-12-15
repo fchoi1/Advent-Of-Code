@@ -131,7 +131,7 @@ class RestroomRedoubt {
   }
 }
 
-const restroomRedoubt = new RestroomRedoubt(false);
+const restroomRedoubt = new RestroomRedoubt();
 restroomRedoubt.process();
 restroomRedoubt.displayTree();
 console.log("Day 14 part 1:", restroomRedoubt.getSF());
