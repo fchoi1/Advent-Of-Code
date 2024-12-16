@@ -23,8 +23,8 @@ class BridgeRepair {
   }
 
   isValid(ans, numbers, curr, index, isPart2 = false) {
-    if (ans === curr) return true;
-    if (curr > ans || index >= numbers.length) return false;
+    if (curr > ans) return false;
+    if (index >= numbers.length) return ans === curr;
     const mul = this.isValid(
       ans,
       numbers,
