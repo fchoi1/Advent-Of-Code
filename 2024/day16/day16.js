@@ -44,14 +44,12 @@ class Warehouse {
     ];
     let visited = new Map();
     let prevMap = new Map();
-    let paths = [];
     let bestScore = Infinity;
 
+    let count = 0;
+
     while (q.length > 0) {
-      // console.log(" ");
-      // for (const item of q) {
-      //   console.log(item[0], item[1], item[2], item[3], item[4].size);
-      // }
+      count += 1;
 
       q.sort((a, b) => {
         if (a[0] === b[0]) return a[4].size - b[4].size;
@@ -62,41 +60,86 @@ class Warehouse {
       const [x, y] = start;
 
       if (prev) {
-        prevMap.set(`${x},${y}`, seen);
-
         if (prevMap.has(`${prev[0]},${prev[1]}`)) {
-          const prevSeen = prevMap.get(`${prev[0]},${prev[1]}`);
-          seen = new Set([...seen, ...prevSeen]);
+          prevMap.set(
+            `${x},${y}`,
+            new Set([...seen, ...prevMap.get(`${prev[0]},${prev[1]}`)])
+          );
+        } else {
+          prevMap.set(`${x},${y}`, new Set([...seen]));
         }
       }
 
       if (this.map[y][x] === "E") {
-        console.log("Found end", score, seen.size);
+        console.log("\n\nFound end", score, seen.size);
+
         if (score < bestScore) {
           bestScore = score;
-          paths = [];
-          paths.push(seen);
+          prevMap.set(
+            `${x},${y}`,
+            new Set([...seen, ...prevMap.get(`${x},${y}`)])
+          );
+          visited.set(`${x},${y}`, [score, seen]);
+
+          console.log(
+            "new end",
+            [x, y],
+            this.end,
+            prevMap.get(`${x},${y}`).size,
+            visited.get(`${x},${y}`)[1].size,
+            prevMap.get(`${prev[0]},${prev[1]}`).size
+          );
+          break;
         } else if (score === bestScore) {
-          paths.push(seen);
+          console.log("same score found", bestScore);
+
+          prevMap.set(
+            `${x},${y}`,
+            new Set([...seen, ...prevMap.get(`${x},${y}`)])
+          );
         } else {
           continue;
         }
       }
 
       const [dx, dy] = this.directions[dir];
-      const key = `${x},${y},${dx},${dy}`;
+
+      const key = `${x},${y}`;
+
+      // const [dx, dy] = this.directions[dir];
+      // const key = `${x},${y},${dx},${dy}`;
       if (visited.has(key)) {
         const [currScore, currSeen] = visited.get(key);
         if (score > currScore) continue;
         else {
           // console.log("seen prev", x, y, seen, currSeen);
           if (score == currScore) {
+            // console.log(" ");
+            console.log(
+              "Same score",
+              score,
+              [x, y],
+              prev,
+              "seen",
+              seen.size,
+              "curr size",
+              prevMap.get(`${x},${y}`).size,
+              "prev size",
+              prevMap.get(`${prev[0]},${prev[1]}`).size
+            );
+            // for (const item of q) {
+            //   console.log(item[0], item[1], item[2], item[3], item[4].size);
+            // }
             seen = new Set([...seen, ...currSeen]);
-            visited.set(key, [score, seen]);
-            continue;
+            visited.set(key, [score, new Set([...seen])]);
+            prevMap.set(`${x},${y}`, new Set([...seen]));
+            console.log("new prev", seen.size, prevMap.get(`${x},${y}`).size);
+
+            // continue;
           } else {
             seen = new Set([...seen, ...currSeen]);
-            visited.set(key, [score, seen]);
+            visited.set(key, [score, new Set([...seen])]);
+            prevMap.set(`${x},${y}`, new Set([...seen]));
           }
         }
       } else {
@@ -119,21 +162,71 @@ class Warehouse {
     }
 
     console.log("seen", this.end);
-    console.log(visited.get(`${this.end[0]},${this.end[1]},0,-1`)[1].size);
-    console.log(prevMap.get(`${this.end[0]},${this.end[1]}`.size));
-    // console.log(prevMap);
-    // console.log(visited.get(`${this.end[0]},${this.end[1]},1,0`));
-    // console.log(visited.get(`${this.end[0]},${this.end[1]},0,1`));
-    // console.log(visited.get(`${this.end[0]},${this.end[1]},-1,0`));
-    return [bestScore, paths];
+    if (visited.has(`${this.end[0]},${this.end[1]},0,-1`))
+      console.log(
+        "top",
+        visited.get(`${this.end[0]},${this.end[1]},0,-1`)[1].size
+      );
+
+    if (visited.has(`${this.end[0]},${this.end[1]},0,1`))
+      console.log(
+        "bottom",
+        visited.get(`${this.end[0]},${this.end[1]},0,1`)[1].size
+      );
+
+    if (visited.has(`${this.end[0]},${this.end[1]},1,0`))
+      console.log(
+        "right",
+        visited.get(`${this.end[0]},${this.end[1]},1,0`)[1].size
+      );
+
+    if (visited.has(`${this.end[0]},${this.end[1]},-1,0`))
+      console.log(
+        "left",
+        visited.get(`${this.end[0]},${this.end[1]},-1,0`)[1].size
+      );
+
+    console.log(prevMap.get(`${this.end[0]},${this.end[1]}`).size);
+    console.log(visited.get(`${this.end[0]},${this.end[1]}`).size);
+    // this.printGrid(prevMap.get(`${this.end[0]},${this.end[1]}`), prevMap);
+
+    // console.log(prevMap.get(`${this.end[0] - 1},${this.end[1]}`).size);
+    // console.log(prevMap.get(`${this.end[0]},${this.end[1] + 1}`).size);
+
+    return [bestScore];
+  }
+
+  printGrid(seen, prevMap) {
+    for (let j = 0; j < this.map.length; j++) {
+      let str = "";
+      for (let i = 0; i < this.map[0].length; i++) {
+        const key = `${i},${j}`;
+        if (seen.has(key)) {
+          str += "O";
+        } else str += this.map[j][i];
+      }
+      console.log(str);
+    }
+
+    for (let j = 0; j < this.map.length; j++) {
+      for (let i = 0; i < this.map[0].length; i++) {
+        const key = `${i},${j}`;
+        if (seen.has(key)) {
+          if (prevMap.has(`${i},${j}`)) {
+            console.log([i, j], "prev", prevMap.get(`${i},${j}`).size);
+          }
+        }
+      }
+    }
   }
 
   getGPS(isPart2 = false) {
-    const [bestScore, paths] = this.bfs();
+    const [bestScore] = this.bfs();
     // console.log(paths);
     return bestScore;
   }
 }
 
-const warehouse = new Warehouse(true);
+const warehouse = new Warehouse();
 console.log("Day 15 part 1:", warehouse.getGPS());
+// console.log("Day 15 part 1:", warehouse.getGPS());
