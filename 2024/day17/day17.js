@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { run } = require("node:test");
 
 class Warehouse {
   getInput() {
@@ -67,17 +66,16 @@ class Warehouse {
     return false;
   }
 
-  runProgram(target = null) {
-    let ans = 0;
+  // combine
+  // B = A % 8 ^ 5
+  // C = A / 2 ** B
+  // A /= 8
 
-    // this.register.C = 9;
-    // this.applyOp("bst", 6);
-    // console.log(this.register.B);
+  // last 3 digits
+  // 101 = 5
+  //
 
-    // this.register.A =10;
-    // this.applyOp("bst", 6);
-    // console.log(this.register.B);
-
+  runProgram() {
     while (this.index < this.program.length) {
       const op = this.opcodes[this.program[this.index]];
       const x = this.program[this.index + 1];
@@ -109,26 +107,6 @@ class Warehouse {
 
     // Digits increase by 8
 
-    // while (target !== out && A < 1000) {
-    //   // if (A % 100 === 0) console.log(A);
-    //   // console.log(out)
-    //   A += 1;
-    //   this.reset();
-    //   this.register.A = A;
-    //   out = this.runProgram(this.program);
-    //   // if (out.length != curr) console.log(A);
-
-    //   const num = out.split(",").join("");
-    //   console.log(A, num);
-    //   if (num == "530") {
-    //     // console.log("530:", A, A * 8);
-    //     // digits.push(A * 8);
-    //   }
-    //   // console.log(num)
-    //   curr = out.length;
-    //   // if (A == 117440) console.log("REAL", out, "TARGET", target);
-    // }
-
     let digits = [1];
     const t = [];
 
@@ -137,32 +115,92 @@ class Warehouse {
     for (let i = this.program.length - 1; i >= 0; i--) {
       t.unshift(this.program[i]);
       const strT = t.join(",");
-      console.log("Target", strT);
       let temp = [];
+      console.log(strT);
       while (digits.length > 0) {
         const d = digits.shift();
-        for (let j = d - 64; j < d + 64; j++) {
-          if (j < 0) continue;
+        for (let j = d; j < d + 8; j++) {
           if (this.testA(j) === strT) {
-            // console.log("Found", j, strT, this.testA(j));
+            console.log("found", j, String(j).length);
             temp.push(j * 8);
           }
+          if (temp.length > 8) break;
         }
       }
       digits = temp;
-      // console.log("digits", digits);
     }
+    console.log("done:", digits);
+    const ans = Math.min(...digits) / 8;
     console.log(
-      this.testA(872155878029320 / 8),
+      this.testA(ans),
       "::",
       this.program.join(","),
-      this.testA(872155878029320 / 8) === this.program.join(",")
+      this.testA(ans) === this.program.join(",")
     );
+
+    console.log(String(Math.min(...digits) / 8).length);
     return Math.min(...digits) / 8;
+  }
+
+  // 2,4, bst -> 4  B = A % 8
+  // 1,5, bxl -> 5  B ^= 5
+  // 7,5, cdv -> 5  C = A /  2 ** b
+  // 0,3, adv -> 3  A  =  A / 8
+  // 4,0, bxc -> 0  B ^= C
+  // 1,6, bxl -> 6  B ^= 6
+  // 5,5, out -> 5  B % 8
+  // 3,0  jnz -> jump to 0
+
+  find(program, ans) {
+    let sub = null;
+    if (program.length === 0) return ans;
+    const end = program.length - 1;
+    for (let i = 0; i < 8; i++) {
+      const a = ans * 8 + i;
+      let b = a % 8;
+      b ^= 5;
+      let c = Math.floor(a / 2 ** b);
+      b ^= c;
+      b ^= 6;
+      if (b % 8 === program[end]) {
+        sub = this.find(program.slice(0, end), a);
+        if (!sub) continue;
+        return sub;
+      }
+    }
+    return null;
+  }
+
+  // find(program, ans) {
+  //   // console.log(program, ans);
+  //   let sub = null;
+  //   if (program.length === 0) return ans;
+  //   const end = program.length - 1;
+  //   for (let i = 0; i <= 8; i++) {
+  //     const a = ans * 8 + i;
+  //     let b = a % 8;
+  //     b ^= 2;
+  //     let c = Math.floor(a / 2 ** b);
+  //     b ^= c;
+  //     b ^= 3;
+  //     if (b % 8 === program[end]) {
+  //       sub = this.find(program.slice(0, end), a);
+  //       if (!sub) continue;
+  //       return sub;
+  //     }
+  //   }
+  //   return sub;
+  // }
+
+  part2() {
+    return this.find(this.program, 0);
   }
 }
 
 const warehouse = new Warehouse();
-console.log("Day 15 part 1:", warehouse.getA());
+console.log("Day 15 part 1:", warehouse.runProgram());
+console.log("Day 15 part 2:", warehouse.getA());
+console.log("Day 15 part 2a:", warehouse.part2());
 // console.log("Day 15 part 2:", warehouse.getGPS());
 // 109019476332289
+// 109019476330651

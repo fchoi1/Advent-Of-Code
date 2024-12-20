@@ -119,4 +119,4 @@ class Fragmenter {
 const fragmenter = new Fragmenter();
 console.log("Day 9 part 1:", fragmenter.checksum());
 console.log("Day 9 part 2:", fragmenter.checksum2());
-// ~0.55s
+// Total Runtime ~0.55s
