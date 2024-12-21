@@ -82,7 +82,7 @@ class RunRAM {
     // Iterate through the grid
     for (let j = 0; j < map.length; j++) {
       for (let i = 0; i < map[0].length; i++) {
-        if (map[j][i] === "*") continue; // Skip if it's an invalid cell
+        if (map[j][i] === "*") continue; 
 
         for (let y = 0; y < map.length; y++) {
           for (let x = 0; x < map[0].length; x++) {
@@ -188,5 +188,5 @@ class RunRAM {
 }
 
 const runRAM = new RunRAM(true);
-console.log("Day 20 part 1:", runRAM.getCodes());
+console.log("Day 21 part 1:", runRAM.getCodes());
 // console.log("Day 20 part 2:", runRAM.getByte());
