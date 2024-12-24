@@ -82,7 +82,7 @@ class RunRAM {
     // Iterate through the grid
     for (let j = 0; j < map.length; j++) {
       for (let i = 0; i < map[0].length; i++) {
-        if (map[j][i] === "*") continue; 
+        if (map[j][i] === "*") continue;
 
         for (let y = 0; y < map.length; y++) {
           for (let x = 0; x < map[0].length; x++) {
@@ -177,12 +177,10 @@ class RunRAM {
 
   getCodes() {
     let ans = 0;
-
     for (let code of this.codes) {
       const pathLen = this.getShortest2(code);
       ans += parseInt(code.slice(0, 3)) * pathLen;
     }
-
     return ans;
   }
 }
@@ -190,3 +188,19 @@ class RunRAM {
 const runRAM = new RunRAM(true);
 console.log("Day 21 part 1:", runRAM.getCodes());
 // console.log("Day 20 part 2:", runRAM.getByte());
+
+//     +---+---+
+//     | ^ | A |
+// +---+---+---+
+// | < | v | > |
+// +---+---+---+
+
+// +---+---+---+
+// | 7 | 8 | 9 |
+// +---+---+---+
+// | 4 | 5 | 6 |
+// +---+---+---+
+// | 1 | 2 | 3 |
+// +---+---+---+
+//     | 0 | A |
+//     +---+---+
