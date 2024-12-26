@@ -189,6 +189,7 @@ const runRAM = new RunRAM(true);
 console.log("Day 21 part 1:", runRAM.getCodes());
 // console.log("Day 20 part 2:", runRAM.getByte());
 
+
 //     +---+---+
 //     | ^ | A |
 // +---+---+---+
