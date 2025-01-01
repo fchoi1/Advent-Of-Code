@@ -37,7 +37,7 @@ class RunRAM {
     this.numMap = this.getMap(this.numberKey);
     this.cache = new Map();
     console.log(this.dirMap);
-    // console.log(this.numMap);
+    console.log(this.numMap);
   }
 
   getMap(map) {
