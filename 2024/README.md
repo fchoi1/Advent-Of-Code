@@ -1,4 +1,4 @@
-# Advent of Code (2015)
+# Advent of Code (2024)
 
 Programmed in Javascript
 
