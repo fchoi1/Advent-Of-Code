@@ -36,8 +36,6 @@ class RunRAM {
     this.dirMap = this.getMap(this.directionKey);
     this.numMap = this.getMap(this.numberKey);
     this.cache = new Map();
-    console.log(this.dirMap);
-    console.log(this.numMap);
   }
 
   getMap(map) {
@@ -97,7 +95,7 @@ class RunRAM {
     return m;
   }
 
-  getPaths(code, map) {
+  getNumMapPaths(code, map) {
     let prev = "A";
     let paths = [""];
 
@@ -115,93 +113,47 @@ class RunRAM {
     return paths;
   }
 
-  dfs(x, y, level, target, length) {
+  dfs(x, y, level, target) {
     const key = `${x},${y},${level}`;
-    if (this.cache.has(key) && this.cache.get(key) < length)
-      return this.cache.get(key);
-    if (level >= target) return length;
-    let l = 0;
-    for (let path of this.dirMap[`${x},${y}`]) {
-      // console.log("checking ", path, x, y, level, length);
-      for (let i = 0; i < path.length - 1; i++) {
-        l += this.dfs(
-          path[i],
-          path[i + 1],
-          level + 1,
-          target,
-          length + path.length
-        );
-      }
-    }
-    this.cache.set(key, l);
-    return l;
-  }
+    if (this.cache.has(key)) return this.cache.get(key);
+    if (level >= target) return this.dirMap[`${x},${y}`][0].length;
 
-  getShortest2(code) {
-    let nested = 2;
-    let paths = this.getPaths(code, this.numMap);
-    console.log("Num", paths);
-
-    // Arrow pad
-    let l;
     let minL = Infinity;
-    for (let p of paths) {
-      l = 0;
-      for (let i = 0; i < p.length - 1; i++) {
-        // console.log(p[i], p[i + 1]);
-        // console.log(this.dfs(p[i], p[i + 1], 0, 1, 0));
-        l += this.dfs(p[i], p[i + 1], 0, 1, 0);
+    for (let path of this.dirMap[`${x},${y}`]) {
+      let l = 0;
+      path = "A" + path;
+      for (let i = 0; i < path.length - 1; i++) {
+        l += this.dfs(path[i], path[i + 1], level + 1, target);
       }
       minL = Math.min(minL, l);
     }
-    console.log("LEN", l, minL);
-    return l;
+    this.cache.set(key, minL);
+    return minL;
   }
 
-  getShortest(code) {
-    let nested = 2;
-    let paths = this.getPaths(code, this.numMap);
-    console.log("Num", paths.length);
-
-    // Arrow pad
-    for (let i = 0; i < nested; i++) {
-      let temp = [];
-      for (let p of paths) {
-        const newPaths = this.getPaths(p, this.dirMap);
-        temp = temp.concat(newPaths);
-      }
-      paths = temp;
+  getShortest(code, isPart2) {
+    let loops = isPart2 ? 24 : 1;
+    let paths = this.getNumMapPaths(code, this.numMap);
+    let minL = Infinity;
+    for (let p of paths) {
+      let l = 0;
+      p = "A" + p;
+      for (let i = 0; i < p.length - 1; i++)
+        l += this.dfs(p[i], p[i + 1], 0, loops);
+      minL = Math.min(minL, l);
     }
-    return paths.reduce((min, str) => Math.min(min, str.length), Infinity);
+    return minL;
   }
 
-  getCodes() {
+  getCodes(isPart2) {
     let ans = 0;
-    for (let code of this.codes) {
-      const pathLen = this.getShortest2(code);
-      ans += parseInt(code.slice(0, 3)) * pathLen;
-    }
+    this.cache = new Map();
+    for (let code of this.codes)
+      ans += parseInt(code.slice(0, 3)) * this.getShortest(code, isPart2);
     return ans;
   }
 }
 
-const runRAM = new RunRAM(true);
+const runRAM = new RunRAM();
 console.log("Day 21 part 1:", runRAM.getCodes());
-// console.log("Day 20 part 2:", runRAM.getByte());
-
-
-//     +---+---+
-//     | ^ | A |
-// +---+---+---+
-// | < | v | > |
-// +---+---+---+
-
-// +---+---+---+
-// | 7 | 8 | 9 |
-// +---+---+---+
-// | 4 | 5 | 6 |
-// +---+---+---+
-// | 1 | 2 | 3 |
-// +---+---+---+
-//     | 0 | A |
-//     +---+---+
+console.log("Day 21 part 2:", runRAM.getCodes(true));
