@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-class RunRAM {
+class Keypad {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
@@ -154,6 +154,6 @@ class RunRAM {
   }
 }
 
-const runRAM = new RunRAM();
-console.log("Day 21 part 1:", runRAM.getCodes());
-console.log("Day 21 part 2:", runRAM.getCodes(true));
+const keypad = new Keypad();
+console.log("Day 21 part 1:", keypad.getCodes());
+console.log("Day 21 part 2:", keypad.getCodes(true));
