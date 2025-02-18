@@ -33,16 +33,17 @@ func main() {
 
 ## Completed
 
+- [X] [2024](2024) (Node)
 - [X] [2023](2023) (Python)
 - [X] [2022](2022) (Python)
 - [ ] [2021](2021) (Golang)
 - [X] [2020](2020) (Python)
 - [x] [2019](2019) (Golang)
-- [X] [2018](2018) (Javascript)
+- [X] [2018](2018) (Node)
 - [X] [2017](2017) (Python)
 - [X] [2016](2016) (Golang)
-- [X] [2015](2015) (Javascript)
+- [X] [2015](2015) (Node)
 
-## AOC 2023
+## AOC 2024
 
-<a href="https://adventofcode.com/2023"><img src="2022/calendar.svg" width="80%" /></a>
+<a href="https://adventofcode.com/2024"><img src="2024/calendar.svg" width="80%" /></a>
