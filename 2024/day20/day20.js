@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-class RunRAM {
+class Race {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
@@ -126,7 +126,7 @@ class RunRAM {
   }
 }
 
-const runRAM = new RunRAM();
-console.log("Day 20 part 1:", runRAM.getSteps());
-console.log("Day 20 part 2:", runRAM.getSteps(true));
+const race = new Race();
+console.log("Day 20 part 1:", race.getSteps());
+console.log("Day 20 part 2:", race.getSteps(true));
 // Total Runtime ~3.4s
