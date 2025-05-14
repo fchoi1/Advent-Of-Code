@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-class RunRAM {
+class LinenLayout {
   getInput() {
     const inputFile = this.useTest ? "input-test.txt" : "input.txt";
     try {
@@ -103,6 +103,6 @@ class RunRAM {
   }
 }
 
-const runRAM = new RunRAM();
-console.log("Day 19 part 1:", runRAM.countValidDesigns());
-console.log("Day 19 part 2:", runRAM.getAllCombos());
+const linenLayout = new LinenLayout();
+console.log("Day 19 part 1:", linenLayout.countValidDesigns());
+console.log("Day 19 part 2:", linenLayout.getAllCombos());
