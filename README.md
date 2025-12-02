@@ -32,7 +32,7 @@ func main() {
 ```
 
 ## Completed
-
+- []  [2025](2025) (Golang)
 - [X] [2024](2024) (Node)
 - [X] [2023](2023) (Python)
 - [X] [2022](2022) (Python)
