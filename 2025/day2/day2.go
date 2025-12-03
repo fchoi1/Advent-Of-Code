@@ -71,9 +71,7 @@ func invalidPart2(num int) bool {
 				return true
 			}
 		}
-
 	}
-
 	return false
 }
 
@@ -81,7 +79,6 @@ func (this *GiftShop) parseIDs() {
 	this.part1 = 0
 	this.part2 = 0
 	for _, r := range this.ranges {
-
 		for i := r.start; i <= r.end; i++ {
 			if invalidPart1(i) {
 				this.part1 += i
@@ -91,7 +88,6 @@ func (this *GiftShop) parseIDs() {
 			}
 		}
 	}
-
 }
 
 func (this *GiftShop) getPart1() int {
