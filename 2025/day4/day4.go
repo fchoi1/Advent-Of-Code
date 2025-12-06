@@ -10,8 +10,6 @@ import (
 type Rolls struct {
 	useTest bool
 	grid    [][]rune
-	part1   int
-	part2   int
 }
 
 func (this *Rolls) getInput() {
