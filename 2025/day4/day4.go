@@ -101,6 +101,6 @@ func main() {
 		useTest: *useTest,
 	}
 	rolls.getInput()
-	fmt.Println("Day 2 part 1:", rolls.countAll())
-	fmt.Println("Day 2 part 2:", rolls.remove())
+	fmt.Println("Day 4 part 1:", rolls.countAll())
+	fmt.Println("Day 4 part 2:", rolls.remove())
 }
