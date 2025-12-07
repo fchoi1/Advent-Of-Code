@@ -89,6 +89,6 @@ func main() {
 		useTest: *useTest,
 	}
 	batteries.getInput()
-	fmt.Println("Day 2 part 1:", batteries.getPart1())
-	fmt.Println("Day 2 part 2:", batteries.getPart2())
+	fmt.Println("Day 3 part 1:", batteries.getPart1())
+	fmt.Println("Day 3 part 2:", batteries.getPart2())
 }
