@@ -118,5 +118,5 @@ func main() {
 	}
 	cafeteria.getInput()
 	fmt.Println("Day 5 part 1:", cafeteria.countFresh())
-	fmt.Println("Day 2 part 2:", cafeteria.countAllFresh())
+	fmt.Println("Day 6 part 2:", cafeteria.countAllFresh())
 }
