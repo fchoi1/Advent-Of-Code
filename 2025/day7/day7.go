@@ -71,9 +71,11 @@ func (this *Lab) shootBeam() {
 func (this *Lab) getSplits() int {
 	return this.splits
 }
+
 func (this *Lab) getPaths() int {
 	return this.paths
 }
+
 func main() {
 	useTest := flag.Bool("test", false, "use test input file")
 	flag.Parse()
