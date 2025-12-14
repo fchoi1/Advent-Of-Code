@@ -81,14 +81,7 @@ func (this *Christmas) getInput() {
 				currCoords = append(currCoords, line)
 			}
 		}
-
 	}
-
-	fmt.Println(this.grids)
-	for k, v := range this.presents {
-		fmt.Println(k, v, "\n")
-	}
-	fmt.Println("\n\n")
 	defer file.Close()
 }
 
