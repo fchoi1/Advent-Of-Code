@@ -93,10 +93,10 @@ func (this *Reactor) getPart2() int {
 func main() {
 	useTest := flag.Bool("test", false, "use test input file")
 	flag.Parse()
-	Reactor := &Reactor{
+	reactor := &Reactor{
 		useTest: *useTest,
 	}
-	Reactor.getInput()
-	fmt.Println("Day 11 part 1:", Reactor.getPart1())
-	fmt.Println("Day 11 part 2:", Reactor.getPart2())
+	reactor.getInput()
+	fmt.Println("Day 11 part 1:", reactor.getPart1())
+	fmt.Println("Day 11 part 2:", reactor.getPart2())
 }
